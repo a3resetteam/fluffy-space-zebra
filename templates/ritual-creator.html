@@ -774,19 +774,22 @@
             <button type="submit" class="btn">🔮 Create My Ritual</button>
         </form>
 
-        <!-- Modal for Ritual Steps -->
-        <div id="ritualModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">
-            <div style="background:#181818; border-radius:20px; max-width:500px; margin:auto; padding:32px 24px; color:#fff; box-shadow:0 8px 32px #000a; position:relative;">
-                <button onclick="closeRitualModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
-                <h2 style="text-align:center; margin-bottom:16px;">Your Custom Ritual</h2>
-                <div id="ritualStepsContainer"></div>
-                <div style="margin:24px 0; text-align:center;">
-                    <span id="ritualTimer" style="font-size:2rem; font-weight:bold;">00:00</span>
+        <!-- Modal for Ritual Steps (Professional, One Step at a Time) -->
+        <div id="ritualModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.92); z-index:9999; align-items:center; justify-content:center;">
+            <div style="background:#232946; border-radius:24px; max-width:420px; margin:auto; padding:36px 28px 32px 28px; color:#fff; box-shadow:0 8px 32px #000a; position:relative; display:flex; flex-direction:column; align-items:center;">
+                <button onclick="closeRitualModal()" style="position:absolute; top:18px; right:18px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;">&times;</button>
+                <h2 style="text-align:center; margin-bottom:10px; font-size:2rem; font-weight:700; letter-spacing:0.5px; color:#eebbc3;">Your Custom Ritual</h2>
+                <div id="ritualProgress" style="margin-bottom:18px; color:#eebbc3; font-weight:600; font-size:1.1rem;"></div>
+                <div id="ritualStepContainer" style="width:100%; min-height:120px; margin-bottom:18px;"></div>
+                <div style="margin:10px 0 18px 0; text-align:center;">
+                    <span id="ritualTimer" style="font-size:1.5rem; font-weight:bold; background:#eebbc3; color:#232946; padding:6px 18px; border-radius:12px;">00:00</span>
                     <div style="font-size:0.95rem; color:#aaa;">Time Remaining</div>
                 </div>
-                <div style="text-align:center;">
-                    <button onclick="closeRitualModal()" class="btn" style="margin-top:12px;">Close</button>
+                <div style="display:flex; gap:12px; width:100%; justify-content:center;">
+                    <button id="prevStepBtn" class="btn btn-secondary" style="display:none; min-width:100px;">Previous</button>
+                    <button id="nextStepBtn" class="btn" style="min-width:100px;">Next</button>
                 </div>
+                <button onclick="closeRitualModal()" class="btn btn-danger" style="margin-top:18px; width:100%;">End Ritual</button>
             </div>
         </div>
         </form>
@@ -829,6 +832,7 @@
 
         // Form validation
 
+
         document.getElementById('ritualForm').addEventListener('submit', function(e) {
             e.preventDefault();
             // Gather form data
@@ -855,45 +859,42 @@
                 focus_area: getVal('focus_area'),
             };
 
-            // Generate ritual steps (same logic as backend)
+            // --- Improved Ritual Step Generation ---
             const steps = [];
+            // 1. Opening
+            steps.push({title:'Center Yourself', instruction:'Sit comfortably, close your eyes, and take 5 slow, deep breaths. Feel your body relax with each exhale.'});
+
+            // 2. Breathwork (personalized)
             if (data.ritual_need === 'energy') {
-                steps.push({title:'Energizing Breathwork', instruction:'Start with 2 minutes of deep, energizing breaths.'});
-                steps.push({title:'Dynamic Warm-up', instruction:'Do a quick dynamic warm-up to activate your body.'});
+                steps.push({title:'Energizing Breathwork', instruction:'Try the "Breath of Fire": quick, rhythmic inhales and exhales through the nose for 1 minute.'});
             } else if (data.ritual_need === 'grounding') {
-                steps.push({title:'Grounding Breath', instruction:'Begin with slow, mindful breathing to center yourself.'});
-                steps.push({title:'Restorative Yoga', instruction:'Practice restorative yoga or gentle stretching.'});
+                steps.push({title:'Grounding Breath', instruction:'Inhale for 4, hold for 4, exhale for 6. Repeat for 2 minutes, feeling your body connect to the earth.'});
             } else if (data.ritual_need === 'peace') {
-                steps.push({title:'Calming Breathwork', instruction:'Begin with a calming breathwork session.'});
-                steps.push({title:'Stillness', instruction:'Sit in stillness or meditate for a few minutes.'});
+                steps.push({title:'Calming Breathwork', instruction:'Inhale for 4, exhale for 8. Let your body soften and your mind quiet.'});
             } else if (data.ritual_need === 'clarity') {
-                steps.push({title:'Focused Breathing', instruction:'Start with focused breathing and set an intention.'});
-                steps.push({title:'Mindful Walking', instruction:'Do a mindful walking or journaling exercise.'});
+                steps.push({title:'Clarity Breathing', instruction:'Breathe in through the nose, out through the mouth, focusing on clearing your mind.'});
             } else if (data.ritual_need === 'confidence') {
-                steps.push({title:'Power Poses', instruction:'Begin with power poses and affirmations.'});
-                steps.push({title:'Dynamic Flow', instruction:'Move through a dynamic flow or light exercise.'});
+                steps.push({title:'Power Breath', instruction:'Stand tall, inhale deeply, and exhale with a strong sigh. Repeat 5 times, visualizing confidence.'});
             } else if (data.ritual_need === 'healing') {
-                steps.push({title:'Gentle Breathwork', instruction:'Start with gentle breathwork and self-compassion.'});
-                steps.push({title:'Restorative Movement', instruction:'Focus on restorative movement and body awareness.'});
-            } else {
-                steps.push({title:'Mindful Breathing', instruction:'Begin with mindful breathing.'});
-                steps.push({title:'Gentle Movement', instruction:'Move gently and listen to your body.'});
+                steps.push({title:'Healing Breath', instruction:'Place a hand on your heart, breathe in love and exhale tension. Repeat for 2 minutes.'});
             }
-            // Add movement type
+
+            // 3. Movement (detailed)
             if (data.movement_type === 'dynamic_flow') {
-                steps.push({title:'Dynamic Flow', instruction:'Follow a dynamic flow sequence for 5-10 minutes.'});
+                steps.push({title:'Dynamic Flow', instruction:'Move through 3 rounds of: 5 squats, 5 arm circles, 5 lunges per leg, 5 jumping jacks. Flow with your breath.'});
             } else if (data.movement_type === 'restorative_yoga') {
-                steps.push({title:'Restorative Yoga', instruction:'Hold restorative yoga poses for 2-3 minutes each.'});
+                steps.push({title:'Restorative Yoga', instruction:'Hold Child’s Pose, Reclined Butterfly, and Legs-Up-the-Wall for 2-3 minutes each. Focus on releasing tension.'});
             } else if (data.movement_type === 'therapeutic_stretching') {
-                steps.push({title:'Therapeutic Stretching', instruction:'Do targeted therapeutic stretches for your selected areas.'});
+                steps.push({title:'Therapeutic Stretching', instruction:'Gently stretch each area of tension for 30 seconds: neck, shoulders, spine, hips, legs, arms.'});
             } else if (data.movement_type === 'mindful_walking') {
-                steps.push({title:'Mindful Walking', instruction:'Take a mindful walk, focusing on each step and breath.'});
+                steps.push({title:'Mindful Walking', instruction:'Walk slowly, feeling each step. Inhale for 3 steps, exhale for 3 steps. Notice your surroundings.'});
             } else if (data.movement_type === 'advanced_breathwork') {
-                steps.push({title:'Advanced Breathwork', instruction:'Practice advanced breathwork techniques for 5 minutes.'});
+                steps.push({title:'Advanced Breathwork', instruction:'Try box breathing: inhale 4, hold 4, exhale 4, hold 4. Repeat for 2 minutes.'});
             } else if (data.movement_type === 'deep_stillness') {
-                steps.push({title:'Deep Stillness', instruction:'Sit or lie in deep stillness, focusing on relaxation.'});
+                steps.push({title:'Deep Stillness', instruction:'Lie down, close your eyes, and scan your body from head to toe, relaxing each part.'});
             }
-            // Add body area focus
+
+            // 4. Body area focus (if any)
             if (data.body_areas.length) {
                 const area_map = {
                     'neck_shoulders': 'neck and shoulders',
@@ -904,30 +905,52 @@
                     'jaw_face': 'jaw and face',
                 };
                 const focus_areas = data.body_areas.map(a => area_map[a] || a);
-                steps.push({title:'Body Focus', instruction:`Pay special attention to: ${focus_areas.join(', ')}.`});
+                steps.push({title:'Targeted Release', instruction:`Spend extra time stretching and massaging: ${focus_areas.join(', ')}.`});
             }
-            // Add a closing step
-            steps.push({title:'Closing', instruction:'End your ritual with gratitude and a few deep breaths.'});
 
-            // Show modal with steps and timer
+            // 5. Intensity/focus area (optional)
+            if (data.ritual_intensity === 'intense' || data.ritual_intensity === 'transformational') {
+                steps.push({title:'Challenge Yourself', instruction:'Hold each movement or stretch a little longer, and set a bold intention for your day.'});
+            }
+            if (data.focus_area) {
+                steps.push({title:'Inner Focus', instruction:`Reflect on your ${data.focus_area.replace('_',' ')} as you move and breathe.`});
+            }
+
+            // 6. Closing
+            steps.push({title:'Gratitude & Integration', instruction:'Sit quietly, place hands over heart, and name 3 things you’re grateful for. Breathe deeply and smile.'});
+
+            // Show modal with steps and timer (one step at a time)
             showRitualModal(steps, data.duration);
         });
 
+        // --- Modal Logic: One Step at a Time ---
+        let ritualSteps = [], ritualStepIndex = 0, ritualTotalSteps = 0;
         function showRitualModal(steps, duration) {
-            const modal = document.getElementById('ritualModal');
-            const stepsContainer = document.getElementById('ritualStepsContainer');
-            stepsContainer.innerHTML = steps.map((step, i) =>
-                `<div style='margin-bottom:18px;'><b>Step ${i+1}: ${step.title}</b><br><span>${step.instruction}</span></div>`
-            ).join('');
-            modal.style.display = 'flex';
+            ritualSteps = steps;
+            ritualStepIndex = 0;
+            ritualTotalSteps = steps.length;
+            document.getElementById('ritualModal').style.display = 'flex';
+            updateRitualStep();
             startRitualTimer(duration * 60);
         }
-
+        function updateRitualStep() {
+            const step = ritualSteps[ritualStepIndex];
+            document.getElementById('ritualStepContainer').innerHTML = `<div style='margin-bottom:8px; font-size:1.2rem; color:#eebbc3; font-weight:600;'>Step ${ritualStepIndex+1} of ${ritualTotalSteps}</div><div style='font-size:1.3rem; font-weight:700; margin-bottom:8px;'>${step.title}</div><div style='font-size:1.05rem; color:#fff;'>${step.instruction}</div>`;
+            document.getElementById('ritualProgress').textContent = `Step ${ritualStepIndex+1} of ${ritualTotalSteps}`;
+            document.getElementById('prevStepBtn').style.display = ritualStepIndex > 0 ? 'inline-block' : 'none';
+            document.getElementById('nextStepBtn').textContent = ritualStepIndex < ritualTotalSteps-1 ? 'Next' : 'Finish';
+        }
+        document.getElementById('prevStepBtn').onclick = function() {
+            if (ritualStepIndex > 0) { ritualStepIndex--; updateRitualStep(); }
+        };
+        document.getElementById('nextStepBtn').onclick = function() {
+            if (ritualStepIndex < ritualTotalSteps-1) { ritualStepIndex++; updateRitualStep(); }
+            else closeRitualModal();
+        };
         function closeRitualModal() {
             document.getElementById('ritualModal').style.display = 'none';
             stopRitualTimer();
         }
-
         let ritualTimerInterval = null;
         function startRitualTimer(seconds) {
             let remaining = seconds;
