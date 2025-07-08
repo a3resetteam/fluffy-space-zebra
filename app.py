@@ -2642,7 +2642,7 @@ def ritual_session():
         'birthday': request.form.get('birthday'),
         'mood': request.form.get('mood'),
         'environment': request.form.get('environment'),
-        'duration': request.form.get('duration'),
+        'duration': int(request.form.get('duration', 5)),  # ensure int
         'time_of_day': request.form.get('time_of_day'),
         'ritual_need': request.form.get('ritual_need'),
         'movement_type': request.form.get('movement_type'),
