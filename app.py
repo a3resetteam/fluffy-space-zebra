@@ -2716,6 +2716,12 @@ def ritual_session():
 
     return render_template('ritual-session.html', ritual_data=data, ritual_steps=steps)
 
+
+# --- Personality Profile Route ---
+@app.route('/personality-profile')
+def personality_profile():
+    return render_template('personality_profile.html')
+
 # Run the application
 if __name__ == '__main__':
     # Initialize the database
