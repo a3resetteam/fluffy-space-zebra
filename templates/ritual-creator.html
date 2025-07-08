@@ -255,7 +255,7 @@
             <p>Design your personalized transformation ritual</p>
         </div>
 
-        <form class="ritual-form" method="POST" action="/ritual-session" id="ritualForm">
+        <form class="ritual-form" method="POST" action="#" id="ritualForm">
             
             <!-- Personal Details -->
             <div class="form-section">
@@ -773,6 +773,23 @@
 
             <button type="submit" class="btn">🔮 Create My Ritual</button>
         </form>
+
+        <!-- Modal for Ritual Steps -->
+        <div id="ritualModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">
+            <div style="background:#181818; border-radius:20px; max-width:500px; margin:auto; padding:32px 24px; color:#fff; box-shadow:0 8px 32px #000a; position:relative;">
+                <button onclick="closeRitualModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
+                <h2 style="text-align:center; margin-bottom:16px;">Your Custom Ritual</h2>
+                <div id="ritualStepsContainer"></div>
+                <div style="margin:24px 0; text-align:center;">
+                    <span id="ritualTimer" style="font-size:2rem; font-weight:bold;">00:00</span>
+                    <div style="font-size:0.95rem; color:#aaa;">Time Remaining</div>
+                </div>
+                <div style="text-align:center;">
+                    <button onclick="closeRitualModal()" class="btn" style="margin-top:12px;">Close</button>
+                </div>
+            </div>
+        </div>
+        </form>
     </div>
 
     <script>
@@ -811,45 +828,128 @@
         });
 
         // Form validation
+
         document.getElementById('ritualForm').addEventListener('submit', function(e) {
-            // Only require the most essential fields
-            const requiredFields = [
-                'duration', 'movement_type', 'breathing_style', 'intensity_level'
-            ];
-            let isValid = true;
-            let missingFields = [];
+            e.preventDefault();
+            // Gather form data
+            const form = e.target;
+            const getVal = name => {
+                const el = form.querySelector(`[name="${name}"]:checked, [name="${name}"]`);
+                return el ? el.value : '';
+            };
+            const getVals = name => Array.from(form.querySelectorAll(`[name="${name}"]:checked`)).map(x => x.value);
 
-            requiredFields.forEach(field => {
-                const input = document.querySelector(`[name="${field}"]:checked, [name="${field}"]`);
-                if (!input || !input.value) {
-                    isValid = false;
-                    missingFields.push(field.replace('_', ' '));
-                }
-            });
+            const data = {
+                birthday: getVal('birthday'),
+                mood: getVal('mood'),
+                environment: getVal('environment'),
+                duration: parseInt(getVal('duration') || '5'),
+                time_of_day: getVal('time_of_day'),
+                ritual_need: getVal('ritual_need'),
+                movement_type: getVal('movement_type'),
+                body_areas: getVals('body_areas'),
+                breathing_style: getVal('breathing_style'),
+                intensity_level: getVal('intensity_level'),
+                ritual_items: getVals('ritual_items'),
+                ritual_intensity: getVal('ritual_intensity'),
+                focus_area: getVal('focus_area'),
+            };
 
-            // Check if at least one body area is selected (recommended)
-            const bodyAreas = document.querySelectorAll('input[name="body_areas"]:checked');
-            if (bodyAreas.length === 0) {
-                const confirmNoAreas = confirm('No specific body areas selected. Your ritual will include full-body movements. Continue?');
-                if (!confirmNoAreas) {
-                    e.preventDefault();
-                    return;
-                }
+            // Generate ritual steps (same logic as backend)
+            const steps = [];
+            if (data.ritual_need === 'energy') {
+                steps.push({title:'Energizing Breathwork', instruction:'Start with 2 minutes of deep, energizing breaths.'});
+                steps.push({title:'Dynamic Warm-up', instruction:'Do a quick dynamic warm-up to activate your body.'});
+            } else if (data.ritual_need === 'grounding') {
+                steps.push({title:'Grounding Breath', instruction:'Begin with slow, mindful breathing to center yourself.'});
+                steps.push({title:'Restorative Yoga', instruction:'Practice restorative yoga or gentle stretching.'});
+            } else if (data.ritual_need === 'peace') {
+                steps.push({title:'Calming Breathwork', instruction:'Begin with a calming breathwork session.'});
+                steps.push({title:'Stillness', instruction:'Sit in stillness or meditate for a few minutes.'});
+            } else if (data.ritual_need === 'clarity') {
+                steps.push({title:'Focused Breathing', instruction:'Start with focused breathing and set an intention.'});
+                steps.push({title:'Mindful Walking', instruction:'Do a mindful walking or journaling exercise.'});
+            } else if (data.ritual_need === 'confidence') {
+                steps.push({title:'Power Poses', instruction:'Begin with power poses and affirmations.'});
+                steps.push({title:'Dynamic Flow', instruction:'Move through a dynamic flow or light exercise.'});
+            } else if (data.ritual_need === 'healing') {
+                steps.push({title:'Gentle Breathwork', instruction:'Start with gentle breathwork and self-compassion.'});
+                steps.push({title:'Restorative Movement', instruction:'Focus on restorative movement and body awareness.'});
+            } else {
+                steps.push({title:'Mindful Breathing', instruction:'Begin with mindful breathing.'});
+                steps.push({title:'Gentle Movement', instruction:'Move gently and listen to your body.'});
             }
-
-            if (!isValid) {
-                e.preventDefault();
-                alert(`Please complete these required fields:\n- ${missingFields.join('\n- ')}`);
-                return;
+            // Add movement type
+            if (data.movement_type === 'dynamic_flow') {
+                steps.push({title:'Dynamic Flow', instruction:'Follow a dynamic flow sequence for 5-10 minutes.'});
+            } else if (data.movement_type === 'restorative_yoga') {
+                steps.push({title:'Restorative Yoga', instruction:'Hold restorative yoga poses for 2-3 minutes each.'});
+            } else if (data.movement_type === 'therapeutic_stretching') {
+                steps.push({title:'Therapeutic Stretching', instruction:'Do targeted therapeutic stretches for your selected areas.'});
+            } else if (data.movement_type === 'mindful_walking') {
+                steps.push({title:'Mindful Walking', instruction:'Take a mindful walk, focusing on each step and breath.'});
+            } else if (data.movement_type === 'advanced_breathwork') {
+                steps.push({title:'Advanced Breathwork', instruction:'Practice advanced breathwork techniques for 5 minutes.'});
+            } else if (data.movement_type === 'deep_stillness') {
+                steps.push({title:'Deep Stillness', instruction:'Sit or lie in deep stillness, focusing on relaxation.'});
             }
-
-            // Show loading state
-            const submitButton = e.target.querySelector('button[type="submit"]');
-            if (submitButton) {
-                submitButton.textContent = 'Creating Your Ritual...';
-                submitButton.disabled = true;
+            // Add body area focus
+            if (data.body_areas.length) {
+                const area_map = {
+                    'neck_shoulders': 'neck and shoulders',
+                    'spine_back': 'spine and back',
+                    'hips_pelvis': 'hips and pelvis',
+                    'legs_feet': 'legs and feet',
+                    'arms_hands': 'arms and hands',
+                    'jaw_face': 'jaw and face',
+                };
+                const focus_areas = data.body_areas.map(a => area_map[a] || a);
+                steps.push({title:'Body Focus', instruction:`Pay special attention to: ${focus_areas.join(', ')}.`});
             }
+            // Add a closing step
+            steps.push({title:'Closing', instruction:'End your ritual with gratitude and a few deep breaths.'});
+
+            // Show modal with steps and timer
+            showRitualModal(steps, data.duration);
         });
+
+        function showRitualModal(steps, duration) {
+            const modal = document.getElementById('ritualModal');
+            const stepsContainer = document.getElementById('ritualStepsContainer');
+            stepsContainer.innerHTML = steps.map((step, i) =>
+                `<div style='margin-bottom:18px;'><b>Step ${i+1}: ${step.title}</b><br><span>${step.instruction}</span></div>`
+            ).join('');
+            modal.style.display = 'flex';
+            startRitualTimer(duration * 60);
+        }
+
+        function closeRitualModal() {
+            document.getElementById('ritualModal').style.display = 'none';
+            stopRitualTimer();
+        }
+
+        let ritualTimerInterval = null;
+        function startRitualTimer(seconds) {
+            let remaining = seconds;
+            const timerEl = document.getElementById('ritualTimer');
+            timerEl.textContent = formatTime(remaining);
+            ritualTimerInterval = setInterval(() => {
+                remaining--;
+                timerEl.textContent = formatTime(remaining);
+                if (remaining <= 0) {
+                    clearInterval(ritualTimerInterval);
+                    timerEl.textContent = '00:00';
+                }
+            }, 1000);
+        }
+        function stopRitualTimer() {
+            if (ritualTimerInterval) clearInterval(ritualTimerInterval);
+        }
+        function formatTime(sec) {
+            const m = Math.floor(sec/60).toString().padStart(2,'0');
+            const s = (sec%60).toString().padStart(2,'0');
+            return `${m}:${s}`;
+        }
 
         // Show ritual complexity indicator
         function updateComplexityIndicator() {
