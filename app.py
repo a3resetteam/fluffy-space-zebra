@@ -984,18 +984,8 @@ def test123():
     return 'Test route is working!'
 @app.route('/assessment')
 def assessment():
-    if 'customer_id' not in session:
-        return redirect(url_for('login'))
-
-    customer_id = session['customer_id']
-    # Get user progress for personality/assessment mode
-    progress_data = get_user_progress(customer_id)
-    mode_progress = progress_data['modes'].get('personality', {'completion_percentage': 0, 'level': 1})
-
-    # Log session entry for assessment mode
-    log_user_session(customer_id, 'personality', {'action': 'enter_assessment'})
-
-    return render_template('assessment.html', progress=mode_progress)
+    # Simple route: just render the A3 Assessment Dashboard
+    return render_template('assessment.html')
 @app.route('/')
 def home():
     if 'customer_id' not in session:
