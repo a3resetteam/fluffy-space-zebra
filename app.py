@@ -2652,44 +2652,44 @@ def ritual_session():
         'ritual_items': request.form.getlist('ritual_items'),
     }
 
-    # Generate ritual steps based on selections
+    # Generate ritual steps as dicts with title and instruction
     steps = []
     # Example logic: personalize steps based on need, movement, and mood
     if data['ritual_need'] == 'energy':
-        steps.append('Start with 2 minutes of deep, energizing breaths.')
-        steps.append('Do a quick dynamic warm-up to activate your body.')
+        steps.append({'title': 'Energizing Breathwork', 'instruction': 'Start with 2 minutes of deep, energizing breaths.'})
+        steps.append({'title': 'Dynamic Warm-up', 'instruction': 'Do a quick dynamic warm-up to activate your body.'})
     elif data['ritual_need'] == 'grounding':
-        steps.append('Begin with slow, mindful breathing to center yourself.')
-        steps.append('Practice restorative yoga or gentle stretching.')
+        steps.append({'title': 'Grounding Breath', 'instruction': 'Begin with slow, mindful breathing to center yourself.'})
+        steps.append({'title': 'Restorative Yoga', 'instruction': 'Practice restorative yoga or gentle stretching.'})
     elif data['ritual_need'] == 'peace':
-        steps.append('Begin with a calming breathwork session.')
-        steps.append('Sit in stillness or meditate for a few minutes.')
+        steps.append({'title': 'Calming Breathwork', 'instruction': 'Begin with a calming breathwork session.'})
+        steps.append({'title': 'Stillness', 'instruction': 'Sit in stillness or meditate for a few minutes.'})
     elif data['ritual_need'] == 'clarity':
-        steps.append('Start with focused breathing and set an intention.')
-        steps.append('Do a mindful walking or journaling exercise.')
+        steps.append({'title': 'Focused Breathing', 'instruction': 'Start with focused breathing and set an intention.'})
+        steps.append({'title': 'Mindful Walking', 'instruction': 'Do a mindful walking or journaling exercise.'})
     elif data['ritual_need'] == 'confidence':
-        steps.append('Begin with power poses and affirmations.')
-        steps.append('Move through a dynamic flow or light exercise.')
+        steps.append({'title': 'Power Poses', 'instruction': 'Begin with power poses and affirmations.'})
+        steps.append({'title': 'Dynamic Flow', 'instruction': 'Move through a dynamic flow or light exercise.'})
     elif data['ritual_need'] == 'healing':
-        steps.append('Start with gentle breathwork and self-compassion.')
-        steps.append('Focus on restorative movement and body awareness.')
+        steps.append({'title': 'Gentle Breathwork', 'instruction': 'Start with gentle breathwork and self-compassion.'})
+        steps.append({'title': 'Restorative Movement', 'instruction': 'Focus on restorative movement and body awareness.'})
     else:
-        steps.append('Begin with mindful breathing.')
-        steps.append('Move gently and listen to your body.')
+        steps.append({'title': 'Mindful Breathing', 'instruction': 'Begin with mindful breathing.'})
+        steps.append({'title': 'Gentle Movement', 'instruction': 'Move gently and listen to your body.'})
 
     # Add movement type
     if data['movement_type'] == 'dynamic_flow':
-        steps.append('Follow a dynamic flow sequence for 5-10 minutes.')
+        steps.append({'title': 'Dynamic Flow', 'instruction': 'Follow a dynamic flow sequence for 5-10 minutes.'})
     elif data['movement_type'] == 'restorative_yoga':
-        steps.append('Hold restorative yoga poses for 2-3 minutes each.')
+        steps.append({'title': 'Restorative Yoga', 'instruction': 'Hold restorative yoga poses for 2-3 minutes each.'})
     elif data['movement_type'] == 'therapeutic_stretching':
-        steps.append('Do targeted therapeutic stretches for your selected areas.')
+        steps.append({'title': 'Therapeutic Stretching', 'instruction': 'Do targeted therapeutic stretches for your selected areas.'})
     elif data['movement_type'] == 'mindful_walking':
-        steps.append('Take a mindful walk, focusing on each step and breath.')
+        steps.append({'title': 'Mindful Walking', 'instruction': 'Take a mindful walk, focusing on each step and breath.'})
     elif data['movement_type'] == 'advanced_breathwork':
-        steps.append('Practice advanced breathwork techniques for 5 minutes.')
+        steps.append({'title': 'Advanced Breathwork', 'instruction': 'Practice advanced breathwork techniques for 5 minutes.'})
     elif data['movement_type'] == 'deep_stillness':
-        steps.append('Sit or lie in deep stillness, focusing on relaxation.')
+        steps.append({'title': 'Deep Stillness', 'instruction': 'Sit or lie in deep stillness, focusing on relaxation.'})
 
     # Add body area focus
     if data['body_areas']:
@@ -2702,10 +2702,10 @@ def ritual_session():
             'jaw_face': 'jaw and face',
         }
         focus_areas = [area_map.get(a, a) for a in data['body_areas']]
-        steps.append(f'Pay special attention to: {", ".join(focus_areas)}.')
+        steps.append({'title': 'Body Focus', 'instruction': f'Pay special attention to: {", ".join(focus_areas)}.'})
 
     # Add a closing step
-    steps.append('End your ritual with gratitude and a few deep breaths.')
+    steps.append({'title': 'Closing', 'instruction': 'End your ritual with gratitude and a few deep breaths.'})
 
     return render_template('ritual-session.html', ritual_data=data, ritual_steps=steps)
 
