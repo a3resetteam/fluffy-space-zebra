@@ -1,162 +1,3 @@
-# --- Custom Ritual Creator: Ritual Session Route ---
-from flask import abort
-
-@app.route('/ritual-session', methods=['POST'])
-def ritual_session():
-    """Start a personalized ritual session with countdown timer"""
-    if 'customer_id' not in session:
-        return redirect(url_for('login'))
-    data = request.form
-    ritual_data = {
-        'birthday': data.get('birthday'),
-        'mood': data.get('mood'),
-        'environment': data.get('environment'),
-        'duration': int(data.get('duration', 15)),
-        'time_of_day': data.get('time_of_day'),
-        'ritual_need': data.get('ritual_need'),
-        'created_at': datetime.now().isoformat()
-    }
-    ritual_steps = generate_ritual_steps(ritual_data)
-    return render_template('ritual-session.html', ritual_data=ritual_data, ritual_steps=ritual_steps)
-
-# --- Ritual Step Generation Logic ---
-def generate_ritual_steps(ritual_data):
-    """Generate personalized ritual steps based on user inputs"""
-    birthday = ritual_data.get('birthday', '')
-    mood = ritual_data.get('mood', '')
-    environment = ritual_data.get('environment', '')
-    duration = ritual_data.get('duration', 15)
-    time_of_day = ritual_data.get('time_of_day', '')
-    ritual_need = ritual_data.get('ritual_need', '')
-    steps = []
-    # Step 1: Opening/Grounding
-    opening_step = {
-        'title': '🌟 Opening & Grounding',
-        'duration': max(2, duration // 7),
-        'instruction': f'Find your center in this {environment} space. Take 3 deep breaths and set your intention for {ritual_need.lower()}.'
-    }
-    if time_of_day == 'morning':
-        opening_step['instruction'] += ' Welcome the new day with gratitude.'
-    elif time_of_day == 'evening':
-        opening_step['instruction'] += ' Release the day and prepare for rest.'
-    elif time_of_day == 'afternoon':
-        opening_step['instruction'] += ' Reset your energy for the remainder of your day.'
-    steps.append(opening_step)
-    # Step 2: Mood-based activity
-    mood_activities = {
-        'energized': {
-            'title': '⚡ Energy Channeling',
-            'instruction': 'Channel your high energy into powerful affirmations. Stand tall and declare your intentions.'
-        },
-        'calm': {
-            'title': '🧘 Peaceful Meditation',
-            'instruction': 'Embrace this calm state. Focus on your breath and visualize your goals manifesting.'
-        },
-        'stressed': {
-            'title': '🌊 Stress Release',
-            'instruction': 'Release tension through gentle movement or stretching. Let go of what no longer serves you.'
-        },
-        'tired': {
-            'title': '🔋 Energy Restoration',
-            'instruction': 'Focus on gentle movement and energizing breath work to restore your vitality.'
-        },
-        'anxious': {
-            'title': '🌿 Anxiety Soothing',
-            'instruction': 'Ground yourself with 4-7-8 breathing. Feel your connection to the earth beneath you.'
-        },
-        'excited': {
-            'title': '✨ Excitement Focusing',
-            'instruction': 'Direct your excitement toward your transformation goals. Visualize your success.'
-        }
-    }
-    mood_step = mood_activities.get(mood, mood_activities['calm'])
-    mood_step['duration'] = max(3, duration // 4)
-    steps.append(mood_step)
-    # Step 3: Need-based core activity
-    need_activities = {
-        'energy': {
-            'title': '🔥 Energy Activation',
-            'instruction': 'Engage in dynamic movement, power poses, or energizing breathwork to boost your vitality.'
-        },
-        'grounding': {
-            'title': '🌍 Earth Connection',
-            'instruction': 'Visualize roots growing from your feet into the earth. Feel stable, centered, and secure.'
-        },
-        'peace': {
-            'title': '☮️ Inner Peace Cultivation',
-            'instruction': 'Practice mindful awareness, gentle meditation, or soothing self-talk for deep tranquility.'
-        },
-        'clarity': {
-            'title': '🔍 Mental Clarity',
-            'instruction': 'Focus on your breath, clear your mind, and set clear intentions for your path forward.'
-        },
-        'confidence': {
-            'title': '💪 Confidence Building',
-            'instruction': 'Stand in power poses, repeat confidence affirmations, and visualize yourself succeeding.'
-        },
-        'healing': {
-            'title': '💚 Emotional Healing',
-            'instruction': 'Practice self-compassion, forgiveness, and gentle healing visualization or movement.'
-        }
-    }
-    core_step = need_activities.get(ritual_need, need_activities['energy'])
-    core_step['duration'] = max(5, duration // 2)
-    steps.append(core_step)
-    # Step 4: Integration & Closing
-    remaining_time = duration - sum(step['duration'] for step in steps)
-    closing_step = {
-        'title': '🌟 Integration & Closing',
-        'duration': max(1, remaining_time),
-        'instruction': f'Take a moment to integrate this {ritual_need} energy into your being. Set an intention for how you\'ll carry this energy forward.'
-    }
-    if time_of_day == 'morning':
-        closing_step['instruction'] += ' Step into your day with renewed purpose.'
-    elif time_of_day == 'evening':
-        closing_step['instruction'] += ' Carry this peace into your rest.'
-    steps.append(closing_step)
-    return steps
-
-# --- Password Reset: Request Form ---
-def register_password_reset_routes(app):
-    @app.route('/forgot-password', methods=['GET', 'POST'])
-    def forgot_password():
-        if request.method == 'POST':
-            email = request.form.get('email')
-            if not email:
-                flash('Please enter your email address.')
-                return render_template('forgot-password.html')
-            conn = sqlite3.connect('oracle.db')
-            cursor = conn.cursor()
-            cursor.execute('SELECT customer_id FROM users WHERE email = ?', (email,))
-            user = cursor.fetchone()
-            conn.close()
-            if not user:
-                flash('No account found with that email.')
-                return render_template('forgot-password.html')
-            # For demo: show reset form directly (no email sent)
-            return render_template('reset-password.html', email=email)
-        return render_template('forgot-password.html')
-
-    @app.route('/reset-password', methods=['POST'])
-    def reset_password():
-        email = request.form.get('email')
-        password = request.form.get('password')
-        confirm = request.form.get('confirm_password')
-        if not (email and password and confirm):
-            flash('All fields are required.')
-            return render_template('reset-password.html', email=email)
-        if password != confirm:
-            flash('Passwords do not match.')
-            return render_template('reset-password.html', email=email)
-        password_hash = generate_password_hash(password)
-        conn = sqlite3.connect('oracle.db')
-        cursor = conn.cursor()
-        cursor.execute('UPDATE users SET password_hash = ? WHERE email = ?', (password_hash, email))
-        conn.commit()
-        conn.close()
-        flash('Password reset successful! You can now log in.')
-        return redirect(url_for('login'))
-
 #!/usr/bin/env python3
 """
 MYA3Reset: The Oracle - Premium Transformation Platform
@@ -1309,46 +1150,29 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        
         conn = sqlite3.connect('oracle.db')
         cursor = conn.cursor()
         cursor.execute('SELECT customer_id, username, password_hash, is_admin FROM users WHERE email = ?', (email,))
         user = cursor.fetchone()
+        
         if user and check_password_hash(user[2], password):
             session['customer_id'] = user[0]
             session['username'] = user[1]
             session['is_admin'] = bool(user[3])
-            cursor.execute('UPDATE users SET last_login = ? WHERE customer_id = ?', (dt.datetime.now(), user[0]))
+            
+            # Update last login
+            cursor.execute('UPDATE users SET last_login = ? WHERE customer_id = ?', 
+                         (dt.datetime.now(), user[0]))
             conn.commit()
             conn.close()
+            
             return redirect(url_for('home'))
         else:
             flash('Invalid credentials')
             conn.close()
-    # Always show a simple login form if template is missing
-    login_html = '''
-    <div style="max-width:400px;margin:60px auto;padding:30px;background:#222;color:#fff;border-radius:12px;box-shadow:0 2px 12px #0003;">
-        <h2 style="text-align:center;margin-bottom:20px;">Login to Oracle</h2>
-        <form method="POST">
-            <div style="margin-bottom:15px;">
-                <label>Email:</label><br>
-                <input type="email" name="email" required style="width:100%;padding:8px;border-radius:6px;border:none;">
-            </div>
-            <div style="margin-bottom:15px;">
-                <label>Password:</label><br>
-                <input type="password" name="password" required style="width:100%;padding:8px;border-radius:6px;border:none;">
-            </div>
-            <button type="submit" style="width:100%;padding:10px;background:#74b9ff;color:#222;font-weight:bold;border:none;border-radius:6px;">Login</button>
-        </form>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <div style="margin-top:20px;color:#e17055;">
-              {% for message in messages %}{{ message }}<br>{% endfor %}
-            </div>
-          {% endif %}
-        {% endwith %}
-    </div>
-    '''
-    return render_template_string(login_html)
+    
+    return render_template('login-working.html')
 
 @app.route('/logout')
 def logout():
@@ -2813,7 +2637,5 @@ def submit_shadow_work():
 if __name__ == '__main__':
     # Initialize the database
     init_db()
-    # Register password reset routes after app is defined
-    register_password_reset_routes(app)
     print("🚀 Starting Oracle Platform on http://0.0.0.0:5000")
     app.run(host='0.0.0.0', port=5000, debug=True)
