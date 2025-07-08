@@ -2633,6 +2633,82 @@ def submit_shadow_work():
     
     return redirect(url_for('shadow_work'))
 
+
+# --- Custom Ritual Session Route ---
+@app.route('/ritual-session', methods=['POST'])
+def ritual_session():
+    # Collect form data
+    data = {
+        'birthday': request.form.get('birthday'),
+        'mood': request.form.get('mood'),
+        'environment': request.form.get('environment'),
+        'duration': request.form.get('duration'),
+        'time_of_day': request.form.get('time_of_day'),
+        'ritual_need': request.form.get('ritual_need'),
+        'movement_type': request.form.get('movement_type'),
+        'body_areas': request.form.getlist('body_areas'),
+        'breathing_style': request.form.get('breathing_style'),
+        'intensity_level': request.form.get('intensity_level'),
+        'ritual_items': request.form.getlist('ritual_items'),
+    }
+
+    # Generate ritual steps based on selections
+    steps = []
+    # Example logic: personalize steps based on need, movement, and mood
+    if data['ritual_need'] == 'energy':
+        steps.append('Start with 2 minutes of deep, energizing breaths.')
+        steps.append('Do a quick dynamic warm-up to activate your body.')
+    elif data['ritual_need'] == 'grounding':
+        steps.append('Begin with slow, mindful breathing to center yourself.')
+        steps.append('Practice restorative yoga or gentle stretching.')
+    elif data['ritual_need'] == 'peace':
+        steps.append('Begin with a calming breathwork session.')
+        steps.append('Sit in stillness or meditate for a few minutes.')
+    elif data['ritual_need'] == 'clarity':
+        steps.append('Start with focused breathing and set an intention.')
+        steps.append('Do a mindful walking or journaling exercise.')
+    elif data['ritual_need'] == 'confidence':
+        steps.append('Begin with power poses and affirmations.')
+        steps.append('Move through a dynamic flow or light exercise.')
+    elif data['ritual_need'] == 'healing':
+        steps.append('Start with gentle breathwork and self-compassion.')
+        steps.append('Focus on restorative movement and body awareness.')
+    else:
+        steps.append('Begin with mindful breathing.')
+        steps.append('Move gently and listen to your body.')
+
+    # Add movement type
+    if data['movement_type'] == 'dynamic_flow':
+        steps.append('Follow a dynamic flow sequence for 5-10 minutes.')
+    elif data['movement_type'] == 'restorative_yoga':
+        steps.append('Hold restorative yoga poses for 2-3 minutes each.')
+    elif data['movement_type'] == 'therapeutic_stretching':
+        steps.append('Do targeted therapeutic stretches for your selected areas.')
+    elif data['movement_type'] == 'mindful_walking':
+        steps.append('Take a mindful walk, focusing on each step and breath.')
+    elif data['movement_type'] == 'advanced_breathwork':
+        steps.append('Practice advanced breathwork techniques for 5 minutes.')
+    elif data['movement_type'] == 'deep_stillness':
+        steps.append('Sit or lie in deep stillness, focusing on relaxation.')
+
+    # Add body area focus
+    if data['body_areas']:
+        area_map = {
+            'neck_shoulders': 'neck and shoulders',
+            'spine_back': 'spine and back',
+            'hips_pelvis': 'hips and pelvis',
+            'legs_feet': 'legs and feet',
+            'arms_hands': 'arms and hands',
+            'jaw_face': 'jaw and face',
+        }
+        focus_areas = [area_map.get(a, a) for a in data['body_areas']]
+        steps.append(f'Pay special attention to: {", ".join(focus_areas)}.')
+
+    # Add a closing step
+    steps.append('End your ritual with gratitude and a few deep breaths.')
+
+    return render_template('ritual-session.html', ritual_data=data, ritual_steps=steps)
+
 # Run the application
 if __name__ == '__main__':
     # Initialize the database
