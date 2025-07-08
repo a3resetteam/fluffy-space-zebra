@@ -69,6 +69,26 @@ def schedule_performance_exercise():
     if request.method == 'POST':
         user_priorities = request.form.get('priorities', '').strip()
     return render_template('schedule-performance-exercise.html', user_priorities=user_priorities)
+
+# Strategic Mastery Main Dashboard
+@app.route('/alpha-elite/strategic-mastery')
+def strategic_mastery():
+    if 'customer_id' not in session:
+        # Set demo user for alpha-elite to maintain compatibility
+        session['customer_id'] = 'DEMO-USER'
+        session['username'] = 'Demo User'
+        session.modified = True
+    
+    customer_id = session['customer_id']
+    
+    # Get user progress for strategic mastery
+    progress_data = get_user_progress(customer_id)
+    strategic_progress = progress_data['modes'].get('alpha-elite', {'completion_percentage': 0, 'level': 1})
+    
+    # Log session
+    log_user_session(customer_id, 'strategic-mastery', {'action': 'enter_strategic_mastery'})
+    
+    return render_template('strategic-mastery.html', progress=strategic_progress)
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'pk_test_your_stripe_publishable_key')
 STRIPE_PRODUCT_ID = 'prod_SZVuyI8OkJaIQa'
 STRIPE_PRICE_ID = os.environ.get('STRIPE_PRICE_ID', 'price_1999_monthly')  # $19.99/month price ID
