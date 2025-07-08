@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MYA3Reset: The Oracle - Situationship Mode</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+        .nav-back {
+            margin-bottom: 30px;
+        }
+        .nav-back a {
+            color: #74b9ff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 2px solid #74b9ff;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        .nav-back a:hover {
+            background: #74b9ff;
+            color: #000;
+        }
+        .mode-overview {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #fd79a8;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .module-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+            border-color: #fd79a8;
+            box-shadow: 0 15px 35px rgba(253, 121, 168, 0.2);
+        }
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(253, 121, 168, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        .module-card:hover::before {
+            left: 100%;
+        }
+        .module-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%);
+            color: #000;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(253, 121, 168, 0.3);
+        }
+        .progress-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-back">
+            <a href="/">← Back to Dashboard</a>
+        </div>
+        
+        <div class="header">
+            <h1>💝 Situationship Mode</h1>
+            <p style="font-size: 1.2rem; color: #c0c0c0;">Master the art of relationships, boundaries, and emotional intelligence</p>
+        </div>
+
+        <div class="mode-overview">
+            <h2 style="color: #fd79a8; margin-bottom: 20px;">Navigate Complex Relationships with Confidence</h2>
+            <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 30px;">
+                Whether you're dealing with undefined relationships, setting boundaries, or mastering emotional intelligence, 
+                this mode provides you with the tools and insights to transform any situationship into clarity and empowerment.
+            </p>
+            <div class="progress-section">
+                <h3 style="color: #fd79a8;">Your Relationship Mastery Progress</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 25%"></div>
+                </div>
+                <p style="color: #fd79a8; font-size: 1.1rem;">25% Complete - Keep building your relationship intelligence!</p>
+            </div>
+        </div>
+
+        <div class="modules-grid">
+            <div class="module-card">
+                <span class="module-icon">📊</span>
+                <h3 style="color: #fd79a8; margin-bottom: 15px;">Relationship Status Analyzer</h3>
+                <p style="color: #c0c0c0; margin-bottom: 20px;">Get clarity on where you stand. Our AI analyzes your situation and provides actionable insights.</p>
+                <a href="/relationship-analyzer" class="btn">📋 Analyze Now</a>
+            </div>
+
+            <div class="module-card">
+                <span class="module-icon">🛡️</span>
+                <h3 style="color: #74b9ff; margin-bottom: 15px;">Boundary Setting Workshop</h3>
+                <p style="color: #c0c0c0; margin-bottom: 20px;">Learn to set and maintain healthy boundaries that protect your energy and attract respect.</p>
+                <a href="/boundary-setting" class="btn">🎯 Start Workshop</a>
+            </div>
+
+            <div class="module-card">
+                <span class="module-icon">🧠</span>
+                <h3 style="color: #00b894; margin-bottom: 15px;">Emotional Intelligence Boost</h3>
+                <p style="color: #c0c0c0; margin-bottom: 20px;">Develop advanced EQ skills to read situations, manage emotions, and communicate effectively.</p>
+                <a href="/emotional-intelligence" class="btn">🚀 Level Up</a>
+            </div>
+
+            <div class="module-card">
+                <span class="module-icon">💬</span>
+                <h3 style="color: #e17055; margin-bottom: 15px;">Communication Mastery</h3>
+                <p style="color: #c0c0c0; margin-bottom: 20px;">Master difficult conversations, express your needs clearly, and handle conflicts with grace.</p>
+                <a href="/communication-training" class="btn">🎤 Practice Now</a>
+            </div>
+
+            <div class="module-card">
+                <span class="module-icon">💎</span>
+                <h3 style="color: #a29bfe; margin-bottom: 15px;">Self-Worth Amplifier</h3>
+                <p style="color: #c0c0c0; margin-bottom: 20px;">Build unshakeable self-worth that attracts healthy relationships and repels toxic patterns.</p>
+                <a href="/worth-assessment" class="btn">✨ Build Confidence</a>
+            </div>
+
+            <div class="module-card">
+                <span class="module-icon">🎭</span>
+                <h3 style="color: #fd79a8; margin-bottom: 15px;">Situationship Simulator</h3>
+                <p style="color: #c0c0c0; margin-bottom: 20px;">Practice handling various relationship scenarios in a safe, AI-powered simulation environment.</p>
+                <a href="/relationship-simulator" class="btn">🎮 Start Simulation</a>
+            </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 1px solid #333; border-radius: 20px; padding: 30px; text-align: center;">
+            <h3 style="color: #fd79a8; margin-bottom: 20px;">🔥 Daily Relationship Challenge</h3>
+            <p style="color: #c0c0c0; margin-bottom: 20px;">Today's Challenge: Practice saying "no" to one request without feeling guilty or over-explaining.</p>
+            <a href="/daily-challenge" class="btn">💪 Accept Challenge</a>
+        </div>
+    </div>
+</body>
+</html>

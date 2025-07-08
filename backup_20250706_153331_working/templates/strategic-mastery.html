@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategic Mastery - Alpha Elite Mode</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000000;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(0, 168, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            color: #ffffff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #00a8ff 0%, #ffffff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+        .card {
+            background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+            border: 1px solid #333333;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 
+                0 4px 20px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .lesson-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 1px solid #444444;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .lesson-card:hover {
+            border-color: #00a8ff;
+            box-shadow: 0 8px 25px rgba(0, 168, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        .lesson-card.completed {
+            border-color: #00ff88;
+            background: linear-gradient(135deg, #0a2a1a 0%, #1a3a2a 100%);
+        }
+        .btn {
+            background: linear-gradient(135deg, #00a8ff 0%, #0088cc 100%);
+            color: #ffffff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 168, 255, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 168, 255, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #333333 0%, #555555 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .progress-bar {
+            background: #333333;
+            border-radius: 10px;
+            height: 8px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #00a8ff 0%, #00ff88 100%);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 168, 255, 0.5);
+        }
+        .lesson-status {
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        .completed-status { color: #00ff88; }
+        .in-progress-status { color: #00a8ff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Strategic Mastery</h1>
+            <p style="font-size: 1.2rem; color: #a0a0a0;">Master the Art of Strategic Thinking & Executive Decision-Making</p>
+            <p style="font-size: 1rem; color: #c0c0c0; margin-top: 10px;">✨ Choose your area of focus - All modules are unlocked for flexible learning</p>
+            <a href="/alpha-elite" class="btn btn-secondary">← Back to Alpha Elite</a>
+        </div>
+
+        <!-- Progress Overview -->
+        <div class="card">
+            <h2 style="color: #ffffff; text-align: center; margin-bottom: 20px;">📊 Strategic Mastery Progress</h2>
+            <div class="progress-bar" style="height: 12px;">
+                <div class="progress-fill" style="width: {% if progress and progress.completion_percentage %}{{ progress.completion_percentage }}{% else %}0{% endif %}%"></div>
+            </div>
+            <p style="text-align: center; color: #c0c0c0; font-size: 1.1rem; margin: 15px 0;">
+                {% if progress and progress.completion_percentage and progress.completion_percentage > 0 %}
+                    {{ progress.completion_percentage }}% Complete - Building elite strategic thinking! 🎯
+                {% else %}
+                    0% Complete - Ready to develop elite strategic thinking! 🎯
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Strategic Framework Lessons -->
+        <h2 style="text-align: center; color: #ffffff; margin-bottom: 30px;">🎯 Choose Your Strategic Focus Area</h2>
+        <p style="text-align: center; color: #a0a0a0; margin-bottom: 30px; font-size: 1.1rem;">
+            All modules are unlocked! Select the area you want to master first, or explore them in any order that suits your goals.
+        </p>
+        
+        <div class="module-grid">
+            <!-- Module 1: Overview Strategic Observation -->
+            <div class="lesson-card" id="strategic-observation">
+                <h3 style="color: #00a8ff; margin-bottom: 15px;">🔍 Overview Strategic Observation</h3>
+                <p style="color: #a0a0a0; margin-bottom: 15px;">Master the art of strategic observation and environmental scanning for competitive advantage.</p>
+                <div style="font-size: 0.9rem; color: #c0c0c0; margin-bottom: 15px;">
+                    • Market Intelligence Gathering<br>
+                    • Pattern Recognition Techniques<br>
+                    • Competitive Landscape Analysis<br>
+                    • Trend Identification Methods<br>
+                    • Strategic Information Systems
+                </div>
+                <div class="lesson-status in-progress-status">
+                    ⏳ Ready to Start • 45 min • Interactive
+                </div>
+                <a href="/alpha-elite/strategic-mastery/strategic-observation" class="btn">Begin Observation Training</a>
+                <a href="/alpha-elite/strategic-mastery/strategic-observation/30-day-challenge" class="btn" style="background: linear-gradient(135deg, #ff6b35 0%, #ff4500 100%); box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);">🏆 30-Day Challenge</a>
+            </div>
+
+            <!-- Module 2: Communication Mastery -->
+            <div class="lesson-card" id="communication-mastery">
+                <h3 style="color: #00a8ff; margin-bottom: 15px;">🗣️ Communication Mastery</h3>
+                <p style="color: #a0a0a0; margin-bottom: 15px;">Develop elite-level communication skills for strategic influence and executive presence.</p>
+                <div style="font-size: 0.9rem; color: #c0c0c0; margin-bottom: 15px;">
+                    • Executive Presentation Skills<br>
+                    • Persuasive Communication<br>
+                    • Strategic Storytelling<br>
+                    • Stakeholder Management<br>
+                    • Crisis Communication
+                </div>
+                <div class="lesson-status in-progress-status">
+                    ✅ Available • 60 min • Interactive
+                </div>
+                <a href="/alpha-elite/strategic-mastery/communication-mastery" class="btn">Begin Communication Training</a>
+                <a href="/alpha-elite/strategic-mastery/communication-mastery/30-day-challenge" class="btn" style="background: linear-gradient(135deg, #ff6b35 0%, #ff4500 100%); box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);">🏆 30-Day Challenge</a>
+            </div>
+
+            <!-- Module 3: Presence & Authority -->
+            <div class="lesson-card" id="presence-authority">
+                <h3 style="color: #00a8ff; margin-bottom: 15px;">👑 Presence & Authority</h3>
+                <p style="color: #a0a0a0; margin-bottom: 15px;">Build commanding presence and natural authority that demands respect in any room.</p>
+                <div style="font-size: 0.9rem; color: #c0c0c0; margin-bottom: 15px;">
+                    • Executive Presence Development<br>
+                    • Authoritative Body Language<br>
+                    • Commanding Voice Techniques<br>
+                    • Leadership Gravitas<br>
+                    • Power Positioning Strategies
+                </div>
+                <div class="lesson-status in-progress-status">
+                    ✅ Available • 50 min • Interactive
+                </div>
+                <a href="/alpha-elite/strategic-mastery/presence-authority" class="btn">Begin Presence Training</a>
+                <a href="/alpha-elite/strategic-mastery/presence-authority/30-day-challenge" class="btn" style="background: linear-gradient(135deg, #ff6b35 0%, #ff4500 100%); box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);">🏆 30-Day Challenge</a>
+            </div>
+
+            <!-- Module 4: Strategic Thinking -->
+            <div class="lesson-card" id="strategic-thinking">
+                <h3 style="color: #00a8ff; margin-bottom: 15px;">🧠 Strategic Thinking</h3>
+                <p style="color: #a0a0a0; margin-bottom: 15px;">Master advanced strategic thinking frameworks used by Fortune 500 executives.</p>
+                <div style="font-size: 0.9rem; color: #c0c0c0; margin-bottom: 15px;">
+                    • Systems Thinking Mastery<br>
+                    • Strategic Planning Frameworks<br>
+                    • Long-term Vision Development<br>
+                    • Complex Problem Solving<br>
+                    • Strategic Decision Making
+                </div>
+                <div class="lesson-status in-progress-status">
+                    ✅ Available • 70 min • Advanced
+                </div>
+                <a href="/alpha-elite/strategic-mastery/strategic-thinking" class="btn">Begin Strategic Thinking</a>
+                <a href="/alpha-elite/strategic-mastery/strategic-thinking/30-day-challenge" class="btn" style="background: linear-gradient(135deg, #ff6b35 0%, #ff4500 100%); box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);">🏆 30-Day Challenge</a>
+            </div>
+
+            <!-- Module 5: AI Framework -->
+            <div class="lesson-card" id="ai-framework">
+                <h3 style="color: #00a8ff; margin-bottom: 15px;">🤖 AI Framework</h3>
+                <p style="color: #a0a0a0; margin-bottom: 15px;">Leverage artificial intelligence tools and frameworks for strategic advantage.</p>
+                <div style="font-size: 0.9rem; color: #c0c0c0; margin-bottom: 15px;">
+                    • AI-Powered Decision Making<br>
+                    • Predictive Analytics for Strategy<br>
+                    • Machine Learning Applications<br>
+                    • AI Implementation Strategies<br>
+                    • Future-Proofing with AI
+                </div>
+                <div class="lesson-status in-progress-status">
+                    ✅ Available • 80 min • Advanced
+                </div>
+                <a href="/alpha-elite/strategic-mastery/ai-framework" class="btn">Begin AI Framework</a>
+                <a href="/alpha-elite/strategic-mastery/ai-framework/30-day-challenge" class="btn" style="background: linear-gradient(135deg, #ff6b35 0%, #ff4500 100%); box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);">🏆 30-Day Challenge</a>
+            </div>
+
+            <!-- Module 6: Schedule Performance -->
+            <div class="lesson-card" id="schedule-performance">
+                <h3 style="color: #00a8ff; margin-bottom: 15px;">⏰ Schedule Performance</h3>
+                <p style="color: #a0a0a0; margin-bottom: 15px;">Optimize your schedule for peak performance and strategic impact.</p>
+                <div style="font-size: 0.9rem; color: #c0c0c0; margin-bottom: 15px;">
+                    • Elite Time Management<br>
+                    • Peak Performance Scheduling<br>
+                    • Energy Management Systems<br>
+                    • Strategic Calendar Design<br>
+                    • Productivity Optimization
+                </div>
+                <div class="lesson-status in-progress-status">
+                    ✅ Available • 55 min • Master Level
+                </div>
+                <a href="/alpha-elite/strategic-mastery/schedule-performance" class="btn">Begin Schedule Mastery</a>
+                <a href="/alpha-elite/strategic-mastery/schedule-performance/30-day-challenge" class="btn" style="background: linear-gradient(135deg, #ff6b35 0%, #ff4500 100%); box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);">🏆 30-Day Challenge</a>
+            </div>
+        </div>
+
+        <!-- Quick Strategic Exercise -->
+        <div class="card">
+            <h3 style="color: #ffffff; text-align: center; margin-bottom: 20px;">⚡ Daily Strategic Exercise</h3>
+            <div style="background: rgba(0, 168, 255, 0.1); border: 1px solid #00a8ff; border-radius: 12px; padding: 25px; text-align: center;">
+                <h4 style="color: #ffffff; margin-bottom: 15px;">🎯 Strategic Thinking Warm-Up</h4>
+                <p style="color: #a0a0a0; margin-bottom: 20px;">Analyze a current market trend using SWOT analysis. Identify 3 strategic opportunities and 2 potential threats in a growing industry of your choice.</p>
+                <a href="/alpha-elite/strategic-mastery/daily-exercise" class="btn">Start Exercise (5 min)</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Module progression logic
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check user progress and unlock modules accordingly
+            // This would normally connect to backend to check actual progress
+            
+            // For now, framework-analysis is unlocked by default
+            console.log('Strategic Mastery module loaded');
+        });
+    </script>
+</body>
+</html>

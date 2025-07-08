@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="header">
+    <h1>🛡️ Day {{ day }} of 21</h1>
+    <p>{{ content.title }}</p>
+</div>
+
+<!-- Progress Bar -->
+<div class="card" style="margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="color: #ffffff; margin: 0;">Program Progress</h3>
+        <span style="color: #74b9ff; font-weight: bold;">{{ ((day / total_days) * 100)|round }}% Complete</span>
+    </div>
+    
+    <div style="background: #2d3436; border-radius: 10px; height: 20px; overflow: hidden;">
+        <div style="background: linear-gradient(135deg, #00b894 0%, #74b9ff 100%); height: 100%; width: {{ (day / total_days) * 100 }}%; transition: width 0.5s ease;"></div>
+    </div>
+    
+    <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.9rem; color: #74b9ff;">
+        <span>Day 1</span>
+        <span>Day {{ day }}</span>
+        <span>Day 21</span>
+    </div>
+</div>
+
+<!-- Daily Objective -->
+<div class="card" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%); margin-bottom: 20px;">
+    <h2 style="color: #ffffff; margin-bottom: 15px; text-align: center;">🎯 Today's Objective</h2>
+    <p style="color: #ffffff; font-size: 1.1rem; line-height: 1.6; margin: 0; text-align: center;">
+        {{ content.objective }}
+    </p>
+</div>
+
+<!-- Daily Affirmation -->
+<div class="card" style="background: linear-gradient(135deg, #00b894 0%, #00a085 100%); margin-bottom: 20px;">
+    <h3 style="color: #ffffff; margin-bottom: 15px; text-align: center;">✨ Today's Affirmation</h3>
+    <p style="color: #ffffff; font-size: 1.2rem; line-height: 1.6; margin: 0; text-align: center; font-style: italic;">
+        "{{ content.daily_affirmation }}"
+    </p>
+    <div style="text-align: center; margin-top: 15px;">
+        <button onclick="practiceAffirmation()" class="btn" style="background: rgba(255,255,255,0.2);">
+            🎧 Practice with Audio
+        </button>
+    </div>
+</div>
+
+<!-- Exercises -->
+<div class="card">
+    <h2 style="color: #ffffff; margin-bottom: 25px; text-align: center;">Today's Exercises</h2>
+    
+    <div style="display: grid; gap: 20px;">
+        {% for exercise in content.exercises %}
+        <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 2px solid #333; border-radius: 15px; padding: 25px; position: relative;" id="exercise-{{ loop.index }}">
+            
+            <!-- Exercise Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                <div>
+                    <h3 style="color: #74b9ff; margin-bottom: 10px;">
+                        {% if exercise.type == 'reflection' %}🤔
+                        {% elif exercise.type == 'writing' %}📝
+                        {% elif exercise.type == 'practice' %}🎯
+                        {% elif exercise.type == 'mindfulness' %}🧘
+                        {% elif exercise.type == 'analysis' %}📊
+                        {% else %}✅{% endif %}
+                        {{ exercise.name }}
+                    </h3>
+                    <span style="background: #74b9ff; color: #ffffff; padding: 3px 10px; border-radius: 15px; font-size: 0.8rem;">
+                        {{ exercise.time }}
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="complete-{{ loop.index }}" onchange="markComplete({{ loop.index }})" style="transform: scale(1.5);">
+                    <label for="complete-{{ loop.index }}" style="color: #ffffff; cursor: pointer;">Complete</label>
+                </div>
+            </div>
+            
+            <!-- Exercise Description -->
+            <p style="color: #ffffff; margin-bottom: 20px; line-height: 1.6;">
+                {{ exercise.description }}
+            </p>
+            
+            <!-- Interactive Elements Based on Type -->
+            {% if exercise.type == 'reflection' or exercise.type == 'writing' %}
+            <div style="margin-bottom: 15px;">
+                <textarea 
+                    id="notes-{{ loop.index }}" 
+                    placeholder="Write your thoughts here..."
+                    style="width: 100%; height: 120px; padding: 15px; border-radius: 10px; border: none; background: #2d3436; color: #ffffff; resize: vertical;"
+                ></textarea>
+            </div>
+            {% endif %}
+            
+            {% if exercise.type == 'practice' %}
+            <div style="background: #2d3436; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                <h4 style="color: #00b894; margin-bottom: 10px;">Practice Tracker</h4>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="color: #ffffff;">Times practiced today:</span>
+                    <button onclick="incrementPractice({{ loop.index }})" style="background: #74b9ff; border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">+</button>
+                    <span id="practice-count-{{ loop.index }}" style="color: #74b9ff; font-weight: bold; font-size: 1.2rem;">0</span>
+                    <button onclick="decrementPractice({{ loop.index }})" style="background: #636e72; border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">-</button>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if exercise.type == 'mindfulness' %}
+            <div style="text-align: center; margin-bottom: 15px;">
+                <button onclick="startMindfulness({{ loop.index }})" class="btn">
+                    🧘 Start Guided Session
+                </button>
+            </div>
+            {% endif %}
+            
+            <!-- Save Progress Button -->
+            <div style="text-align: center;">
+                <button onclick="saveExercise({{ loop.index }})" class="btn btn-secondary">
+                    💾 Save Progress
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Progress Tip -->
+<div class="card" style="background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);">
+    <h3 style="color: #74b9ff; margin-bottom: 15px;">💡 Today's Progress Tip</h3>
+    <p style="color: #ffffff; margin: 0; line-height: 1.6;">
+        {{ content.progress_tip }}
+    </p>
+</div>
+
+<!-- Navigation -->
+<div style="display: flex; justify-content: space-between; margin-top: 30px;">
+    {% if day > 1 %}
+    <a href="{{ url_for('boundary_program_day', day=day-1) }}" class="btn btn-secondary">
+        ← Day {{ day - 1 }}
+    </a>
+    {% else %}
+    <a href="{{ url_for('boundary_setting') }}" class="btn btn-secondary">
+        ← Back to Overview
+    </a>
+    {% endif %}
+    
+    {% if day < total_days %}
+    <a href="{{ url_for('boundary_program_day', day=day+1) }}" class="btn" onclick="return confirmNextDay()">
+        Day {{ day + 1 }} →
+    </a>
+    {% else %}
+    <button onclick="completProgram()" class="btn">
+        🎉 Complete Program
+    </button>
+    {% endif %}
+</div>
+
+<style>
+.btn {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(116, 185, 255, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+}
+
+.exercise-completed {
+    border-color: #00b894 !important;
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f1a1a 100%) !important;
+}
+</style>
+
+<script>
+const practiceCounters = {};
+
+function markComplete(exerciseNum) {
+    const checkbox = document.getElementById(`complete-${exerciseNum}`);
+    const exercise = document.getElementById(`exercise-${exerciseNum}`);
+    
+    if (checkbox.checked) {
+        exercise.classList.add('exercise-completed');
+        // Celebrate completion
+        showCompletionAnimation(exerciseNum);
+    } else {
+        exercise.classList.remove('exercise-completed');
+    }
+    
+    updateDayProgress();
+}
+
+function incrementPractice(exerciseNum) {
+    if (!practiceCounters[exerciseNum]) {
+        practiceCounters[exerciseNum] = 0;
+    }
+    practiceCounters[exerciseNum]++;
+    document.getElementById(`practice-count-${exerciseNum}`).textContent = practiceCounters[exerciseNum];
+}
+
+function decrementPractice(exerciseNum) {
+    if (!practiceCounters[exerciseNum]) {
+        practiceCounters[exerciseNum] = 0;
+    }
+    if (practiceCounters[exerciseNum] > 0) {
+        practiceCounters[exerciseNum]--;
+        document.getElementById(`practice-count-${exerciseNum}`).textContent = practiceCounters[exerciseNum];
+    }
+}
+
+function saveExercise(exerciseNum) {
+    const notes = document.getElementById(`notes-${exerciseNum}`)?.value || '';
+    const practiceCount = practiceCounters[exerciseNum] || 0;
+    const completed = document.getElementById(`complete-${exerciseNum}`).checked;
+    
+    // In real app, this would save to backend
+    showToast(`Exercise ${exerciseNum} progress saved! ✅`);
+}
+
+function startMindfulness(exerciseNum) {
+    showToast('🧘 Starting mindfulness session... Focus on your breath and notice any tension in your body when thinking about boundary situations.');
+    
+    // Simulate a guided session
+    setTimeout(() => {
+        showToast('Take a deep breath and imagine yourself calmly saying "I need to think about that"');
+    }, 30000); // 30 seconds
+}
+
+function practiceAffirmation() {
+    showToast('🎧 Say today\'s affirmation out loud 3 times with confidence and conviction!');
+}
+
+function updateDayProgress() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+    const total = checkboxes.length;
+    
+    if (completed === total) {
+        showToast('🎉 Congratulations! You\'ve completed all of today\'s exercises!');
+    }
+}
+
+function confirmNextDay() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+    const total = checkboxes.length;
+    
+    if (completed < total) {
+        return confirm(`You've completed ${completed} of ${total} exercises. Are you sure you want to move to the next day?`);
+    }
+    return true;
+}
+
+function showCompletionAnimation(exerciseNum) {
+    const exercise = document.getElementById(`exercise-${exerciseNum}`);
+    
+    // Create celebration animation
+    const celebration = document.createElement('div');
+    celebration.innerHTML = '🎉';
+    celebration.style.cssText = `
+        position: absolute;
+        top: 10px;
+        right: 50px;
+        font-size: 2rem;
+        animation: bounce 0.6s ease-in-out;
+        z-index: 10;
+    `;
+    
+    exercise.appendChild(celebration);
+    
+    setTimeout(() => {
+        celebration.remove();
+    }, 600);
+}
+
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #00b894 0%, #74b9ff 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        z-index: 1000;
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes bounce {
+        0%, 20%, 60%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        80% { transform: translateY(-5px); }
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

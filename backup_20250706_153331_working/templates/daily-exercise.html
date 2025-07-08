@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Daily Strategic Exercise</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #181818;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+            padding: 32px 24px;
+        }
+        h1 {
+            color: #00a8ff;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .exercise-card {
+            background: #111;
+            border: 1px solid #00a8ff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #00a8ff 0%, #00ff88 100%);
+            color: #fff;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #00ff88 0%, #00a8ff 100%);
+            transform: translateY(-2px);
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 32px;
+            color: #00a8ff;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Daily Strategic Exercise</h1>
+        <div class="exercise-card">
+            <h2 style="color:#00ff88;">{{ challenge.title if challenge else "Today's Challenge" }}</h2>
+            <p>Sharpen your strategic mind with this daily scenario:</p>
+            <p style="font-size:1.1rem; color:#c0c0c0;">
+                <strong>Scenario:</strong> {{ challenge.scenario if challenge else "No challenge for today." }}
+            </p>
+            <form method="post" action="#" onsubmit="showThankYou(); return false;">
+                <label for="response" style="color:#fff;">Your Strategic Response:</label><br>
+                <textarea id="response" name="response" rows="5" style="width:100%; border-radius:8px; margin-top:8px; padding:8px;"></textarea>
+                <button class="btn" type="submit">Submit Response</button>
+            </form>
+            <div id="thankyou" style="display:none; color:#00ff88; text-align:center; margin-top:20px; font-size:1.1rem;">
+                Thank you for submitting your strategic response! Keep training daily for elite results.
+            </div>
+            <div id="ai-response" style="display:none; background:#222; border:1px solid #00ff88; border-radius:10px; margin-top:28px; padding:20px;">
+                <h3 style="color:#00ff88; text-align:center;">AI's Recommended Approach</h3>
+                <p style="color:#fff; font-size:1.05rem;">
+                    <strong>Step 1:</strong> Immediately convene your leadership team for a rapid response meeting.<br>
+                    <strong>Step 2:</strong> Assign team members to gather real-time intelligence on the competitor’s product, launch strategy, and customer reactions (social media, press releases, customer feedback).<br>
+                    <strong>Step 3:</strong> Analyze your own product’s strengths and weaknesses versus the new competitor. Identify any quick wins or differentiators you can highlight.<br>
+                    <strong>Step 4:</strong> Communicate transparently with your team, rallying them around a clear, time-bound action plan. Emphasize adaptability and collective problem-solving.<br>
+                    <strong>Step 5:</strong> Prepare a public response (if needed) that reassures your customers and stakeholders, highlighting your unique value and any upcoming improvements.<br>
+                    <strong>Step 6:</strong> Set up a war room to monitor developments and adjust your strategy in real time over the next 24 hours.
+                </p>
+                <p style="color:#00ff88; text-align:center; margin-top:18px;">Compare your answer to this approach and reflect on what you might do differently next time!</p>
+            </div>
+        </div>
+        <a href="/alpha-elite/strategic-mastery" class="back-link">← Back to Strategic Mastery</a>
+    </div>
+    <script>
+        function showThankYou() {
+            document.getElementById('thankyou').style.display = 'block';
+            document.getElementById('ai-response').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

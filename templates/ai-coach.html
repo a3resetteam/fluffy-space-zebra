@@ -1,0 +1,2139 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="header">
+    <h1>🤖 AI Situationship Coach</h1>
+    <p>Your personal AI relationship coach with 4 different coaching styles</p>
+</div>
+
+<!-- Coach Selection -->
+<div class="card" style="margin-bottom: 20px;">
+    <h2 style="color: #ffffff; margin-bottom: 20px; text-align: center;">Choose Your Coaching Style</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+        <div class="coach-card" data-coach="supportive" style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); padding: 20px; border-radius: 15px; cursor: pointer; transition: all 0.3s ease; border: 3px solid transparent;">
+            <div style="text-align: center;">
+                <span style="font-size: 2rem; margin-bottom: 10px; display: block;">💚</span>
+                <h3 style="color: #ffffff; margin-bottom: 10px;">Supportive Maya</h3>
+                <p style="color: #ffffff; font-size: 0.9rem; line-height: 1.4;">Gentle, empathetic guidance with emotional validation and nurturing support</p>
+            </div>
+        </div>
+        
+        <div class="coach-card" data-coach="direct" style="background: linear-gradient(135deg, #e17055 0%, #d63031 100%); padding: 20px; border-radius: 15px; cursor: pointer; transition: all 0.3s ease; border: 3px solid transparent;">
+            <div style="text-align: center;">
+                <span style="font-size: 2rem; margin-bottom: 10px; display: block;">🔥</span>
+                <h3 style="color: #ffffff; margin-bottom: 10px;">Direct Dana</h3>
+                <p style="color: #ffffff; font-size: 0.9rem; line-height: 1.4;">Straight-talk coaching with tough love and no-nonsense reality checks</p>
+            </div>
+        </div>
+        
+        <div class="coach-card" data-coach="strategic" style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); padding: 20px; border-radius: 15px; cursor: pointer; transition: all 0.3s ease; border: 3px solid transparent;">
+            <div style="text-align: center;">
+                <span style="font-size: 2rem; margin-bottom: 10px; display: block;">🧠</span>
+                <h3 style="color: #ffffff; margin-bottom: 10px;">Strategic Sam</h3>
+                <p style="color: #ffffff; font-size: 0.9rem; line-height: 1.4;">Analytical approach with logical frameworks and step-by-step action plans</p>
+            </div>
+        </div>
+        
+        <div class="coach-card" data-coach="intuitive" style="background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); padding: 20px; border-radius: 15px; cursor: pointer; transition: all 0.3s ease; border: 3px solid transparent;">
+            <div style="text-align: center;">
+                <span style="font-size: 2rem; margin-bottom: 10px; display: block;">🔮</span>
+                <h3 style="color: #ffffff; margin-bottom: 10px;">Intuitive Iris</h3>
+                <p style="color: #ffffff; font-size: 0.9rem; line-height: 1.4;">Wisdom-based guidance focusing on inner knowing and spiritual growth</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chat Interface -->
+<div id="chatInterface" class="card" style="display: none; min-height: 500px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #2d3436;">
+        <div>
+            <h2 id="coachName" style="color: #ffffff; margin: 0;"></h2>
+            <p id="coachDescription" style="color: #c0c0c0; margin: 5px 0 0; font-size: 0.9rem;"></p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="viewChatHistory()" class="btn btn-secondary" style="padding: 8px 15px; font-size: 0.9rem;">📊 Chat History</button>
+            <button onclick="changeCoach()" class="btn btn-secondary" style="padding: 8px 15px; font-size: 0.9rem;">🔄 Change Coach</button>
+        </div>
+    </div>
+    
+    <!-- Chat Messages -->
+    <div id="chatMessages" style="background: #2d3436; border-radius: 15px; padding: 20px; margin-bottom: 20px; min-height: 350px; max-height: 400px; overflow-y: auto;">
+        <div id="initialMessage" class="coach-message" style="margin-bottom: 20px;">
+            <!-- Initial message will be inserted here -->
+        </div>
+    </div>
+    
+    <!-- Input Area -->
+    <div style="display: flex; gap: 15px; align-items: flex-end;">
+        <div style="flex: 1;">
+            <textarea id="messageInput" placeholder="What's going on in your relationship or situation? I'm here to help..." style="width: 100%; min-height: 80px; max-height: 150px; background: #2d3436; border: 2px solid #636e72; border-radius: 10px; padding: 15px; color: #ffffff; font-family: inherit; resize: vertical;" onkeypress="handleKeyPress(event)"></textarea>
+        </div>
+        <button id="sendButton" onclick="sendMessage()" class="btn" style="padding: 15px 25px; height: fit-content;">
+            💬 Send
+        </button>
+    </div>
+    
+    <!-- Quick Prompts -->
+    <div style="margin-top: 15px;">
+        <p style="color: #c0c0c0; margin-bottom: 10px; font-size: 0.9rem;">Quick prompts:</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <button class="quick-prompt" onclick="useQuickPrompt(this)" style="background: #636e72; border: none; color: #ffffff; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease;">My partner isn't communicating</button>
+            <button class="quick-prompt" onclick="useQuickPrompt(this)" style="background: #636e72; border: none; color: #ffffff; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease;">I don't know where I stand</button>
+            <button class="quick-prompt" onclick="useQuickPrompt(this)" style="background: #636e72; border: none; color: #ffffff; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease;">Setting boundaries is hard</button>
+            <button class="quick-prompt" onclick="useQuickPrompt(this)" style="background: #636e72; border: none; color: #ffffff; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease;">Should I end this relationship?</button>
+            <button class="quick-prompt" onclick="useQuickPrompt(this)" style="background: #636e72; border: none; color: #ffffff; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease;">Building self-confidence</button>
+        </div>
+    </div>
+</div>
+
+<!-- Chat History Modal -->
+<div id="chatHistoryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 20px; padding: 30px; max-width: 800px; width: 90%; max-height: 80%; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2 style="color: #ffffff; margin: 0;">💬 Chat History</h2>
+            <button onclick="closeChatHistory()" style="background: none; border: none; color: #ffffff; font-size: 1.5rem; cursor: pointer;">✕</button>
+        </div>
+        
+        <!-- Stats -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px;">
+            <div style="background: #2d3436; padding: 15px; border-radius: 10px; text-align: center;">
+                <span id="totalChats" style="color: #74b9ff; font-size: 1.5rem; font-weight: bold;">0</span>
+                <p style="color: #ffffff; margin: 5px 0 0; font-size: 0.9rem;">Total Chats</p>
+            </div>
+            <div style="background: #2d3436; padding: 15px; border-radius: 10px; text-align: center;">
+                <span id="favoriteCoach" style="color: #00b894; font-size: 1.5rem; font-weight: bold;">-</span>
+                <p style="color: #ffffff; margin: 5px 0 0; font-size: 0.9rem;">Favorite Coach</p>
+            </div>
+            <div style="background: #2d3436; padding: 15px; border-radius: 10px; text-align: center;">
+                <span id="totalMessages" style="color: #fdcb6e; font-size: 1.5rem; font-weight: bold;">0</span>
+                <p style="color: #ffffff; margin: 5px 0 0; font-size: 0.9rem;">Messages Sent</p>
+            </div>
+        </div>
+        
+        <!-- History List -->
+        <div id="historyList" style="background: #2d3436; border-radius: 15px; padding: 20px; min-height: 200px;">
+            <p style="color: #c0c0c0; text-align: center; margin: 20px 0;">No chat history yet. Start a conversation with one of your AI coaches!</p>
+        </div>
+    </div>
+</div>
+
+<!-- Success Toast -->
+<div id="successToast" style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 15px 20px; border-radius: 10px; display: none; z-index: 1001; max-width: 300px;">
+    <span id="toastMessage">Message sent!</span>
+</div>
+
+<style>
+.coach-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.coach-card.selected {
+    border: 3px solid #ffffff !important;
+    transform: scale(1.05);
+}
+
+.coach-message {
+    background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+    padding: 15px 20px;
+    border-radius: 15px 15px 15px 5px;
+    margin-bottom: 15px;
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+.user-message {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    padding: 15px 20px;
+    border-radius: 15px 15px 5px 15px;
+    margin-bottom: 15px;
+    color: #ffffff;
+    line-height: 1.6;
+    margin-left: 20%;
+    text-align: right;
+}
+
+.quick-prompt:hover {
+    background: #74b9ff !important;
+    transform: translateY(-2px);
+}
+
+.typing-indicator {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #74b9ff;
+    animation: typing 1.4s infinite;
+    margin: 0 1px;
+}
+
+.typing-indicator:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-10px); }
+}
+
+#messageInput:focus {
+    outline: none;
+    border-color: #74b9ff;
+}
+
+.history-item {
+    background: #1a1a2e;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    background: #2d3436;
+    transform: translateX(5px);
+}
+</style>
+
+<script>
+let currentCoach = null;
+let chatHistory = JSON.parse(localStorage.getItem('aiCoachHistory')) || [];
+let currentConversation = [];
+
+const coachProfiles = {
+    supportive: {
+        name: '💚 Supportive Maya',
+        description: 'Gentle, empathetic guidance with emotional validation',
+        color: '#00b894',
+        welcomeMessage: "Hi there, beautiful soul 💚 I'm Maya, and I'm so glad you're here. I want you to know that whatever you're going through, your feelings are completely valid. I'm here to listen with my whole heart and support you through this. What's been weighing on your mind lately?",
+        style: 'supportive'
+    },
+    direct: {
+        name: '🔥 Direct Dana',
+        description: 'Straight-talk coaching with tough love and reality checks',
+        color: '#d63031',
+        welcomeMessage: "Hey there! 🔥 I'm Dana, and I don't do sugar-coating. I'm here to give you the real talk you need to hear, even when it's uncomfortable. Sometimes the truth stings, but that's how we grow. So tell me straight up - what's the situation that brought you here today?",
+        style: 'direct'
+    },
+    strategic: {
+        name: '🧠 Strategic Sam',
+        description: 'Analytical approach with logical frameworks and action plans',
+        color: '#0984e3',
+        welcomeMessage: "Hello! 🧠 I'm Sam, your strategic thinking partner. I believe every relationship challenge can be approached methodically with the right framework and clear action steps. I'll help you analyze the situation objectively and create a practical plan forward. What specific situation would you like to strategize about?",
+        style: 'strategic'
+    },
+    intuitive: {
+        name: '🔮 Intuitive Iris',
+        description: 'Wisdom-based guidance focusing on inner knowing and growth',
+        color: '#6c5ce7',
+        welcomeMessage: "Welcome, dear one 🔮 I'm Iris, and I'm here to help you tap into your inner wisdom. Sometimes the answers we seek are already within us - we just need someone to help us listen. Trust your intuition as we explore this together. What is your heart trying to tell you about your situation?",
+        style: 'intuitive'
+    }
+};
+
+function selectCoach(coachType) {
+    // Remove previous selections
+    document.querySelectorAll('.coach-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    
+    // Select new coach
+    document.querySelector(`[data-coach="${coachType}"]`).classList.add('selected');
+    
+    currentCoach = coachType;
+    const profile = coachProfiles[coachType];
+    
+    // Update chat interface
+    document.getElementById('coachName').textContent = profile.name;
+    document.getElementById('coachDescription').textContent = profile.description;
+    
+    // Show initial message
+    document.getElementById('initialMessage').innerHTML = `
+        <div class="coach-message" style="border-left: 4px solid ${profile.color};">
+            ${profile.welcomeMessage}
+        </div>
+    `;
+    
+    // Clear previous conversation
+    const messagesContainer = document.getElementById('chatMessages');
+    const existingMessages = messagesContainer.querySelectorAll('.user-message, .coach-message:not(#initialMessage .coach-message)');
+    existingMessages.forEach(msg => msg.remove());
+    
+    // Initialize new conversation
+    currentConversation = [{
+        type: 'coach',
+        message: profile.welcomeMessage,
+        timestamp: new Date().toISOString(),
+        coach: coachType
+    }];
+    
+    // Show chat interface
+    document.getElementById('chatInterface').style.display = 'block';
+    document.getElementById('messageInput').focus();
+    
+    showToast(`Connected to ${profile.name}! 💫`);
+}
+
+function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+    
+    if (!message || !currentCoach) {
+        if (!message) showToast('Please enter a message! 💬');
+        return;
+    }
+    
+    // Add user message to chat
+    addMessageToChat('user', message);
+    
+    // Add to current conversation
+    currentConversation.push({
+        type: 'user',
+        message: message,
+        timestamp: new Date().toISOString()
+    });
+    
+    // Clear input
+    input.value = '';
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Send to AI backend
+    fetch('/ai-coach/chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            message: message,
+            coach_type: currentCoach,
+            conversation_history: currentConversation
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideTypingIndicator();
+        
+        if (data.error) {
+            showToast('Error: ' + data.error);
+            return;
+        }
+        
+        // Add AI response to chat
+        addMessageToChat('coach', data.response);
+        
+        // Add to current conversation
+        currentConversation.push({
+            type: 'coach',
+            message: data.response,
+            timestamp: data.timestamp,
+            coach: currentCoach
+        });
+        
+        // Save conversation to history
+        saveChatToHistory();
+    })
+    .catch(error => {
+        hideTypingIndicator();
+        console.error('Error:', error);
+        
+        // Fallback to local response if API fails
+        const fallbackResponse = generateFallbackResponse(message, currentCoach);
+        addMessageToChat('coach', fallbackResponse);
+        
+        currentConversation.push({
+            type: 'coach',
+            message: fallbackResponse,
+            timestamp: new Date().toISOString(),
+            coach: currentCoach
+        });
+        
+        saveChatToHistory();
+        showToast('Using offline mode - responses may be limited');
+    });
+}
+
+function generateFallbackResponse(message, coachType) {
+    const fallbackResponses = {
+        'supportive': [
+            "I hear you, and what you're sharing takes courage. Your feelings are completely valid. 💚 What feels like the most loving step you could take for yourself right now?",
+            "Thank you for trusting me with this. It sounds like you're going through something really challenging. 🤗 How are you taking care of yourself through this?",
+            "I can feel the emotion in your words. Remember that you deserve love, respect, and clarity in your relationships. ✨ What does your heart tell you?",
+            "Your vulnerability in sharing this shows incredible strength. 💕 Sometimes our hearts know what we need before our minds catch up. What is your heart saying?",
+            "I'm holding space for you and everything you're feeling right now. 🌸 What would self-compassion look like in this moment?"
+        ],
+        'direct': [
+            "Let's be real here - you already know what needs to happen. 🔥 Stop waiting for permission to trust your gut. What action are you avoiding?",
+            "I hear a lot of excuses, but what I'm not hearing is you standing up for what you deserve. 💪 When are you going to start putting yourself first?",
+            "Here's the truth: if someone wanted to be with you, they'd make it clear. 🎯 What are you going to do about this situation?",
+            "Stop making yourself small to fit into someone else's confusion. 💥 You deserve clarity, respect, and commitment. When do you start demanding it?",
+            "Cut through the noise - your time and energy are precious. 🔥 Are you investing them in someone who's investing back?"
+        ],
+        'strategic': [
+            "Let's analyze this systematically. 🧠 What patterns do you notice in this situation? What data points indicate the relationship direction?",
+            "Looking at this objectively, what are your non-negotiable requirements? 📊 How does the current situation measure against those standards?",
+            "Strategic assessment needed here. 🎯 What's your timeline for clarity, and what specific actions will you take to achieve it?",
+            "Data-driven approach: What behaviors can you observe and measure? 📈 What would success look like in concrete terms?",
+            "Framework thinking: What are the key variables in this situation? 🧠 Which ones can you influence, and which are outside your control?"
+        ],
+        'intuitive': [
+            "Your soul is speaking to you through these feelings. ✨ What is your inner wisdom trying to tell you about this situation?",
+            "Trust the energy you feel - it's rarely wrong. 🔮 What would love do in this situation? How can you honor your highest self?",
+            "This challenge is asking you to step into your power. 🌙 What version of yourself wants to emerge from this experience?",
+            "The universe has a way of showing us what we need to see. 🌟 What lesson is this situation offering your soul?",
+            "Your intuition is your internal guidance system. ✨ When you quiet the noise, what does that still, small voice tell you?"
+        ]
+    };
+    
+    const responses = fallbackResponses[coachType] || fallbackResponses['supportive'];
+    return responses[Math.floor(Math.random() * responses.length)];
+}
+
+function addMessageToChat(type, message) {
+    const messagesContainer = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = type === 'user' ? 'user-message' : 'coach-message';
+    
+    if (type === 'coach') {
+        const profile = coachProfiles[currentCoach];
+        messageDiv.style.borderLeft = `4px solid ${profile.color}`;
+    }
+    
+    messageDiv.textContent = message;
+    messagesContainer.appendChild(messageDiv);
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function generateCoachResponse(userMessage, coachType) {
+    // Advanced natural language understanding
+    const nlpAnalysis = performAdvancedNLP(userMessage);
+    
+    // Deep contextual analysis
+    const contextualInsights = extractContextualInsights(userMessage, nlpAnalysis);
+    
+    // Conversation continuity and memory
+    const conversationMemory = getAdvancedConversationContext();
+    
+    // Generate highly personalized, detailed response
+    return generateDetailedPersonalizedResponse(userMessage, nlpAnalysis, contextualInsights, conversationMemory, coachType);
+}
+
+function performAdvancedNLP(message) {
+    const analysis = {
+        // Basic structure
+        originalMessage: message,
+        cleanedMessage: message.toLowerCase().trim(),
+        
+        // Detailed emotional analysis
+        emotions: extractDetailedEmotions(message),
+        
+        // Relationship dynamics
+        relationshipDynamics: analyzeRelationshipDynamics(message),
+        
+        // Behavioral patterns
+        behaviorPatterns: identifyBehaviorPatterns(message),
+        
+        // Communication style analysis
+        communicationStyle: analyzeCommunicationStyle(message),
+        
+        // Timeline and frequency analysis
+        temporalContext: analyzeTemporalContext(message),
+        
+        // Specific actions and events
+        actionsAndEvents: extractActionsAndEvents(message),
+        
+        // Emotional triggers and pain points
+        triggers: identifyEmotionalTriggers(message),
+        
+        // Relationship goals and desires
+        desires: extractRelationshipDesires(message),
+        
+        // Power dynamics
+        powerDynamics: analyzePowerDynamics(message),
+        
+        // Self-worth and confidence indicators
+        selfWorthIndicators: analyzeSelfWorthIndicators(message),
+        
+        // Decision-making patterns
+        decisionPatterns: analyzeDecisionPatterns(message)
+    };
+    
+    return analysis;
+}
+
+function extractDetailedEmotions(message) {
+    const emotionAnalysis = {
+        primary: null,
+        secondary: [],
+        intensity: 'medium',
+        emotionalProgression: [],
+        contradictoryEmotions: [],
+        hiddenEmotions: [],
+        emotionalNeeds: []
+    };
+    
+    // Advanced emotion mapping with context
+    const emotionContext = {
+        // Hurt variations
+        devastated: { primary: 'hurt', intensity: 'extreme', context: 'relationship_ending', need: 'healing_support' },
+        heartbroken: { primary: 'hurt', intensity: 'high', context: 'romantic_pain', need: 'emotional_validation' },
+        crushed: { primary: 'hurt', intensity: 'high', context: 'betrayal_rejection', need: 'rebuilding_confidence' },
+        betrayed: { primary: 'hurt', intensity: 'high', context: 'trust_violation', need: 'safety_restoration' },
+        disappointed: { primary: 'hurt', intensity: 'medium', context: 'unmet_expectations', need: 'reality_adjustment' },
+        let_down: { primary: 'hurt', intensity: 'medium', context: 'broken_promises', need: 'boundary_setting' },
+        
+        // Anger variations
+        furious: { primary: 'angry', intensity: 'extreme', context: 'injustice_violation', need: 'immediate_action' },
+        livid: { primary: 'angry', intensity: 'extreme', context: 'repeated_disrespect', need: 'confrontation_strategy' },
+        pissed: { primary: 'angry', intensity: 'high', context: 'fresh_anger', need: 'expression_outlet' },
+        frustrated: { primary: 'angry', intensity: 'medium', context: 'blocked_progress', need: 'problem_solving' },
+        annoyed: { primary: 'angry', intensity: 'low', context: 'minor_irritation', need: 'communication_improvement' },
+        fed_up: { primary: 'angry', intensity: 'high', context: 'accumulated_grievances', need: 'decisive_action' },
+        
+        // Confusion variations
+        lost: { primary: 'confused', intensity: 'high', context: 'identity_crisis', need: 'self_discovery' },
+        bewildered: { primary: 'confused', intensity: 'high', context: 'unexpected_behavior', need: 'pattern_understanding' },
+        confused: { primary: 'confused', intensity: 'medium', context: 'mixed_signals', need: 'clarity_seeking' },
+        uncertain: { primary: 'confused', intensity: 'medium', context: 'future_planning', need: 'decision_support' },
+        torn: { primary: 'confused', intensity: 'medium', context: 'conflicting_desires', need: 'priority_clarification' },
+        
+        // Anxiety variations
+        terrified: { primary: 'anxious', intensity: 'extreme', context: 'existential_threat', need: 'safety_assurance' },
+        panicked: { primary: 'anxious', intensity: 'extreme', context: 'crisis_situation', need: 'immediate_calming' },
+        overwhelmed: { primary: 'anxious', intensity: 'high', context: 'excessive_demands', need: 'stress_reduction' },
+        worried: { primary: 'anxious', intensity: 'medium', context: 'future_concerns', need: 'reassurance' },
+        nervous: { primary: 'anxious', intensity: 'medium', context: 'performance_pressure', need: 'confidence_building' },
+        
+        // Hope and positive emotions
+        hopeful: { primary: 'hopeful', intensity: 'medium', context: 'positive_change', need: 'realistic_planning' },
+        excited: { primary: 'hopeful', intensity: 'high', context: 'new_possibilities', need: 'grounding' },
+        optimistic: { primary: 'hopeful', intensity: 'medium', context: 'improvement_belief', need: 'action_planning' }
+    };
+    
+    // Find emotions in the message
+    const foundEmotions = [];
+    for (const [word, data] of Object.entries(emotionContext)) {
+        if (message.toLowerCase().includes(word.replace('_', ' '))) {
+            foundEmotions.push({ word, ...data });
+        }
+    }
+    
+    if (foundEmotions.length > 0) {
+        // Sort by intensity to find primary emotion
+        foundEmotions.sort((a, b) => {
+            const intensityOrder = { extreme: 4, high: 3, medium: 2, low: 1 };
+            return intensityOrder[b.intensity] - intensityOrder[a.intensity];
+        });
+        
+        emotionAnalysis.primary = foundEmotions[0].primary;
+        emotionAnalysis.intensity = foundEmotions[0].intensity;
+        emotionAnalysis.emotionalNeeds = foundEmotions.map(e => e.need);
+        emotionAnalysis.secondary = foundEmotions.slice(1).map(e => e.primary);
+    }
+    
+    // Identify contradictory emotions
+    const positiveEmotions = foundEmotions.filter(e => ['hopeful', 'excited'].includes(e.primary));
+    const negativeEmotions = foundEmotions.filter(e => ['hurt', 'angry', 'confused', 'anxious'].includes(e.primary));
+    
+    if (positiveEmotions.length > 0 && negativeEmotions.length > 0) {
+        emotionAnalysis.contradictoryEmotions = ['internal_conflict', 'ambivalence'];
+    }
+    
+    return emotionAnalysis;
+}
+
+function analyzeRelationshipDynamics(message) {
+    const dynamics = {
+        powerBalance: 'unknown',
+        attachmentStyle: 'unknown',
+        conflictPattern: 'unknown',
+        intimacyLevel: 'unknown',
+        communicationPattern: 'unknown',
+        boundaryRespect: 'unknown',
+        emotionalLabor: 'unknown',
+        futureAlignment: 'unknown'
+    };
+    
+    // Power balance indicators
+    if (message.includes('he decides') || message.includes('she decides') || message.includes('they control')) {
+        dynamics.powerBalance = 'imbalanced_other_dominant';
+    } else if (message.includes('i have to') || message.includes('i always') || message.includes('i do everything')) {
+        dynamics.powerBalance = 'imbalanced_user_overgiving';
+    } else if (message.includes('we both') || message.includes('mutual') || message.includes('together we')) {
+        dynamics.powerBalance = 'balanced';
+    }
+    
+    // Attachment style indicators
+    if (message.includes('clingy') || message.includes('needy') || message.includes('constant reassurance')) {
+        dynamics.attachmentStyle = 'anxious';
+    } else if (message.includes('space') || message.includes('independence') || message.includes('too close')) {
+        dynamics.attachmentStyle = 'avoidant';
+    } else if (message.includes('hot and cold') || message.includes('push and pull')) {
+        dynamics.attachmentStyle = 'disorganized';
+    }
+    
+    // Communication patterns
+    if (message.includes('silent treatment') || message.includes('stonewalling') || message.includes('shuts down')) {
+        dynamics.communicationPattern = 'avoidant_withdrawal';
+    } else if (message.includes('yelling') || message.includes('arguing') || message.includes('fighting')) {
+        dynamics.communicationPattern = 'aggressive_conflict';
+    } else if (message.includes('passive aggressive') || message.includes('hints') || message.includes('expects me to read minds')) {
+        dynamics.communicationPattern = 'indirect_passive';
+    }
+    
+    return dynamics;
+}
+
+function identifyBehaviorPatterns(message) {
+    const patterns = {
+        cyclicalBehaviors: [],
+        escalationTriggers: [],
+        rewardPunishmentCycles: [],
+        boundaryViolations: [],
+        manipulationTactics: [],
+        loveTargetingCycles: []
+    };
+    
+    // Cyclical behaviors
+    if (message.includes('always happens') || message.includes('every time') || message.includes('pattern')) {
+        patterns.cyclicalBehaviors.push('recognized_cycle');
+    }
+    
+    if (message.includes('good for a while then') || message.includes('honeymoon period')) {
+        patterns.cyclicalBehaviors.push('honeymoon_conflict_cycle');
+    }
+    
+    // Love bombing and withdrawal
+    if (message.includes('amazing at first') || message.includes('perfect in the beginning')) {
+        patterns.loveTargetingCycles.push('initial_love_bombing');
+    }
+    
+    if (message.includes('changed after') || message.includes('not the same person')) {
+        patterns.loveTargetingCycles.push('personality_shift');
+    }
+    
+    // Manipulation tactics
+    if (message.includes('gaslighting') || message.includes('makes me question') || message.includes('crazy')) {
+        patterns.manipulationTactics.push('gaslighting');
+    }
+    
+    if (message.includes('guilt trip') || message.includes('makes me feel guilty')) {
+        patterns.manipulationTactics.push('guilt_manipulation');
+    }
+    
+    if (message.includes('threatens to leave') || message.includes('threatens to break up')) {
+        patterns.manipulationTactics.push('abandonment_threats');
+    }
+    
+    return patterns;
+}
+
+function analyzeCommunicationStyle(message) {
+    return {
+        userStyle: detectUserCommunicationStyle(message),
+        partnerStyle: detectPartnerCommunicationStyle(message),
+        mismatchAreas: identifyMismatchAreas(message),
+        improvementNeeds: identifyImprovementNeeds(message)
+    };
+}
+
+function detectUserCommunicationStyle(message) {
+    if (message.includes('i said') || message.includes('i told them') || message.includes('i was direct')) {
+        return 'direct_assertive';
+    } else if (message.includes('i hinted') || message.includes('i tried to') || message.includes('i hoped they would')) {
+        return 'indirect_passive';
+    } else if (message.includes('i exploded') || message.includes('i yelled') || message.includes('i lost it')) {
+        return 'aggressive_reactive';
+    } else if (message.includes('i said nothing') || message.includes('i kept quiet') || message.includes('i avoided')) {
+        return 'avoidant_withdrawn';
+    }
+    return 'unclear';
+}
+
+function identifyMismatchAreas(message) {
+    const mismatches = [];
+    
+    if (message.includes('they don\'t listen') || message.includes('talks over me')) {
+        mismatches.push('listening_styles');
+    }
+    if (message.includes('different communication') || message.includes('speaks differently')) {
+        mismatches.push('expression_styles');
+    }
+    if (message.includes('conflict styles') || message.includes('handles arguments differently')) {
+        mismatches.push('conflict_resolution');
+    }
+    
+    return mismatches;
+}
+
+function identifyImprovementNeeds(message) {
+    const needs = [];
+    
+    if (message.includes('better communication') || message.includes('need to talk more')) {
+        needs.push('frequency_improvement');
+    }
+    if (message.includes('more honest') || message.includes('open up more')) {
+        needs.push('transparency_improvement');
+    }
+    if (message.includes('listen better') || message.includes('understand me')) {
+        needs.push('active_listening');
+    }
+    
+    return needs;
+}
+
+function analyzeProgression(message) {
+    if (message.includes('getting worse') || message.includes('escalating')) {
+        return 'deteriorating';
+    } else if (message.includes('getting better') || message.includes('improving')) {
+        return 'improving';
+    } else if (message.includes('same') || message.includes('no change')) {
+        return 'stagnant';
+    }
+    return 'unclear';
+}
+
+function assessDetailedUrgency(message) {
+    const urgencyFactors = {
+        immediate: ['right now', 'today', 'emergency', 'crisis', 'urgent'],
+        high: ['this week', 'soon', 'quickly', 'asap', 'can\'t wait'],
+        medium: ['this month', 'sometime soon', 'in the near future'],
+        low: ['eventually', 'when possible', 'no rush']
+    };
+    
+    for (const [level, indicators] of Object.entries(urgencyFactors)) {
+        if (indicators.some(indicator => message.toLowerCase().includes(indicator))) {
+            return level;
+        }
+    }
+    
+    // Context-based urgency assessment
+    if (message.includes('breaking up') || message.includes('end things')) {
+        return 'high';
+    }
+    if (message.includes('thinking about') || message.includes('considering')) {
+        return 'medium';
+    }
+    
+    return 'low';
+}
+
+function analyzeTemporalContext(message) {
+    return {
+        timeframe: extractDetailedTimeframe(message),
+        frequency: extractFrequency(message),
+        progression: analyzeProgression(message),
+        urgency: assessDetailedUrgency(message)
+    };
+}
+
+function extractDetailedTimeframe(message) {
+    // More specific time extraction
+    const timePatterns = {
+        immediate: ['right now', 'today', 'this morning', 'tonight', 'just happened', 'currently happening'],
+        recent: ['yesterday', 'last night', 'this week', 'few days ago', 'recently'],
+        ongoing: ['always', 'constantly', 'every day', 'all the time', 'continuously'],
+        periodic: ['sometimes', 'often', 'frequently', 'occasionally', 'every so often'],
+        longterm: ['for years', 'for months', 'long time', 'since we met', 'from the beginning'],
+        escalating: ['getting worse', 'more frequent', 'escalating', 'increasing'],
+        improving: ['getting better', 'less often', 'improving', 'working on it']
+    };
+    
+    for (const [category, indicators] of Object.entries(timePatterns)) {
+        if (indicators.some(indicator => message.toLowerCase().includes(indicator))) {
+            return category;
+        }
+    }
+    
+    return 'unspecified';
+}
+
+function extractFrequency(message) {
+    if (message.includes('daily') || message.includes('every day')) return 'daily';
+    if (message.includes('weekly') || message.includes('every week')) return 'weekly';
+    if (message.includes('rarely') || message.includes('seldom')) return 'rare';
+    if (message.includes('constantly') || message.includes('all the time')) return 'constant';
+    if (message.includes('sometimes') || message.includes('occasionally')) return 'occasional';
+    return 'unspecified';
+}
+
+function extractActionsAndEvents(message) {
+    const actions = {
+        userActions: [],
+        partnerActions: [],
+        jointActions: [],
+        triggeredEvents: [],
+        consequences: []
+    };
+    
+    // Extract specific user actions
+    const userActionPatterns = [
+        /i (said|told|asked|demanded|requested|tried|attempted|decided|chose|left|stayed|called|texted|confronted|avoided)/gi
+    ];
+    
+    userActionPatterns.forEach(pattern => {
+        const matches = message.match(pattern);
+        if (matches) {
+            actions.userActions.push(...matches);
+        }
+    });
+    
+    // Extract partner actions
+    const partnerActionPatterns = [
+        /(he|she|they) (said|told|asked|demanded|requested|tried|attempted|decided|chose|left|stayed|called|texted|ignored|avoided|yelled|lied|cheated)/gi
+    ];
+    
+    partnerActionPatterns.forEach(pattern => {
+        const matches = message.match(pattern);
+        if (matches) {
+            actions.partnerActions.push(...matches);
+        }
+    });
+    
+    return actions;
+}
+
+function identifyEmotionalTriggers(message) {
+    const triggers = {
+        abandonment: ['leaving', 'break up', 'end things', 'don\'t want to see', 'space'],
+        rejection: ['not interested', 'don\'t want', 'not attracted', 'friend zone'],
+        disrespect: ['disrespects', 'doesn\'t listen', 'interrupts', 'dismissive', 'condescending'],
+        betrayal: ['lying', 'cheating', 'behind my back', 'secret', 'hiding'],
+        invalidation: ['overreacting', 'too sensitive', 'dramatic', 'crazy', 'imagining'],
+        control: ['controlling', 'can\'t do', 'not allowed', 'permission', 'checking up'],
+        neglect: ['ignoring', 'doesn\'t care', 'priority', 'important', 'attention']
+    };
+    
+    const foundTriggers = [];
+    for (const [trigger, keywords] of Object.entries(triggers)) {
+        if (keywords.some(keyword => message.toLowerCase().includes(keyword))) {
+            foundTriggers.push(trigger);
+        }
+    }
+    
+    return foundTriggers;
+}
+
+function extractRelationshipDesires(message) {
+    const desires = {
+        commitment: [],
+        communication: [],
+        intimacy: [],
+        respect: [],
+        growth: [],
+        stability: []
+    };
+    
+    // Commitment desires
+    if (message.includes('exclusive') || message.includes('official') || message.includes('committed')) {
+        desires.commitment.push('exclusivity');
+    }
+    if (message.includes('future') || message.includes('long term') || message.includes('marriage')) {
+        desires.commitment.push('future_planning');
+    }
+    
+    // Communication desires
+    if (message.includes('talk more') || message.includes('open up') || message.includes('communicate')) {
+        desires.communication.push('increased_openness');
+    }
+    if (message.includes('honest') || message.includes('truthful') || message.includes('transparent')) {
+        desires.communication.push('honesty');
+    }
+    
+    return desires;
+}
+
+function analyzePowerDynamics(message) {
+    const dynamics = {
+        decisionMaking: 'unknown',
+        financialControl: 'unknown',
+        socialControl: 'unknown',
+        emotionalControl: 'unknown',
+        timeControl: 'unknown'
+    };
+    
+    if (message.includes('makes all decisions') || message.includes('never asked')) {
+        dynamics.decisionMaking = 'partner_dominant';
+    }
+    if (message.includes('controls money') || message.includes('financial decisions')) {
+        dynamics.financialControl = 'partner_controls';
+    }
+    if (message.includes('isolates') || message.includes('friends don\'t like') || message.includes('can\'t see')) {
+        dynamics.socialControl = 'partner_isolating';
+    }
+    
+    return dynamics;
+}
+
+function analyzeSelfWorthIndicators(message) {
+    const indicators = {
+        selfTalk: [],
+        boundaryStrength: 'unknown',
+        advocacyLevel: 'unknown',
+        worthBeliefs: []
+    };
+    
+    // Negative self-talk
+    if (message.includes('not good enough') || message.includes('don\'t deserve')) {
+        indicators.selfTalk.push('negative_worth_beliefs');
+    }
+    if (message.includes('my fault') || message.includes('i\'m the problem')) {
+        indicators.selfTalk.push('self_blame');
+    }
+    
+    // Boundary strength
+    if (message.includes('can\'t say no') || message.includes('feel guilty setting boundaries')) {
+        indicators.boundaryStrength = 'weak';
+    } else if (message.includes('set clear boundaries') || message.includes('stand up for myself')) {
+        indicators.boundaryStrength = 'strong';
+    }
+    
+    return indicators;
+}
+
+function analyzeDecisionPatterns(message) {
+    const patterns = {
+        decisionStyle: 'unknown',
+        influenceFactors: [],
+        hesitationReasons: [],
+        pastDecisions: []
+    };
+    
+    if (message.includes('can\'t decide') || message.includes('torn between')) {
+        patterns.decisionStyle = 'indecisive';
+    } else if (message.includes('impulsive') || message.includes('quick decision')) {
+        patterns.decisionStyle = 'impulsive';
+    } else if (message.includes('thought about') || message.includes('considering')) {
+        patterns.decisionStyle = 'deliberative';
+    }
+    
+    return patterns;
+}
+
+function extractContextualInsights(message, nlpAnalysis) {
+    return {
+        // Deeper relationship analysis
+        relationshipHealth: assessRelationshipHealth(message, nlpAnalysis),
+        
+        // Behavioral red flags and green flags
+        redFlags: identifyRedFlags(message, nlpAnalysis),
+        greenFlags: identifyGreenFlags(message, nlpAnalysis),
+        
+        // Underlying psychological patterns
+        psychologicalPatterns: identifyPsychologicalPatterns(message, nlpAnalysis),
+        
+        // Attachment and trauma indicators
+        attachmentTrauma: analyzeAttachmentTrauma(message, nlpAnalysis),
+        
+        // Growth opportunities
+        growthOpportunities: identifyGrowthOpportunities(message, nlpAnalysis),
+        
+        // Actionable insights
+        actionableInsights: generateActionableInsights(message, nlpAnalysis),
+        
+        // Risk assessment
+        riskAssessment: assessRisks(message, nlpAnalysis)
+    };
+}
+
+function assessRelationshipHealth(message, nlpAnalysis) {
+    let healthScore = 50; // Start neutral
+    const factors = {
+        communication: 0,
+        respect: 0,
+        trust: 0,
+        intimacy: 0,
+        growth: 0,
+        conflict_resolution: 0
+    };
+    
+    // Communication assessment
+    if (nlpAnalysis.relationshipDynamics.communicationPattern === 'avoidant_withdrawal') {
+        factors.communication = -20;
+    } else if (nlpAnalysis.relationshipDynamics.communicationPattern === 'aggressive_conflict') {
+        factors.communication = -15;
+    } else if (message.includes('good communication') || message.includes('talk openly')) {
+        factors.communication = +15;
+    }
+    
+    // Respect assessment
+    if (nlpAnalysis.triggers.includes('disrespect') || nlpAnalysis.triggers.includes('invalidation')) {
+        factors.respect = -25;
+    } else if (message.includes('respects me') || message.includes('values my opinion')) {
+        factors.respect = +20;
+    }
+    
+    // Trust assessment
+    if (nlpAnalysis.triggers.includes('betrayal') || nlpAnalysis.behaviorPatterns.manipulationTactics.length > 0) {
+        factors.trust = -30;
+    } else if (message.includes('trust') && !message.includes('don\'t trust')) {
+        factors.trust = +15;
+    }
+    
+    const totalAdjustment = Object.values(factors).reduce((sum, val) => sum + val, 0);
+    healthScore += totalAdjustment;
+    
+    // Categorize health level
+    if (healthScore >= 80) return { level: 'very_healthy', score: healthScore, factors };
+    if (healthScore >= 60) return { level: 'mostly_healthy', score: healthScore, factors };
+    if (healthScore >= 40) return { level: 'concerning', score: healthScore, factors };
+    if (healthScore >= 20) return { level: 'unhealthy', score: healthScore, factors };
+    return { level: 'toxic', score: healthScore, factors };
+}
+
+function identifyRedFlags(message, nlpAnalysis) {
+    const redFlags = [];
+    
+    // Manipulation red flags
+    if (nlpAnalysis.behaviorPatterns.manipulationTactics.includes('gaslighting')) {
+        redFlags.push({
+            type: 'gaslighting',
+            severity: 'high',
+            description: 'Making you question your reality or perception',
+            implications: 'This is psychological manipulation that erodes your confidence and self-trust'
+        });
+    }
+    
+    if (nlpAnalysis.behaviorPatterns.manipulationTactics.includes('guilt_manipulation')) {
+        redFlags.push({
+            type: 'guilt_manipulation',
+            severity: 'medium',
+            description: 'Using guilt to control your decisions and actions',
+            implications: 'This prevents authentic choice and creates emotional burden'
+        });
+    }
+    
+    // Control red flags
+    if (nlpAnalysis.powerDynamics.socialControl === 'partner_isolating') {
+        redFlags.push({
+            type: 'social_isolation',
+            severity: 'high',
+            description: 'Attempting to isolate you from friends and family',
+            implications: 'This is a classic abuse tactic that removes your support system'
+        });
+    }
+    
+    // Communication red flags
+    if (nlpAnalysis.relationshipDynamics.communicationPattern === 'avoidant_withdrawal') {
+        redFlags.push({
+            type: 'emotional_withdrawal',
+            severity: 'medium',
+            description: 'Consistently withdrawing or giving silent treatment',
+            implications: 'This creates emotional instability and prevents conflict resolution'
+        });
+    }
+    
+    // Pattern red flags
+    if (nlpAnalysis.behaviorPatterns.loveTargetingCycles.includes('initial_love_bombing')) {
+        redFlags.push({
+            type: 'love_bombing',
+            severity: 'high',
+            description: 'Excessive attention and affection early in relationship',
+            implications: 'Often followed by withdrawal and control tactics'
+        });
+    }
+    
+    return redFlags;
+}
+
+function identifyGreenFlags(message, nlpAnalysis) {
+    const greenFlags = [];
+    
+    if (message.includes('apologizes') && message.includes('changes behavior')) {
+        greenFlags.push({
+            type: 'accountability',
+            description: 'Takes responsibility and makes behavioral changes',
+            significance: 'Shows genuine commitment to growth and respect'
+        });
+    }
+    
+    if (message.includes('supports my') || message.includes('encourages me')) {
+        greenFlags.push({
+            type: 'supportive_growth',
+            description: 'Actively supports your personal goals and growth',
+            significance: 'Indicates secure attachment and genuine care'
+        });
+    }
+    
+    if (nlpAnalysis.relationshipDynamics.powerBalance === 'balanced') {
+        greenFlags.push({
+            type: 'balanced_power',
+            description: 'Decisions are made together with mutual respect',
+            significance: 'Foundation for healthy long-term relationship'
+        });
+    }
+    
+    return greenFlags;
+}
+
+function identifyPsychologicalPatterns(message, nlpAnalysis) {
+    const patterns = {
+        codependency: false,
+        trauma_bonding: false,
+        anxious_attachment: false,
+        avoidant_attachment: false,
+        people_pleasing: false,
+        emotional_dysregulation: false
+    };
+    
+    // Codependency indicators
+    if (message.includes('can\'t live without') || message.includes('need them') || 
+        nlpAnalysis.selfWorthIndicators.boundaryStrength === 'weak') {
+        patterns.codependency = true;
+    }
+    
+    // Trauma bonding
+    if (nlpAnalysis.behaviorPatterns.cyclicalBehaviors.includes('honeymoon_conflict_cycle') &&
+        nlpAnalysis.emotions.contradictoryEmotions.includes('ambivalence')) {
+        patterns.trauma_bonding = true;
+    }
+    
+    // Anxious attachment
+    if (nlpAnalysis.relationshipDynamics.attachmentStyle === 'anxious' ||
+        message.includes('constant reassurance') || message.includes('fear of abandonment')) {
+        patterns.anxious_attachment = true;
+    }
+    
+    // People pleasing
+    if (message.includes('always agree') || message.includes('avoid conflict') ||
+        nlpAnalysis.selfWorthIndicators.boundaryStrength === 'weak') {
+        patterns.people_pleasing = true;
+    }
+    
+    return patterns;
+}
+
+function analyzeAttachmentTrauma(message, nlpAnalysis) {
+    const analysis = {
+        attachmentStyle: nlpAnalysis.relationshipDynamics.attachmentStyle,
+        traumaIndicators: [],
+        healingNeeds: [],
+        triggerPatterns: nlpAnalysis.triggers
+    };
+    
+    // Trauma indicators
+    if (nlpAnalysis.emotions.intensity === 'extreme' && nlpAnalysis.triggers.length > 2) {
+        analysis.traumaIndicators.push('emotional_hypervigilance');
+    }
+    
+    if (message.includes('reminds me of') || message.includes('just like my')) {
+        analysis.traumaIndicators.push('historical_pattern_recognition');
+    }
+    
+    // Healing needs based on patterns
+    if (analysis.attachmentStyle === 'anxious') {
+        analysis.healingNeeds.push('security_building', 'self_soothing_skills');
+    }
+    
+    if (nlpAnalysis.selfWorthIndicators.selfTalk.includes('negative_worth_beliefs')) {
+        analysis.healingNeeds.push('self_worth_rebuilding', 'cognitive_restructuring');
+    }
+    
+    return analysis;
+}
+
+function identifyGrowthOpportunities(message, nlpAnalysis) {
+    const opportunities = [];
+    
+    // Communication growth
+    if (nlpAnalysis.communicationStyle.userStyle === 'indirect_passive') {
+        opportunities.push({
+            area: 'communication_skills',
+            specific: 'assertiveness_training',
+            description: 'Learning to express needs directly and confidently',
+            priority: 'high'
+        });
+    }
+    
+    // Boundary growth
+    if (nlpAnalysis.selfWorthIndicators.boundaryStrength === 'weak') {
+        opportunities.push({
+            area: 'boundary_setting',
+            specific: 'boundary_identification_and_enforcement',
+            description: 'Developing clear personal boundaries and enforcement strategies',
+            priority: 'high'
+        });
+    }
+    
+    // Emotional regulation
+    if (nlpAnalysis.emotions.intensity === 'extreme') {
+        opportunities.push({
+            area: 'emotional_regulation',
+            specific: 'emotional_intelligence_development',
+            description: 'Building skills to manage intense emotions effectively',
+            priority: 'medium'
+        });
+    }
+    
+    // Decision making
+    if (nlpAnalysis.decisionPatterns.decisionStyle === 'indecisive') {
+        opportunities.push({
+            area: 'decision_making',
+            specific: 'decision_framework_development',
+            description: 'Creating systematic approaches to important life decisions',
+            priority: 'medium'
+        });
+    }
+    
+    return opportunities;
+}
+
+function generateActionableInsights(message, nlpAnalysis) {
+    const insights = {
+        immediate_actions: [],
+        short_term_goals: [],
+        long_term_strategies: [],
+        conversation_scripts: [],
+        self_care_priorities: []
+    };
+    
+    // Immediate actions based on urgency and situation
+    if (nlpAnalysis.temporalContext.urgency === 'high') {
+        if (nlpAnalysis.triggers.includes('disrespect')) {
+            insights.immediate_actions.push({
+                action: 'address_disrespectful_behavior',
+                description: 'Have a direct conversation about the specific disrespectful behavior',
+                script: 'When you [specific behavior], I feel disrespected. I need this to stop.'
+            });
+        }
+    }
+    
+    // Short-term goals
+    if (nlpAnalysis.relationshipDynamics.communicationPattern === 'indirect_passive') {
+        insights.short_term_goals.push({
+            goal: 'improve_communication_directness',
+            timeline: '2-4 weeks',
+            steps: [
+                'Practice expressing one need directly each day',
+                'Use "I" statements instead of hints',
+                'Ask for specific behavioral changes'
+            ]
+        });
+    }
+    
+    // Conversation scripts
+    if (nlpAnalysis.desires.commitment.includes('exclusivity')) {
+        insights.conversation_scripts.push({
+            situation: 'defining_relationship',
+            script: 'I\'ve been thinking about us, and I\'d like to talk about where we stand. I\'m interested in being exclusive and would like to know how you feel about that.',
+            followup: 'What does a committed relationship look like to you?'
+        });
+    }
+    
+    return insights;
+}
+
+function assessRisks(message, nlpAnalysis) {
+    const risks = {
+        emotional_harm: 'low',
+        escalation_potential: 'low',
+        long_term_damage: 'low',
+        specific_concerns: [],
+        safety_considerations: []
+    };
+    
+    // Assess emotional harm risk
+    if (nlpAnalysis.behaviorPatterns.manipulationTactics.length > 1) {
+        risks.emotional_harm = 'high';
+        risks.specific_concerns.push('psychological_manipulation');
+    }
+    
+    // Assess escalation potential
+    if (nlpAnalysis.temporalContext.timeframe === 'escalating') {
+        risks.escalation_potential = 'medium';
+        risks.specific_concerns.push('pattern_intensification');
+    }
+    
+    // Safety considerations
+    if (message.includes('threatens') || message.includes('aggressive') || message.includes('violence')) {
+        risks.safety_considerations.push('potential_physical_harm');
+        risks.escalation_potential = 'high';
+    }
+    
+    return risks;
+}
+
+function getAdvancedConversationContext() {
+    const context = {
+        conversationLength: currentConversation.length,
+        establishedThemes: [],
+        emotionalProgression: [],
+        adviceHistory: [],
+        userGrowthProgress: [],
+        relationshipEvolution: [],
+        coachingNeeds: []
+    };
+    
+    if (currentConversation.length > 1) {
+        // Analyze conversation themes
+        const userMessages = currentConversation.filter(msg => msg.type === 'user');
+        const coachMessages = currentConversation.filter(msg => msg.type === 'coach');
+        
+        // Track established themes
+        userMessages.forEach((msg, index) => {
+            const analysis = performAdvancedNLP(msg.message);
+            context.establishedThemes.push({
+                message_index: index,
+                primary_theme: analysis.relationshipDynamics,
+                emotional_state: analysis.emotions.primary,
+                concerns: analysis.triggers
+            });
+        });
+        
+        // Track emotional progression
+        context.emotionalProgression = userMessages.map(msg => {
+            const analysis = performAdvancedNLP(msg.message);
+            return {
+                emotion: analysis.emotions.primary,
+                intensity: analysis.emotions.intensity,
+                timestamp: msg.timestamp
+            };
+        });
+        
+        // Analyze coaching effectiveness
+        context.adviceHistory = coachMessages.map(msg => {
+            return {
+                advice_type: classifyAdviceType(msg.message),
+                response_quality: 'needs_assessment', // Could be enhanced
+                timestamp: msg.timestamp
+            };
+        });
+    }
+    
+    return context;
+}
+
+function classifyAdviceType(message) {
+    if (message.includes('try') || message.includes('suggest') || message.includes('could')) {
+        return 'action_oriented';
+    } else if (message.includes('feel') || message.includes('valid') || message.includes('understand')) {
+        return 'emotional_support';
+    } else if (message.includes('analyze') || message.includes('pattern') || message.includes('consider')) {
+        return 'analytical_insight';
+    }
+    return 'general_guidance';
+}
+
+function generateDetailedPersonalizedResponse(userMessage, nlpAnalysis, contextualInsights, conversationMemory, coachType) {
+    // Generate comprehensive response based on all analysis
+    switch (coachType) {
+        case 'supportive':
+            return generateDetailedSupportiveResponse(userMessage, nlpAnalysis, contextualInsights, conversationMemory);
+        case 'direct':
+            return generateDetailedDirectResponse(userMessage, nlpAnalysis, contextualInsights, conversationMemory);
+        case 'strategic':
+            return generateDetailedStrategicResponse(userMessage, nlpAnalysis, contextualInsights, conversationMemory);
+        case 'intuitive':
+            return generateDetailedIntuitiveResponse(userMessage, nlpAnalysis, contextualInsights, conversationMemory);
+        default:
+            return generateDetailedSupportiveResponse(userMessage, nlpAnalysis, contextualInsights, conversationMemory);
+    }
+}
+
+function generateDetailedSupportiveResponse(userMessage, nlpAnalysis, contextualInsights, conversationMemory) {
+    let response = '';
+    
+    // Deep emotional validation with specific details
+    if (nlpAnalysis.emotions.primary) {
+        const emotionContext = nlpAnalysis.emotions.emotionalNeeds[0];
+        if (nlpAnalysis.emotions.intensity === 'extreme') {
+            response += `My heart absolutely breaks reading this. The ${nlpAnalysis.emotions.primary} you're feeling sounds overwhelming, and I want you to know that what you're experiencing is so deeply human and valid. 💚 `;
+        } else if (nlpAnalysis.emotions.contradictoryEmotions.length > 0) {
+            response += `I can sense the internal conflict in your words - feeling ${nlpAnalysis.emotions.primary} while also having other emotions pulling at you. This kind of emotional complexity shows how much you care and how thoughtfully you're processing this. 🤗 `;
+        } else {
+            response += `I hear the ${nlpAnalysis.emotions.primary} in your message, and I want you to know that feeling this way makes complete sense given what you're experiencing. `;
+        }
+    }
+    
+    // Address specific relationship dynamics with empathy
+    if (contextualInsights.relationshipHealth.level === 'toxic' || contextualInsights.relationshipHealth.level === 'unhealthy') {
+        response += `Sweetheart, looking at the patterns you've described, this relationship is asking more of you than it's giving back. Your nervous system is probably exhausted from trying to navigate these dynamics. `;
+    }
+    
+    // Acknowledge red flags with supportive framing
+    if (contextualInsights.redFlags.length > 0) {
+        const primaryRedFlag = contextualInsights.redFlags[0];
+        response += `What you're describing about ${primaryRedFlag.description.toLowerCase()} - that's not something you should have to endure. ${primaryRedFlag.implications} You deserve to feel safe and valued. `;
+    }
+    
+    // Reference conversation history if available
+    if (conversationMemory.conversationLength > 1) {
+        if (conversationMemory.emotionalProgression.length > 1) {
+            const lastEmotion = conversationMemory.emotionalProgression[conversationMemory.emotionalProgression.length - 2];
+            const currentEmotion = nlpAnalysis.emotions.primary;
+            if (lastEmotion.emotion !== currentEmotion) {
+                response += `I notice your emotional state has shifted from ${lastEmotion.emotion} to ${currentEmotion} - this shows you're processing and moving through this experience. `;
+            }
+        }
+    }
+    
+    // Provide growth-oriented support
+    if (contextualInsights.growthOpportunities.length > 0) {
+        const primaryGrowth = contextualInsights.growthOpportunities[0];
+        response += `This challenging situation is actually inviting you to develop your ${primaryGrowth.area.replace('_', ' ')}. ${primaryGrowth.description} I believe in your capacity to grow through this. `;
+    }
+    
+    // Offer specific actionable support
+    if (contextualInsights.actionableInsights.immediate_actions.length > 0) {
+        const action = contextualInsights.actionableInsights.immediate_actions[0];
+        response += `For today, I invite you to consider this gentle step: ${action.description}. You don't have to be perfect - just loving toward yourself. ✨`;
+    } else {
+        response += `What feels like the most nurturing thing you could do for yourself today? Even something small that honors your beautiful heart. 💝`;
+    }
+    
+    return response;
+}
+
+function generateDetailedDirectResponse(userMessage, nlpAnalysis, contextualInsights, conversationMemory) {
+    let response = '';
+    
+    // Start with direct acknowledgment
+    if (userMessage.toLowerCase().includes('confused') || userMessage.toLowerCase().includes('mixed signals')) {
+        response += `Stop being confused by someone whose actions are crystal clear. 💣 `;
+    } else if (userMessage.toLowerCase().includes('hurt') || userMessage.toLowerCase().includes('pain')) {
+        response += `I know this hurts, but that pain is trying to wake you up to the truth. 🔥 `;
+    } else {
+        response += `Let's cut through the BS and get real about what's happening here. 🔥 `;
+    }
+    
+    // Address specific concerns directly
+    if (userMessage.toLowerCase().includes('communication') || userMessage.toLowerCase().includes('won\'t talk') || userMessage.toLowerCase().includes('doesn\'t respond')) {
+        response += `Someone who won't communicate properly doesn't respect you enough to try. Period. `;
+    } else if (userMessage.toLowerCase().includes('commitment') || userMessage.toLowerCase().includes('what are we') || userMessage.toLowerCase().includes('situationship')) {
+        response += `If they wanted to commit, they would have by now. Stop making excuses for their indecision. `;
+    } else if (userMessage.toLowerCase().includes('boundaries') || userMessage.toLowerCase().includes('disrespect')) {
+        response += `Stop asking for permission to set boundaries. Just set them and watch who respects them. `;
+    } else if (userMessage.toLowerCase().includes('worth') || userMessage.toLowerCase().includes('deserve') || userMessage.toLowerCase().includes('good enough')) {
+        response += `You're accepting treatment you know you don't deserve. When are you going to demand better? `;
+    }
+    
+    // Give direct action steps
+    if (userMessage.toLowerCase().includes('should i leave') || userMessage.toLowerCase().includes('should i break up')) {
+        response += `Here's what you're going to do: Stop overthinking and start acting. Set a deadline for change or walk away. What's the first boundary you need to set TODAY? 💪`;
+    } else if (userMessage.toLowerCase().includes('is this normal') || userMessage.toLowerCase().includes('am i overreacting')) {
+        response += `You already know the answer. Stop looking for permission to trust your gut. 🎯`;
+    } else if (userMessage.toLowerCase().includes('what should i do') || userMessage.toLowerCase().includes('help me')) {
+        response += `Stop asking what to do when you know exactly what needs to happen. The question is: when are you going to stop talking and start doing? �`;
+    } else {
+        response += `You know exactly what needs to happen here. The question is: when are you going to stop talking and start doing? 🔥`;
+    }
+    
+    return response;
+}
+
+function generateDetailedStrategicResponse(userMessage, nlpAnalysis, contextualInsights, conversationMemory) {
+    let response = '';
+    
+    // Analytical assessment
+    response += `Strategic analysis of your situation: 🧠 `;
+    
+    // Quantified relationship health assessment
+    response += `Relationship health metrics show ${contextualInsights.relationshipHealth.score}/100 (${contextualInsights.relationshipHealth.level}). `;
+    
+    // Pattern analysis
+    if (nlpAnalysis.behaviorPatterns.cyclicalBehaviors.length > 0) {
+        response += `Identified behavioral cycles: ${nlpAnalysis.behaviorPatterns.cyclicalBehaviors.join(', ')}. This indicates systemic issues rather than isolated incidents. `;
+    }
+    
+    // Risk-benefit analysis
+    const riskFactors = contextualInsights.redFlags.length;
+    const benefitFactors = contextualInsights.greenFlags.length;
+    response += `Current risk-benefit ratio: ${riskFactors} risk factors to ${benefitFactors} positive indicators. `;
+    
+    if (riskFactors > benefitFactors) {
+        response += `Cost-benefit analysis suggests high opportunity cost for continued investment. `;
+    }
+    
+    // Strategic framework based on conversation history
+    if (conversationMemory.conversationLength > 1) {
+        response += `Conversation pattern analysis shows ${conversationMemory.establishedThemes.length} recurring themes, indicating persistent rather than transient issues. `;
+    }
+    
+    // Systematic action plan
+    if (contextualInsights.actionableInsights.short_term_goals.length > 0) {
+        const goal = contextualInsights.actionableInsights.short_term_goals[0];
+        response += `Recommended strategic approach: `;
+        response += `Phase 1 (${goal.timeline}): ${goal.goal.replace('_', ' ')}. `;
+        response += `Implementation steps: ${goal.steps.join(', ')}. `;
+    }
+    
+    // Decision framework
+    if (contextualInsights.growthOpportunities.length > 0) {
+        const priority = contextualInsights.growthOpportunities.find(o => o.priority === 'high');
+        if (priority) {
+            response += `Priority development area: ${priority.area.replace('_', ' ')}. ROI: ${priority.description} `;
+        }
+    }
+    
+    // Measurable outcomes
+    response += `Success metrics: Define specific, measurable behavioral changes within 30 days. Track progress weekly. What quantifiable outcome indicates improvement? 📊`;
+    
+    return response;
+}
+
+function generateDetailedIntuitiveResponse(userMessage, nlpAnalysis, contextualInsights, conversationMemory) {
+    let response = '';
+    
+    // Spiritual/energetic reading
+    if (nlpAnalysis.emotions.intensity === 'extreme') {
+        response += `Your energy feels heavy and contracted right now. This intense ${nlpAnalysis.emotions.primary} is your soul's way of saying this connection is disrupting your natural flow. 🔮 `;
+    } else if (nlpAnalysis.emotions.contradictoryEmotions.length > 0) {
+        response += `I sense conflicting energies within you - your heart pulling one way while your mind pushes another. This inner discord is asking you to find your center. ✨ `;
+    }
+    
+    // Deeper spiritual context
+    if (contextualInsights.relationshipHealth.level === 'toxic') {
+        response += `This relationship is creating energetic imbalance in your life. Your chakras are likely blocked, especially your heart and throat centers. When we stay in toxic dynamics, we're essentially choosing fear over love. `;
+    }
+    
+    // Karmic lesson recognition
+    if (nlpAnalysis.behaviorPatterns.cyclicalBehaviors.length > 0) {
+        response += `These recurring patterns are soul lessons asking you to step into your power. The universe keeps presenting the same scenario until you embody the lesson. What is your spirit learning about boundaries and self-worth? `;
+    }
+    
+    // Intuitive insights based on conversation progression
+    if (conversationMemory.conversationLength > 1) {
+        if (conversationMemory.emotionalProgression.length > 1) {
+            response += `Your energy has been shifting through this conversation - I can feel your inner wisdom awakening. Trust this process of spiritual clarity. `;
+        }
+    }
+    
+    // Guided visualization or spiritual practice
+    if (contextualInsights.actionableInsights.immediate_actions.length > 0) {
+        response += `Your guides are asking you to `;
+        const action = contextualInsights.actionableInsights.immediate_actions[0];
+        response += action.description.toLowerCase() + `. `;
+    }
+    
+    // Soul-level guidance
+    if (contextualInsights.growthOpportunities.length > 0) {
+        const growthArea = contextualInsights.growthOpportunities[0];
+        response += `This experience is calling you to embody more ${growthArea.area.replace('_', ' ')}. Your soul chose this challenge to activate dormant wisdom within you. `;
+    }
+    
+    // Closing spiritual wisdom
+    response += `Place your hand on your heart, breathe deeply, and ask: "What would the highest version of myself do?" The first answer that comes is your truth. Honor it completely. 🌟`;
+    
+    return response;
+}
+
+function detectComplexEmotions(message) {
+    const emotions = {
+        primary: null,
+        secondary: [],
+        intensity: 'medium'
+    };
+    
+    // Primary emotions with intensity indicators
+    const emotionMap = {
+        devastated: { emotion: 'hurt', intensity: 'high' },
+        heartbroken: { emotion: 'hurt', intensity: 'high' },
+        crushed: { emotion: 'hurt', intensity: 'high' },
+        betrayed: { emotion: 'hurt', intensity: 'high' },
+        hurt: { emotion: 'hurt', intensity: 'medium' },
+        disappointed: { emotion: 'hurt', intensity: 'low' },
+        
+        furious: { emotion: 'angry', intensity: 'high' },
+        pissed: { emotion: 'angry', intensity: 'high' },
+        livid: { emotion: 'angry', intensity: 'high' },
+        angry: { emotion: 'angry', intensity: 'medium' },
+        frustrated: { emotion: 'angry', intensity: 'medium' },
+        annoyed: { emotion: 'angry', intensity: 'low' },
+        
+        terrified: { emotion: 'anxious', intensity: 'high' },
+        panicked: { emotion: 'anxious', intensity: 'high' },
+        overwhelmed: { emotion: 'anxious', intensity: 'high' },
+        worried: { emotion: 'anxious', intensity: 'medium' },
+        nervous: { emotion: 'anxious', intensity: 'medium' },
+        uneasy: { emotion: 'anxious', intensity: 'low' },
+        
+        lost: { emotion: 'confused', intensity: 'high' },
+        bewildered: { emotion: 'confused', intensity: 'high' },
+        confused: { emotion: 'confused', intensity: 'medium' },
+        uncertain: { emotion: 'confused', intensity: 'medium' },
+        unsure: { emotion: 'confused', intensity: 'low' }
+    };
+    
+    // Find the primary emotion
+    for (const [word, data] of Object.entries(emotionMap)) {
+        if (message.includes(word)) {
+            emotions.primary = data.emotion;
+            emotions.intensity = data.intensity;
+            break;
+        }
+    }
+    
+    // Look for secondary emotions
+    const allEmotions = Object.values(emotionMap).map(e => e.emotion);
+    emotions.secondary = [...new Set(allEmotions.filter(emotion => 
+        emotion !== emotions.primary && 
+        Object.keys(emotionMap).some(word => 
+            emotionMap[word].emotion === emotion && message.includes(word)
+        )
+    ))];
+    
+    return emotions;
+}
+
+function extractTimeframe(message) {
+    const timeIndicators = {
+        'recent': ['today', 'yesterday', 'this morning', 'last night', 'just happened'],
+        'this_week': ['this week', 'few days ago', 'earlier this week'],
+        'ongoing': ['keeps happening', 'always does', 'constantly', 'every time'],
+        'long_term': ['for months', 'for years', 'long time', 'always been'],
+        'future': ['what if', 'worried about', 'might happen', 'going to']
+    };
+    
+    for (const [timeframe, keywords] of Object.entries(timeIndicators)) {
+        if (keywords.some(keyword => message.includes(keyword))) {
+            return timeframe;
+        }
+    }
+    
+    return 'unspecified';
+}
+
+function extractRelationshipDetails(message) {
+    return {
+        duration: extractDuration(message),
+        livingTogether: message.includes('live together') || message.includes('moved in'),
+        longDistance: message.includes('long distance') || message.includes('different cities'),
+        ageGap: message.includes('older') || message.includes('younger') || message.includes('age'),
+        pastRelationship: message.includes('ex') || message.includes('past relationship'),
+        publicStatus: message.includes('social media') || message.includes('instagram') || message.includes('facebook')
+    };
+}
+
+function extractDuration(message) {
+    const durationPatterns = [
+        /(\d+)\s*years?/i,
+        /(\d+)\s*months?/i,
+        /(\d+)\s*weeks?/i,
+        /a few (months|weeks|years)/i,
+        /couple (months|weeks|years)/i
+    ];
+    
+    for (const pattern of durationPatterns) {
+        const match = message.match(pattern);
+        if (match) {
+            return match[0];
+        }
+    }
+    
+    return null;
+}
+
+function extractSpecificConcerns(message) {
+    const concerns = [];
+    
+    const concernMap = {
+        'communication_frequency': ['never texts', 'doesn\'t call', 'takes forever to respond', 'leaves me on read'],
+        'mixed_signals': ['mixed signals', 'hot and cold', 'confusing behavior', 'says one thing does another'],
+        'commitment_avoidance': ['won\'t define', 'afraid of labels', 'commitment issues', 'won\'t make it official'],
+        'jealousy_issues': ['jealous of', 'other women', 'other men', 'flirts with', 'talks to exes'],
+        'intimacy_problems': ['won\'t be intimate', 'physical issues', 'emotional walls', 'won\'t open up'],
+        'future_uncertainty': ['no future plans', 'won\'t talk about future', 'doesn\'t see long term'],
+        'disrespect': ['disrespects me', 'doesn\'t listen', 'interrupts me', 'dismissive'],
+        'lying': ['caught lying', 'dishonest', 'hides things', 'secretive'],
+        'addiction': ['drinking problem', 'substance abuse', 'gambling', 'addiction'],
+        'financial': ['money issues', 'won\'t pay', 'financial stress', 'different money values']
+    };
+    
+    for (const [concern, keywords] of Object.entries(concernMap)) {
+        if (keywords.some(keyword => message.includes(keyword))) {
+            concerns.push(concern);
+        }
+    }
+    
+    return concerns;
+}
+
+function determineActionNeeded(message) {
+    if (message.includes('should i leave') || message.includes('should i break up')) return 'decision_needed';
+    if (message.includes('how do i') || message.includes('what should i say')) return 'action_plan';
+    if (message.includes('is this normal') || message.includes('am i overreacting')) return 'validation';
+    if (message.includes('what does this mean') || message.includes('why would')) return 'understanding';
+    if (message.includes('help me') || message.includes('what do i do')) return 'guidance';
+    
+    return 'support';
+}
+
+function assessUrgency(message) {
+    const highUrgency = ['emergency', 'urgent', 'happening right now', 'need help now', 'crisis'];
+    const mediumUrgency = ['today', 'tonight', 'this morning', 'just happened'];
+    
+    if (highUrgency.some(word => message.includes(word))) return 'high';
+    if (mediumUrgency.some(word => message.includes(word))) return 'medium';
+    return 'low';
+}
+
+function identifyPatterns(message) {
+    const patterns = [];
+    
+    if (message.includes('always') || message.includes('every time') || message.includes('constantly')) {
+        patterns.push('recurring_behavior');
+    }
+    if (message.includes('used to') || message.includes('before') || message.includes('changed')) {
+        patterns.push('behavior_change');
+    }
+    if (message.includes('cycle') || message.includes('pattern') || message.includes('happens again')) {
+        patterns.push('recognized_pattern');
+    }
+    
+    return patterns;
+}
+
+function findPreviousMentions(message) {
+    // This would ideally check previous messages in the conversation
+    // For now, we'll check for self-referential statements
+    const mentions = [];
+    
+    if (message.includes('like i said') || message.includes('as i mentioned')) {
+        mentions.push('previous_context');
+    }
+    if (message.includes('update') || message.includes('follow up')) {
+        mentions.push('continuation');
+    }
+    
+    return mentions;
+}
+
+function getConversationContext() {
+    // Analyze previous messages for context
+    const context = {
+        isFirstMessage: currentConversation.length <= 1,
+        previousTopics: [],
+        userEmotionalState: 'unknown',
+        establishedConcerns: [],
+        adviceGiven: []
+    };
+    
+    if (currentConversation.length > 1) {
+        // Analyze previous user messages
+        const userMessages = currentConversation.filter(msg => msg.type === 'user');
+        const coachMessages = currentConversation.filter(msg => msg.type === 'coach');
+        
+        // Extract topics from previous messages
+        userMessages.forEach(msg => {
+            const analysis = performDeepAnalysis(msg.message);
+            context.previousTopics.push(analysis.situation);
+            context.establishedConcerns.push(...analysis.specificConcerns);
+        });
+        
+        // Track what advice was given
+        coachMessages.forEach(msg => {
+            if (msg.message.includes('I suggest') || msg.message.includes('try')) {
+                context.adviceGiven.push('action_oriented');
+            }
+            if (msg.message.includes('your feelings') || msg.message.includes('validate')) {
+                context.adviceGiven.push('emotional_support');
+            }
+        });
+    }
+    
+    return context;
+}
+
+function generatePersonalizedResponse(userMessage, analysis, context, coachType) {
+    let response = '';
+    
+    // Generate response based on coach type with deep personalization
+    switch (coachType) {
+        case 'supportive':
+            response = generateAdvancedSupportiveResponse(userMessage, analysis, context);
+            break;
+        case 'direct':
+            response = generateAdvancedDirectResponse(userMessage, analysis, context);
+            break;
+        case 'strategic':
+            response = generateAdvancedStrategicResponse(userMessage, analysis, context);
+            break;
+        case 'intuitive':
+            response = generateAdvancedIntuitiveResponse(userMessage, analysis, context);
+            break;
+    }
+    
+    return response;
+}
+
+function generateAdvancedSupportiveResponse(userMessage, analysis, context) {
+    let response = '';
+    
+    // Personalized emotional acknowledgment
+    if (analysis.emotion.primary === 'hurt' && analysis.emotion.intensity === 'high') {
+        response += `Oh honey, I can feel the deep pain in your words. What you're going through with ${getRelationshipReference(analysis)} sounds absolutely heartbreaking. 💚 `;
+    } else if (analysis.emotion.primary === 'confused' && analysis.specificConcerns.includes('mixed_signals')) {
+        response += `The confusion you're feeling makes complete sense - mixed signals would leave anyone feeling lost and uncertain. 🤗 `;
+    } else if (analysis.emotion.primary === 'angry' && analysis.timeframe === 'recent') {
+        response += `I hear the fresh anger in your voice, and honestly, it sounds like your boundaries have been crossed. That anger is protecting something valuable in you. 💕 `;
+    } else {
+        response += `Thank you for trusting me with what's happening in your ${getRelationshipType(analysis)}. 💚 `;
+    }
+    
+    // Address specific situation with empathy
+    if (analysis.situation === 'undefined' && analysis.specificConcerns.includes('commitment_avoidance')) {
+        response += `Being in a situationship when you want clarity is emotionally exhausting. Your need to know where you stand isn't needy - it's human. `;
+    } else if (analysis.situation === 'long_term' && analysis.specificConcerns.includes('communication_frequency')) {
+        response += `After ${analysis.relationships.duration || 'being together this long'}, you deserve consistent communication. This isn't asking for too much. `;
+    } else if (analysis.situation === 'new_relationship' && analysis.emotion.primary === 'anxious') {
+        response += `New relationships can bring up so much anxiety, especially when you're starting to care about someone. Your feelings are so normal. `;
+    }
+    
+    // Specific guidance based on what they need
+    if (analysis.actionNeeded === 'decision_needed') {
+        response += `I know you're weighing whether to stay or go. What does your heart tell you when you imagine your life ${analysis.timeframe === 'future' ? 'continuing like this' : 'without this pattern'}? Trust that inner wisdom. ✨`;
+    } else if (analysis.actionNeeded === 'validation') {
+        response += `You're absolutely not overreacting. Anyone in your situation would feel ${analysis.emotion.primary}. Your feelings are your internal compass guiding you toward what you need. 🧭`;
+    } else if (analysis.actionNeeded === 'action_plan') {
+        response += `Let's think about the most loving way to approach this. What would honoring both your needs and your heart look like? You don't have to have all the answers right now. 🌸`;
+    } else {
+        response += `What feels like the most nurturing step you could take for yourself today? Even something small that honors your worth. 💝`;
+    }
+    
+    return response;
+}
+
+function generateAdvancedDirectResponse(userMessage, analysis, context) {
+    let response = '';
+    
+    // Direct, no-nonsense acknowledgment
+    if (analysis.emotion.primary === 'confused' && analysis.specificConcerns.includes('mixed_signals')) {
+        response += `Stop calling them "mixed signals" - they're actually crystal clear signals that this person doesn't respect you enough to be consistent. 🔥 `;
+    } else if (analysis.situation === 'undefined' && analysis.relationships.duration) {
+        response += `${analysis.relationships.duration} of undefined? Come on. If they wanted to commit to you, they would have done it by now. Period. 💣 `;
+    } else if (analysis.emotion.primary === 'hurt' && analysis.patterns.includes('recurring_behavior')) {
+        response += `I know it hurts, but this pain is trying to wake you up. You keep getting hurt because you keep accepting behavior that hurts you. 🎯 `;
+    } else {
+        response += `Let's cut through the BS here and talk about what's really happening. 🔥 `;
+    }
+    
+    // Direct analysis of their situation
+    if (analysis.specificConcerns.includes('communication_frequency')) {
+        response += `Someone who leaves you on read or takes days to respond is showing you exactly how much you matter to them. Stop making excuses for their disrespect. `;
+    } else if (analysis.specificConcerns.includes('commitment_avoidance')) {
+        response += `"Afraid of labels" is code for "I want the benefits of a relationship without the responsibility." You're settling for scraps. `;
+    } else if (analysis.actionNeeded === 'validation') {
+        response += `You already know this isn't right - that's why you're here asking. Stop looking for permission to trust your gut. `;
+    }
+    
+    // Direct action step
+    if (analysis.actionNeeded === 'decision_needed') {
+        response += `Here's your reality check: Make a decision by ${getTimeframe(analysis)}. Either they step up and meet your needs, or you walk. No more limbo. What's it going to be? 💪`;
+    } else if (analysis.urgency === 'high') {
+        response += `This is happening RIGHT NOW, which means you need to act RIGHT NOW. What boundary are you setting today? 🔥`;
+    } else {
+        response += `Stop overthinking and start doing. What's the first thing you're going to change about this situation? And when? 💥`;
+    }
+    
+    return response;
+}
+
+function generateAdvancedStrategicResponse(userMessage, analysis, context) {
+    let response = '';
+    
+    // Analytical framing
+    response += `Let me help you analyze this systematically. 🧠 `;
+    
+    // Data-driven analysis
+    if (analysis.patterns.includes('recurring_behavior')) {
+        response += `The recurring pattern you've described indicates this is a core behavioral trait, not a temporary issue. `;
+    } else if (analysis.patterns.includes('behavior_change')) {
+        response += `The behavioral change you've noticed suggests external factors or shifting priorities on their part. `;
+    }
+    
+    // Strategic assessment based on specifics
+    if (analysis.situation === 'undefined' && analysis.relationships.duration) {
+        response += `After ${analysis.relationships.duration}, the cost-benefit analysis shows you're investing relationship-level emotional energy for situationship-level returns. `;
+    } else if (analysis.specificConcerns.includes('communication_frequency')) {
+        response += `Communication frequency directly correlates with relationship investment. Current patterns suggest misaligned priorities. `;
+    } else if (analysis.specificConcerns.includes('mixed_signals')) {
+        response += `Mixed signals typically indicate internal conflict or strategic ambiguity to maintain options. `;
+    }
+    
+    // Strategic framework
+    if (analysis.actionNeeded === 'decision_needed') {
+        response += `Decision framework: (1) Define your non-negotiables, (2) Assess current reality against those standards, (3) Create a timeline for change, (4) Execute with consistency. What's your primary non-negotiable here? 📊`;
+    } else if (analysis.actionNeeded === 'action_plan') {
+        response += `Strategic approach: First, gather more data by ${getDataGatheringMethod(analysis)}. Then, implement a test by ${getTestStrategy(analysis)}. What specific outcome will indicate success? 📈`;
+    } else {
+        response += `Next steps: (1) Document patterns for 2 weeks, (2) Communicate specific needs once clearly, (3) Observe behavioral response, (4) Make decision based on data. Which step needs immediate focus? 🎯`;
+    }
+    
+    return response;
+}
+
+function generateAdvancedIntuitiveResponse(userMessage, analysis, context) {
+    let response = '';
+    
+    // Spiritual/intuitive framing
+    if (analysis.emotion.primary === 'hurt') {
+        response += `Your soul is crying out because this connection isn't nourishing your highest self. Pain is your spirit's way of saying "this isn't aligned." 🔮 `;
+    } else if (analysis.emotion.primary === 'confused') {
+        response += `The confusion you feel is your intuition fighting against what your mind is trying to rationalize. Your inner knowing is clear - listen deeper. ✨ `;
+    } else {
+        response += `The universe has guided you to this moment of clarity. Your spirit knows what it needs. 🌙 `;
+    }
+    
+    // Spiritual context for their situation
+    if (analysis.situation === 'undefined' && analysis.specificConcerns.includes('commitment_avoidance')) {
+        response += `Sacred partnerships require both souls to choose growth together. One-sided spiritual investment creates energetic imbalance. `;
+    } else if (analysis.specificConcerns.includes('mixed_signals')) {
+        response += `Mixed signals block the natural flow of authentic connection. True love moves with clarity and intention. `;
+    } else if (analysis.patterns.includes('recurring_behavior')) {
+        response += `This recurring pattern is a spiritual lesson asking you to step into your power. What is your soul trying to learn? `;
+    }
+    
+    // Intuitive guidance
+    if (analysis.actionNeeded === 'decision_needed') {
+        response += `Close your eyes, place your hand on your heart, and ask: "What would love do?" The first answer that comes is your truth. Trust it completely. 🦋`;
+    } else if (analysis.actionNeeded === 'validation') {
+        response += `Your feelings are divine messengers. They're not random - they're guiding you toward your highest good. What is this feeling trying to protect in you? 🌟`;
+    } else {
+        response += `This challenge is inviting you to embody your full power. What version of yourself is ready to emerge from this experience? Step into that energy. ✨`;
+    }
+    
+    return response;
+}
+
+// Helper functions for personalized responses
+function getRelationshipReference(analysis) {
+    if (analysis.situation === 'undefined') return 'this situationship';
+    if (analysis.situation === 'new_relationship') return 'this new connection';
+    if (analysis.situation === 'long_term') return 'your relationship';
+    if (analysis.relationships.duration) return `your ${analysis.relationships.duration} relationship`;
+    return 'this person';
+}
+
+function getRelationshipType(analysis) {
+    if (analysis.situation === 'family') return 'family situation';
+    if (analysis.situation === 'work') return 'work situation';
+    if (analysis.situation === 'friendship') return 'friendship';
+    return 'relationship';
+}
+
+function getTimeframe(analysis) {
+    if (analysis.urgency === 'high') return 'today';
+    if (analysis.timeframe === 'recent') return 'this week';
+    return 'soon';
+}
+
+function getDataGatheringMethod(analysis) {
+    if (analysis.specificConcerns.includes('communication_frequency')) return 'tracking response times and initiation patterns';
+    if (analysis.specificConcerns.includes('mixed_signals')) return 'documenting specific contradictory behaviors';
+    return 'observing consistent behavioral patterns';
+}
+
+function getTestStrategy(analysis) {
+    if (analysis.specificConcerns.includes('commitment_avoidance')) return 'having one clear conversation about relationship direction';
+    if (analysis.specificConcerns.includes('communication_frequency')) return 'setting specific communication expectations';
+    return 'expressing your needs clearly and observing the response';
+}
+
+function showTypingIndicator() {
+    const messagesContainer = document.getElementById('chatMessages');
+    const typingDiv = document.createElement('div');
+    typingDiv.id = 'typingIndicator';
+    typingDiv.className = 'coach-message';
+    typingDiv.style.borderLeft = `4px solid ${coachProfiles[currentCoach].color}`;
+    typingDiv.innerHTML = `
+        <span style="color: #c0c0c0; font-style: italic;">
+            ${coachProfiles[currentCoach].name.split(' ')[1]} is typing
+            <span class="typing-indicator"></span>
+            <span class="typing-indicator"></span>
+            <span class="typing-indicator"></span>
+        </span>
+    `;
+    messagesContainer.appendChild(typingDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) indicator.remove();
+}
+
+function saveChatToHistory() {
+    if (currentConversation.length < 2) return; // Don't save if only welcome message
+    
+    const chatSession = {
+        id: Date.now(),
+        coach: currentCoach,
+        timestamp: new Date().toISOString(),
+        messages: [...currentConversation],
+        title: generateChatTitle(currentConversation[1]?.message || 'Conversation')
+    };
+    
+    chatHistory.unshift(chatSession);
+    
+    // Keep only last 50 conversations
+    if (chatHistory.length > 50) {
+        chatHistory = chatHistory.slice(0, 50);
+    }
+    
+    localStorage.setItem('aiCoachHistory', JSON.stringify(chatHistory));
+}
+
+function generateChatTitle(firstUserMessage) {
+    const title = firstUserMessage.substring(0, 50);
+    return title.length < firstUserMessage.length ? title + '...' : title;
+}
+
+function viewChatHistory() {
+    updateHistoryStats();
+    document.getElementById('chatHistoryModal').style.display = 'block';
+}
+
+function closeChatHistory() {
+    document.getElementById('chatHistoryModal').style.display = 'none';
+}
+
+function updateHistoryStats() {
+    const totalChats = chatHistory.length;
+    document.getElementById('totalChats').textContent = totalChats;
+    
+    // Calculate favorite coach
+    const coachCounts = {};
+    let totalMessages = 0;
+    
+    chatHistory.forEach(chat => {
+        if (coachCounts[chat.coach]) {
+            coachCounts[chat.coach]++;
+        } else {
+            coachCounts[chat.coach] = 1;
+        }
+        totalMessages += chat.messages.filter(m => m.type === 'user').length;
+    });
+    
+    const favoriteCoach = Object.keys(coachCounts).reduce((a, b) => 
+        coachCounts[a] > coachCounts[b] ? a : b, Object.keys(coachCounts)[0] || 'None'
+    );
+    
+    document.getElementById('favoriteCoach').textContent = 
+        favoriteCoach === 'None' ? '-' : coachProfiles[favoriteCoach]?.name.split(' ')[1] || '-';
+    document.getElementById('totalMessages').textContent = totalMessages;
+    
+    // Update history list
+    updateHistoryList();
+}
+
+function updateHistoryList() {
+    const historyList = document.getElementById('historyList');
+    
+    if (chatHistory.length === 0) {
+        historyList.innerHTML = '<p style="color: #c0c0c0; text-align: center; margin: 20px 0;">No chat history yet. Start a conversation with one of your AI coaches!</p>';
+        return;
+    }
+    
+    historyList.innerHTML = chatHistory.map(chat => {
+        const date = new Date(chat.timestamp).toLocaleDateString();
+        const profile = coachProfiles[chat.coach];
+        const messageCount = chat.messages.filter(m => m.type === 'user').length;
+        
+        return `
+            <div class="history-item" onclick="loadChatHistory('${chat.id}')">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="color: ${profile.color}; font-weight: bold;">${profile.name}</span>
+                    <span style="color: #c0c0c0; font-size: 0.8rem;">${date}</span>
+                </div>
+                <p style="color: #ffffff; margin: 0; font-size: 0.9rem;">${chat.title}</p>
+                <p style="color: #c0c0c0; margin: 5px 0 0; font-size: 0.8rem;">${messageCount} messages</p>
+            </div>
+        `;
+    }).join('');
+}
+
+function loadChatHistory(chatId) {
+    const chat = chatHistory.find(c => c.id == chatId);
+    if (!chat) return;
+    
+    // Switch to the coach from that conversation
+    selectCoach(chat.coach);
+    
+    // Load the conversation
+    const messagesContainer = document.getElementById('chatMessages');
+    
+    // Clear current messages except initial
+    const existingMessages = messagesContainer.querySelectorAll('.user-message, .coach-message:not(#initialMessage .coach-message)');
+    existingMessages.forEach(msg => msg.remove());
+    
+    // Add historical messages (skip welcome message)
+    chat.messages.slice(1).forEach(msg => {
+        addMessageToChat(msg.type, msg.message);
+    });
+    
+    // Update current conversation
+    currentConversation = [...chat.messages];
+    
+    // Close history modal
+    closeChatHistory();
+    
+    showToast('Chat history loaded! 📚');
+}
+
+function changeCoach() {
+    // Reset the interface
+    document.getElementById('chatInterface').style.display = 'none';
+    document.querySelectorAll('.coach-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    currentCoach = null;
+    currentConversation = [];
+    
+    showToast('Choose a new coach to continue! 🔄');
+}
+
+function useQuickPrompt(button) {
+    document.getElementById('messageInput').value = button.textContent;
+    document.getElementById('messageInput').focus();
+}
+
+function handleKeyPress(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
+}
+
+function showToast(message) {
+    const toast = document.getElementById('successToast');
+    document.getElementById('toastMessage').textContent = message;
+    toast.style.display = 'block';
+    
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 3000);
+}
+
+// Initialize coach selection
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.coach-card').forEach(card => {
+        card.addEventListener('click', function() {
+            selectCoach(this.dataset.coach);
+        });
+    });
+    
+    // Auto-focus message input when interface is shown
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.target.id === 'chatInterface' && 
+                mutation.target.style.display === 'block') {
+                setTimeout(() => {
+                    document.getElementById('messageInput').focus();
+                }, 100);
+            }
+        });
+    });
+    
+    const chatInterface = document.getElementById('chatInterface');
+    if (chatInterface) {
+        observer.observe(chatInterface, { attributes: true, attributeFilter: ['style'] });
+    }
+});
+</script>
+
+{% endblock %}

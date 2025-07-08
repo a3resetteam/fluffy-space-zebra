@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧘‍♀️ Your Ritual Session - The Oracle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff 0%, #74b9ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            color: #c0c0c0;
+            font-weight: 300;
+        }
+        
+        .ritual-info {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        .ritual-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .meta-item {
+            background: rgba(116, 185, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(116, 185, 255, 0.3);
+        }
+        
+        .meta-label {
+            font-size: 0.9rem;
+            color: #74b9ff;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .meta-value {
+            font-size: 1.1rem;
+            color: #ffffff;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        
+        .timer-section {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        .timer-display {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #74b9ff;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .timer-label {
+            font-size: 1.2rem;
+            color: #c0c0c0;
+            margin-bottom: 20px;
+        }
+        
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: #ffffff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(116, 185, 255, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e17055 0%, #fd79a8 100%);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+        }
+        
+        .progress-bar {
+            background: #333;
+            border-radius: 15px;
+            height: 12px;
+            margin: 20px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .progress-fill {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 1s ease;
+            border-radius: 15px;
+        }
+        
+        .steps-container {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 100px;
+        }
+        
+        .ritual-step {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 2px solid #333;
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            opacity: 0.4;
+            transform: scale(0.98);
+        }
+        
+        .ritual-step.active {
+            opacity: 1;
+            transform: scale(1);
+            border-color: #74b9ff;
+            box-shadow: 0 20px 40px rgba(116, 185, 255, 0.2);
+        }
+        
+        .ritual-step.completed {
+            opacity: 0.7;
+            border-color: #00b894;
+            background: linear-gradient(135deg, rgba(0, 184, 148, 0.1) 0%, rgba(0, 160, 133, 0.1) 100%);
+        }
+        
+        .step-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #74b9ff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .step-number {
+            background: #74b9ff;
+            color: #000;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .step-instruction {
+            font-size: 1.1rem;
+            color: #ffffff;
+            line-height: 1.8;
+        }
+        
+        .ritual-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 26, 46, 0.95);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+        
+        .status-waiting {
+            background: #636e72;
+        }
+        
+        .status-active {
+            background: #74b9ff;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-completed {
+            background: #00b894;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .completion-message {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .completion-message h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .timer-display {
+                font-size: 2.5rem;
+            }
+            
+            .ritual-controls {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                margin-top: 30px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .steps-container {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧘‍♀️ Your {{ ritual_data.ritual_need | title }} Ritual</h1>
+            <p>Personalized Transformation Session</p>
+        </div>
+
+        <div class="ritual-info">
+            <div class="ritual-meta">
+                <div class="meta-item">
+                    <div class="meta-label">⏳ Duration</div>
+                    <div class="meta-value">{{ ritual_data.duration }} minutes</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">🕒 Time</div>
+                    <div class="meta-value">{{ ritual_data.time_of_day }}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">😊 Mood</div>
+                    <div class="meta-value">{{ ritual_data.mood }}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">🏡 Environment</div>
+                    <div class="meta-value">{{ ritual_data.environment }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timer-section">
+            <div class="timer-display" id="timer-display">{{ '%02d'|format((ritual_data.duration // 60)) }}:{{ '%02d'|format((ritual_data.duration % 60)) }}</div>
+            <div class="timer-label">Ritual Time Remaining</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="timer-controls">
+                <button class="btn" id="start-btn" onclick="startRitual()">🚀 Start Ritual</button>
+                <button class="btn btn-secondary" id="pause-btn" onclick="pauseRitual()" style="display: none;">⏸️ Pause</button>
+                <button class="btn btn-danger" id="reset-btn" onclick="resetRitual()">🔄 Reset</button>
+            </div>
+        </div>
+
+        <div class="steps-container" id="steps-container">
+            {% for step in ritual_steps %}
+            <div class="ritual-step" id="step-{{ loop.index0 }}">
+                <div class="step-title">
+                    <div class="step-number">{{ loop.index }}</div>
+                    <span>{{ step.title }}</span>
+                    <span class="status-indicator status-waiting" id="status-{{ loop.index0 }}"></span>
+                </div>
+                <div class="step-instruction">{{ step.instruction }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="completion-message" id="completion-message">
+            <h2>🎉 Ritual Complete!</h2>
+            <p>You have successfully completed your {{ ritual_data.ritual_need }} ritual. Feel the transformation within you.</p>
+            <div style="margin-top: 20px;">
+                <a href="{{ url_for('ritual_creator') }}" class="btn">🔮 Create Another Ritual</a>
+                <a href="{{ url_for('home') }}" class="btn btn-secondary">🏠 Return Home</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="ritual-controls" id="ritual-controls">
+        <button class="btn btn-success" id="complete-step-btn" onclick="completeCurrentStep()" style="display: none;">✅ Complete Step</button>
+        <a href="{{ url_for('ritual_creator') }}" class="btn btn-secondary">🔙 Back to Creator</a>
+    </div>
+
+    <script>
+        const totalDurationMinutes = {{ ritual_data.duration }};
+        let totalDuration = totalDurationMinutes * 60; // Convert to seconds
+        let timeRemaining = totalDuration;
+        let currentStep = 0;
+        const totalSteps = {{ ritual_steps|length }};
+        let timerInterval = null;
+        let isRunning = false;
+        let stepTimeAllocation = Math.floor(totalDuration / totalSteps);
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer-display').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            const progress = ((totalDuration - timeRemaining) / totalDuration) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+        }
+
+        function startRitual() {
+            if (!isRunning) {
+                isRunning = true;
+                document.getElementById('start-btn').style.display = 'none';
+                document.getElementById('pause-btn').style.display = 'inline-block';
+                document.getElementById('complete-step-btn').style.display = 'inline-block';
+                
+                activateStep(0);
+                
+                timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    updateDisplay();
+                    
+                    // Auto-advance steps based on time
+                    const expectedStep = Math.floor((totalDuration - timeRemaining) / stepTimeAllocation);
+                    if (expectedStep > currentStep && expectedStep < totalSteps) {
+                        completeCurrentStep();
+                    }
+                    
+                    if (timeRemaining <= 0) {
+                        completeRitual();
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseRitual() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                document.getElementById('start-btn').style.display = 'inline-block';
+                document.getElementById('start-btn').textContent = '▶️ Resume';
+                document.getElementById('pause-btn').style.display = 'none';
+            }
+        }
+
+        function resetRitual() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timeRemaining = totalDuration;
+            currentStep = 0;
+            
+            document.getElementById('start-btn').style.display = 'inline-block';
+            document.getElementById('start-btn').textContent = '🚀 Start Ritual';
+            document.getElementById('pause-btn').style.display = 'none';
+            document.getElementById('complete-step-btn').style.display = 'none';
+            document.getElementById('completion-message').style.display = 'none';
+            
+            updateDisplay();
+            resetAllSteps();
+        }
+
+        function activateStep(stepIndex) {
+            // Deactivate all steps
+            for (let i = 0; i < totalSteps; i++) {
+                const step = document.getElementById('step-' + i);
+                const status = document.getElementById('status-' + i);
+                if (step && status) {
+                    step.classList.remove('active', 'completed');
+                    status.classList.remove('status-active', 'status-completed');
+                    status.classList.add('status-waiting');
+                }
+            }
+            
+            // Mark previous steps as completed
+            for (let i = 0; i < stepIndex; i++) {
+                const step = document.getElementById('step-' + i);
+                const status = document.getElementById('status-' + i);
+                if (step && status) {
+                    step.classList.add('completed');
+                    status.classList.remove('status-waiting');
+                    status.classList.add('status-completed');
+                }
+            }
+            
+            // Activate current step
+            if (stepIndex < totalSteps) {
+                const step = document.getElementById('step-' + stepIndex);
+                const status = document.getElementById('status-' + stepIndex);
+                if (step && status) {
+                    step.classList.add('active');
+                    status.classList.remove('status-waiting');
+                    status.classList.add('status-active');
+                    
+                    // Scroll to active step
+                    step.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+
+        function completeCurrentStep() {
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                activateStep(currentStep);
+            } else {
+                completeRitual();
+            }
+        }
+
+        function resetAllSteps() {
+            for (let i = 0; i < totalSteps; i++) {
+                const step = document.getElementById('step-' + i);
+                const status = document.getElementById('status-' + i);
+                if (step && status) {
+                    step.classList.remove('active', 'completed');
+                    status.classList.remove('status-active', 'status-completed');
+                    status.classList.add('status-waiting');
+                }
+            }
+        }
+
+        function completeRitual() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            
+            // Mark all steps as completed
+            for (let i = 0; i < totalSteps; i++) {
+                const step = document.getElementById('step-' + i);
+                const status = document.getElementById('status-' + i);
+                if (step && status) {
+                    step.classList.remove('active');
+                    step.classList.add('completed');
+                    status.classList.remove('status-active', 'status-waiting');
+                    status.classList.add('status-completed');
+                }
+            }
+            
+            document.getElementById('timer-display').textContent = '00:00';
+            document.getElementById('progress-fill').style.width = '100%';
+            document.getElementById('completion-message').style.display = 'block';
+            document.getElementById('ritual-controls').style.display = 'none';
+            
+            // Scroll to completion message
+            document.getElementById('completion-message').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>

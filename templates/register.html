@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="header">
+    <h1>MYA3Reset: The Oracle</h1>
+    <p>✨ Begin Your Elite Transformation Journey</p>
+</div>
+
+<div class="card">
+    <h2 style="text-align: center; margin-bottom: 30px; color: #ffffff;">Join The Oracle Elite 👑</h2>
+    
+    <form method="POST" id="registration-form">
+        <div class="form-group">
+            <label for="username">👤 Username:</label>
+            <input type="text" id="username" name="username" required 
+                   placeholder="Choose your Oracle identity">
+        </div>
+        
+        <div class="form-group">
+            <label for="email">📧 Email Address:</label>
+            <input type="email" id="email" name="email" required 
+                   placeholder="your.email@domain.com">
+        </div>
+        
+        <div class="form-group">
+            <label for="password">🔑 Password:</label>
+            <input type="password" id="password" name="password" required 
+                   placeholder="Create a strong password">
+        </div>
+        
+        <div class="form-group">
+            <label for="confirm_password">🔒 Confirm Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required 
+                   placeholder="Confirm your password">
+        </div>
+
+        <!-- Premium Plan (Only Option) -->
+        <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); padding: 25px; border-radius: 15px; margin-bottom: 30px; text-align: center;">
+            <h3 style="margin: 0 0 10px 0; color: white;">🎁 3-Day FREE Trial</h3>
+            <p style="margin: 0 0 15px 0; color: rgba(255,255,255,0.9); font-size: 1.1rem;">
+                <strong>Then $19.99/month</strong> • Cancel anytime
+            </p>
+            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                <p style="margin: 0; color: white; font-size: 0.9rem;">
+                    💳 Card required • No charge for 3 days • Full access immediately
+                </p>
+            </div>
+        </div>
+
+        <!-- Payment Information (Always Required) -->
+        <div style="border-top: 2px solid #333; margin: 30px 0; padding-top: 30px;">
+            <h3 style="color: #ffffff; margin-bottom: 20px; text-align: center;">💳 Payment Information</h3>
+            <p style="color: #c0c0c0; text-align: center; margin-bottom: 25px;">
+                Your card will be charged <strong>$19.99</strong> after your 3-day free trial ends
+            </p>
+            
+            <div class="form-group">
+                <label for="card-holder-name">💎 Cardholder Name:</label>
+                <input type="text" id="card-holder-name" name="card_holder_name" required 
+                       placeholder="Full name as it appears on card">
+            </div>
+            
+            <div class="form-group">
+                <label for="card-element">💳 Card Information:</label>
+                <div id="card-element" style="padding: 15px; border: 2px solid #333; border-radius: 12px; background: #1a1a2e;">
+                    <!-- Stripe Elements will create form elements here -->
+                </div>
+                <div id="card-errors" role="alert" style="color: #e17055; margin-top: 10px;"></div>
+            </div>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div class="form-group" style="margin: 25px 0;">
+            <label style="display: flex; align-items: flex-start; cursor: pointer; color: #c0c0c0; font-size: 14px; line-height: 1.4;">
+                <input type="checkbox" id="terms" name="terms" required style="margin-right: 10px; width: auto; margin-top: 2px;">
+                <span>
+                    I have read and agree to the <a href="#" id="terms-toggle" style="color: #74b9ff; text-decoration: underline;">Terms of Service & Important Disclaimers</a> and Privacy Policy. I understand my 3-day free trial will automatically convert to a $19.99/month subscription unless cancelled.
+                </span>
+            </label>
+        </div>
+
+        <!-- Expandable Terms Section -->
+        <div id="terms-section" style="display: none; background: rgba(26, 26, 46, 0.8); border: 2px solid #333; border-radius: 15px; padding: 25px; margin: 20px 0; max-height: 400px; overflow-y: auto;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h3 style="color: #74b9ff; margin: 0;">📜 Terms of Service & Important Disclaimers</h3>
+                <button id="close-terms-section" style="background: #e17055; color: white; border: none; padding: 5px 15px; border-radius: 8px; margin-top: 10px; cursor: pointer;">Close</button>
+            </div>
+            
+            <div style="color: #ffffff; line-height: 1.6; font-size: 13px;">
+                <div style="background: rgba(231, 112, 85, 0.1); border-left: 4px solid #e17055; padding: 15px; margin-bottom: 20px; border-radius: 0 8px 8px 0;">
+                    <h4 style="color: #e17055; margin-top: 0; font-size: 14px;">🚨 1. Crisis Support Notice</h4>
+                    <p style="margin-bottom: 0; font-size: 12px;">
+                        If you are experiencing emotional distress or a mental health crisis, please contact a licensed mental health professional or call a local crisis line immediately. This platform is not intended for emergency use or therapeutic intervention.
+                    </p>
+                </div>
+
+                <div style="background: rgba(116, 185, 255, 0.1); border-left: 4px solid #74b9ff; padding: 15px; margin-bottom: 20px; border-radius: 0 8px 8px 0;">
+                    <h4 style="color: #74b9ff; margin-top: 0; font-size: 14px;">⚖️ 2. Results and Responsibility</h4>
+                    <p style="margin-bottom: 0; font-size: 12px;">
+                        Individual results may vary. You are solely responsible for your use of this platform and any actions or decisions taken based on the information provided. Alchemy3 makes no guarantees about outcomes or improvements resulting from using our platform, products, or guidance.
+                    </p>
+                </div>
+
+                <div style="background: rgba(0, 255, 136, 0.1); border-left: 4px solid #00ff88; padding: 15px; margin-bottom: 20px; border-radius: 0 8px 8px 0;">
+                    <h4 style="color: #00ff88; margin-top: 0; font-size: 14px;">🤖 3. AI Companion & Insight Disclaimer</h4>
+                    <p style="margin-bottom: 0; font-size: 12px;">
+                        The Alchemy3 AI Companion is a digital wellness assistant designed to offer guidance rooted in mindfulness, affirmations, and personal reflection. While it references insights inspired by wellness coaches, spiritual mentors, and scientific studies, it does not replace professional advice from licensed therapists, counselors, trainers, or spiritual leaders. All interactions with the AI are intended for personal growth and reflection, not for crisis support or professional consultation.
+                    </p>
+                </div>
+
+                <div style="background: rgba(253, 121, 168, 0.1); border-left: 4px solid #fd79a8; padding: 15px; margin-bottom: 20px; border-radius: 0 8px 8px 0;">
+                    <h4 style="color: #fd79a8; margin-top: 0; font-size: 14px;">🏥 4. General Wellness Disclaimer</h4>
+                    <p style="margin-bottom: 0; font-size: 12px;">
+                        The information provided on this site, including but not limited to text, graphics, audio, video, and AI-generated insights, is for informational and wellness purposes only. It is not intended to diagnose, treat, cure, or prevent any disease or substitute professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified healthcare provider with any questions you may have regarding a medical condition.
+                    </p>
+                </div>
+
+                <div style="background: rgba(116, 185, 255, 0.1); border-left: 4px solid #74b9ff; padding: 15px; margin-bottom: 20px; border-radius: 0 8px 8px 0;">
+                    <h4 style="color: #74b9ff; margin-top: 0; font-size: 14px;">💳 5. Subscription Terms</h4>
+                    <p style="margin-bottom: 10px; font-size: 12px;">
+                        <strong>Free Trial:</strong> Your 3-day free trial begins immediately upon registration. No charges will be made during this period.
+                    </p>
+                    <p style="margin-bottom: 10px; font-size: 12px;">
+                        <strong>Billing:</strong> After your free trial ends, your card will be automatically charged $19.99 per month until you cancel.
+                    </p>
+                    <p style="margin-bottom: 10px; font-size: 12px;">
+                        <strong>Cancellation:</strong> You may cancel your subscription at any time through your account settings or by contacting support.
+                    </p>
+                    <p style="margin-bottom: 0; font-size: 12px;">
+                        <strong>Refunds:</strong> We offer a 7-day money-back guarantee from your first paid charge.
+                    </p>
+                </div>
+
+                <div style="text-align: center; padding: 15px; background: rgba(116, 185, 255, 0.1); border-radius: 10px;">
+                    <p style="margin: 0; font-size: 12px; color: #c0c0c0;">
+                        Effective Date: June 27, 2025. By using MYA3Reset: The Oracle, you acknowledge that you have read, understood, and agree to be bound by these terms.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden input for plan (always premium now) -->
+        <input type="hidden" name="plan" value="premium">
+
+        <!-- Stripe Payment Section (Always Shown) -->
+        <div id="payment-section">
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" class="btn" id="submit-btn" style="width: 100%; font-size: 18px; padding: 20px;">
+                🎯 START MY 3-DAY FREE TRIAL
+            </button>
+        </div>
+        
+        <div style="text-align: center; margin-top: 15px; color: #00ff88; font-size: 14px;">
+            � Secure 256-bit SSL encryption • Cancel anytime
+        </div>
+    </form>
+    
+    <div style="text-align: center; margin-top: 30px; color: #c0c0c0;">
+        Already part of the Oracle? 
+        <a href="{{ url_for('login') }}" style="color: #74b9ff; text-decoration: none;">🔐 Login Here</a>
+    </div>
+</div>
+
+<!-- Stripe.js -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    // Initialize Stripe
+    console.log('Initializing Stripe with key:', '{{ stripe_publishable_key }}');
+    const stripe = Stripe('{{ stripe_publishable_key }}');
+    const elements = stripe.elements();
+
+    // Create card element with better styling
+    const cardElement = elements.create('card', {
+        style: {
+            base: {
+                color: '#ffffff',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: '#c0c0c0'
+                }
+            },
+            invalid: {
+                color: '#e17055'
+            }
+        }
+    });
+
+    // Mount card element immediately
+    console.log('Mounting card element...');
+    cardElement.mount('#card-element');
+
+    // Form submission with seamless card collection (no immediate charge)
+    document.getElementById('registration-form').addEventListener('submit', async (event) => {
+        console.log('Form submitted!');
+        event.preventDefault();
+
+        const submitBtn = document.getElementById('submit-btn');
+        const originalText = submitBtn.textContent;
+        
+        // Disable submit button and show loading
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Processing...';
+
+        const formData = new FormData(event.target);
+        
+        // Validate passwords match
+        if (formData.get('password') !== formData.get('confirm_password')) {
+            alert('Passwords do not match!');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            return;
+        }
+
+        // Validate terms are accepted
+        if (!document.getElementById('terms').checked) {
+            alert('Please accept the Terms of Service and Privacy Policy');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            return;
+        }
+
+        // Get cardholder name
+        const cardHolderName = document.getElementById('card-holder-name').value;
+        if (!cardHolderName.trim()) {
+            alert('Please enter the cardholder name');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            return;
+        }
+
+        try {
+            // Step 1: Create user account first
+            const accountResponse = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    username: formData.get('username'),
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    confirm_password: formData.get('confirm_password'),
+                    plan: formData.get('plan'),
+                    step: 'create_account'
+                })
+            });
+
+            if (!accountResponse.ok) {
+                const errorText = await accountResponse.text();
+                throw new Error(errorText);
+            }
+
+            const accountData = await accountResponse.json();
+            const clientSecret = accountData.client_secret;
+
+            // Step 2: Create payment method and attach to customer
+            const {paymentMethod, error} = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
+                billing_details: {
+                    name: cardHolderName,
+                    email: formData.get('email')
+                }
+            });
+
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            // Step 3: Confirm setup intent to save payment method
+            const {setupIntent, error: confirmError} = await stripe.confirmCardSetup(
+                clientSecret,
+                {
+                    payment_method: paymentMethod.id
+                }
+            );
+
+            if (confirmError) {
+                throw new Error(confirmError.message);
+            }
+
+            // Step 4: Complete registration with payment method
+            const completeResponse = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    step: 'complete_registration',
+                    payment_method_id: paymentMethod.id,
+                    setup_intent_id: setupIntent.id
+                })
+            });
+
+            if (completeResponse.ok) {
+                // Success! Redirect to dashboard
+                window.location.href = '/dashboard';
+            } else {
+                const errorText = await completeResponse.text();
+                throw new Error(errorText);
+            }
+
+        } catch (error) {
+            document.getElementById('card-errors').textContent = error.message;
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
+    });
+
+    // Handle real-time validation errors from the card Element
+    cardElement.on('change', ({error}) => {
+        const displayError = document.getElementById('card-errors');
+        if (error) {
+            displayError.textContent = error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    // Terms Toggle Functionality
+    const termsSection = document.getElementById('terms-section');
+    const termsToggle = document.getElementById('terms-toggle');
+    const closeTermsSection = document.getElementById('close-terms-section');
+    const termsCheckbox = document.getElementById('terms');
+
+    // Toggle terms section
+    termsToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (termsSection.style.display === 'none' || termsSection.style.display === '') {
+            termsSection.style.display = 'block';
+            termsToggle.textContent = 'Hide Terms & Disclaimers';
+            termsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            termsSection.style.display = 'none';
+            termsToggle.textContent = 'Terms of Service & Important Disclaimers';
+        }
+    });
+
+    // Close terms section
+    closeTermsSection.addEventListener('click', () => {
+        termsSection.style.display = 'none';
+        termsToggle.textContent = 'Terms of Service & Important Disclaimers';
+        termsCheckbox.checked = true; // Auto-check when they close (implies they read it)
+    });
+</script>
+</script>
+{% endblock %}

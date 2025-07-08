@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Ritual Creator - The Oracle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #333;
+        }
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+        .header p {
+            font-size: 1.2rem;
+            color: #c0c0c0;
+            margin-bottom: 20px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #c0c0c0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            margin-bottom: 20px;
+        }
+        .back-link:hover {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            color: #ffffff;
+        }
+        .ritual-form {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 1px solid #444;
+            border-radius: 16px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ritual-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .form-section {
+            margin-bottom: 35px;
+            position: relative;
+            z-index: 1;
+        }
+        .form-section h3 {
+            color: #ffffff;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-section p {
+            color: #c0c0c0;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            background: #222;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #666;
+            background: #2a2a2a;
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .option-card {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .option-card:hover {
+            border-color: #666;
+            background: linear-gradient(135deg, #3d3d3d 0%, #2d2d2d 100%);
+        }
+        .option-card.selected {
+            border-color: #c0c0c0;
+            background: linear-gradient(135deg, #4d4d4d 0%, #3d3d3d 100%);
+            box-shadow: 0 0 0 1px rgba(192,192,192,0.3);
+        }
+        .option-card input[type="radio"] {
+            display: none;
+        }
+        .option-emoji {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .option-label {
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .duration-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+        }
+        .duration-card {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .duration-card:hover {
+            border-color: #666;
+        }
+        .duration-card.selected {
+            border-color: #c0c0c0;
+            background: linear-gradient(135deg, #4d4d4d 0%, #3d3d3d 100%);
+        }
+        .duration-time {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .duration-label {
+            font-size: 0.8rem;
+            color: #c0c0c0;
+        }
+        .btn {
+            background: linear-gradient(135deg, #c0c0c0 0%, #ffffff 100%);
+            color: #000000;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-top: 30px;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.2);
+        }
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .checkbox-card {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .checkbox-card:hover {
+            border-color: #666;
+            background: linear-gradient(135deg, #3d3d3d 0%, #2d2d2d 100%);
+        }
+        .checkbox-card.selected {
+            border-color: #c0c0c0;
+            background: linear-gradient(135deg, #4d4d4d 0%, #3d3d3d 100%);
+            box-shadow: 0 0 0 1px rgba(192,192,192,0.3);
+        }
+        .checkbox-card input[type="checkbox"] {
+            display: none;
+        }
+        .checkbox-card .option-emoji {
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
+        .checkbox-card .option-label {
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Dashboard</a>
+        
+        <div class="header">
+            <h1>🎭 Custom Ritual Creator</h1>
+            <p>Design your personalized transformation ritual</p>
+        </div>
+
+        <form class="ritual-form" method="POST" action="/ritual-session" id="ritualForm">
+            
+            <!-- Personal Details -->
+            <div class="form-section">
+                <h3>🎂 Personal Information</h3>
+                <p>Your birthday helps us align your ritual with cosmic energies</p>
+                <div class="form-group">
+                    <label for="birthday">Birthday:</label>
+                    <input type="date" id="birthday" name="birthday" required>
+                </div>
+            </div>
+
+            <!-- Current Mood -->
+            <div class="form-section">
+                <h3>🎭 Current Mood</h3>
+                <p>How are you feeling right now?</p>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="mood" value="energized" required>
+                        <span class="option-emoji">⚡</span>
+                        <span class="option-label">Energized</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="mood" value="calm">
+                        <span class="option-emoji">🧘</span>
+                        <span class="option-label">Calm</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="mood" value="stressed">
+                        <span class="option-emoji">😰</span>
+                        <span class="option-label">Stressed</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="mood" value="tired">
+                        <span class="option-emoji">😴</span>
+                        <span class="option-label">Tired</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="mood" value="anxious">
+                        <span class="option-emoji">😟</span>
+                        <span class="option-label">Anxious</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="mood" value="excited">
+                        <span class="option-emoji">🤩</span>
+                        <span class="option-label">Excited</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Environment -->
+            <div class="form-section">
+                <h3>🌍 Environment</h3>
+                <p>Where will you be performing this ritual?</p>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="environment" value="bedroom" required>
+                        <span class="option-emoji">🛏️</span>
+                        <span class="option-label">Bedroom</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="environment" value="living_room">
+                        <span class="option-emoji">🛋️</span>
+                        <span class="option-label">Living Room</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="environment" value="outdoors">
+                        <span class="option-emoji">🌳</span>
+                        <span class="option-label">Outdoors</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="environment" value="office">
+                        <span class="option-emoji">💼</span>
+                        <span class="option-label">Office</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="environment" value="bathroom">
+                        <span class="option-emoji">🛁</span>
+                        <span class="option-label">Bathroom</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="environment" value="quiet_space">
+                        <span class="option-emoji">🤫</span>
+                        <span class="option-label">Quiet Space</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Duration -->
+            <div class="form-section">
+                <h3>⏰ Ritual Duration</h3>
+                <p>How much time do you have for your ritual?</p>
+                <div class="duration-options">
+                    <label class="duration-card">
+                        <input type="radio" name="duration" value="5" required>
+                        <div class="duration-time">5</div>
+                        <div class="duration-label">mins</div>
+                    </label>
+                    <label class="duration-card">
+                        <input type="radio" name="duration" value="10">
+                        <div class="duration-time">10</div>
+                        <div class="duration-label">mins</div>
+                    </label>
+                    <label class="duration-card">
+                        <input type="radio" name="duration" value="15">
+                        <div class="duration-time">15</div>
+                        <div class="duration-label">mins</div>
+                    </label>
+                    <label class="duration-card">
+                        <input type="radio" name="duration" value="20">
+                        <div class="duration-time">20</div>
+                        <div class="duration-label">mins</div>
+                    </label>
+                    <label class="duration-card">
+                        <input type="radio" name="duration" value="30">
+                        <div class="duration-time">30</div>
+                        <div class="duration-label">mins</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Time of Day -->
+            <div class="form-section">
+                <h3>🌅 Time of Day</h3>
+                <p>When are you performing this ritual?</p>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="time_of_day" value="morning" required>
+                        <span class="option-emoji">🌅</span>
+                        <span class="option-label">Morning</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="time_of_day" value="afternoon">
+                        <span class="option-emoji">☀️</span>
+                        <span class="option-label">Afternoon</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="time_of_day" value="evening">
+                        <span class="option-emoji">🌅</span>
+                        <span class="option-label">Evening</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="time_of_day" value="night">
+                        <span class="option-emoji">🌙</span>
+                        <span class="option-label">Night</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Ritual Need -->
+            <div class="form-section">
+                <h3>✨ What You Need</h3>
+                <p>What do you want to gain from this ritual?</p>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="ritual_need" value="energy" required>
+                        <span class="option-emoji">🔥</span>
+                        <span class="option-label">More Energy</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="ritual_need" value="grounding">
+                        <span class="option-emoji">🌍</span>
+                        <span class="option-label">Grounding</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="ritual_need" value="peace">
+                        <span class="option-emoji">☮️</span>
+                        <span class="option-label">Peace</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="ritual_need" value="clarity">
+                        <span class="option-emoji">🔍</span>
+                        <span class="option-label">Clarity</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="ritual_need" value="confidence">
+                        <span class="option-emoji">💪</span>
+                        <span class="option-label">Confidence</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="ritual_need" value="healing">
+                        <span class="option-emoji">💚</span>
+                        <span class="option-label">Healing</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Movement & Body Work -->
+            <div class="form-section">
+                <h3>💃 Movement & Body Work</h3>
+                <p>What type of physical expression calls to you today?</p>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="movement_type" value="dynamic_flow" required>
+                        <span class="option-emoji">🌊</span>
+                        <span class="option-label">Dynamic Flow</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="movement_type" value="restorative_yoga">
+                        <span class="option-emoji">🧘‍♀️</span>
+                        <span class="option-label">Restorative Yoga</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="movement_type" value="therapeutic_stretching">
+                        <span class="option-emoji">🤸‍♀️</span>
+                        <span class="option-label">Therapeutic Stretching</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="movement_type" value="mindful_walking">
+                        <span class="option-emoji">🚶‍♀️</span>
+                        <span class="option-label">Mindful Walking</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="movement_type" value="advanced_breathwork">
+                        <span class="option-emoji">🌬️</span>
+                        <span class="option-label">Advanced Breathwork</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="movement_type" value="deep_stillness">
+                        <span class="option-emoji">🗿</span>
+                        <span class="option-label">Deep Stillness</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Physical Focus Areas -->
+            <div class="form-section">
+                <h3>🎯 Body Areas Needing Attention</h3>
+                <p>Select areas where you feel tension, stiffness, or need restoration (choose multiple):</p>
+                <div class="checkbox-grid">
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="body_areas" value="neck_shoulders">
+                        <span class="option-emoji">💆‍♀️</span>
+                        <span class="option-label">Neck & Shoulders</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="body_areas" value="spine_back">
+                        <span class="option-emoji">🦴</span>
+                        <span class="option-label">Spine & Back</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="body_areas" value="hips_pelvis">
+                        <span class="option-emoji">🍑</span>
+                        <span class="option-label">Hips & Pelvis</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="body_areas" value="legs_feet">
+                        <span class="option-emoji">🦵</span>
+                        <span class="option-label">Legs & Feet</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="body_areas" value="chest_heart">
+                        <span class="option-emoji">💗</span>
+                        <span class="option-label">Chest & Heart</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="body_areas" value="jaw_face">
+                        <span class="option-emoji">😮</span>
+                        <span class="option-label">Jaw & Face</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="body_areas" value="core_belly">
+                        <span class="option-emoji">🔥</span>
+                        <span class="option-label">Core & Belly</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="body_areas" value="full_body">
+                        <span class="option-emoji">🌟</span>
+                        <span class="option-label">Full Body Reset</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Breathing Style Preference -->
+            <div class="form-section">
+                <h3>🌬️ Breathing & Energy Work</h3>
+                <p>How would you like to work with your breath today?</p>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="breathing_style" value="calming_breath" required>
+                        <span class="option-emoji">😌</span>
+                        <span class="option-label">Calming Breath</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="breathing_style" value="energizing_breath">
+                        <span class="option-emoji">⚡</span>
+                        <span class="option-label">Energizing Breath</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="breathing_style" value="balanced_breath">
+                        <span class="option-emoji">⚖️</span>
+                        <span class="option-label">Balanced Breath</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="breathing_style" value="deep_healing">
+                        <span class="option-emoji">💚</span>
+                        <span class="option-label">Deep Healing</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="breathing_style" value="warrior_breath">
+                        <span class="option-emoji">⚔️</span>
+                        <span class="option-label">Warrior Breath</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="breathing_style" value="meditative_breath">
+                        <span class="option-emoji">🧘</span>
+                        <span class="option-label">Meditative Breath</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Intensity & Challenge Level -->
+            <div class="form-section">
+                <h3>⚡ Intensity & Challenge Level</h3>
+                <p>How challenging would you like your ritual to be?</p>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="intensity_level" value="gentle_restoration" required>
+                        <span class="option-emoji">🌸</span>
+                        <span class="option-label">Gentle Restoration</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="intensity_level" value="moderate_activation">
+                        <span class="option-emoji">🌊</span>
+                        <span class="option-label">Moderate Activation</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="intensity_level" value="dynamic_challenge">
+                        <span class="option-emoji">�</span>
+                        <span class="option-label">Dynamic Challenge</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="intensity_level" value="deep_therapeutic">
+                        <span class="option-emoji">💎</span>
+                        <span class="option-label">Deep Therapeutic</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Ritual Items & Tools -->
+            <div class="form-section">
+                <h3>🕯️ Sacred Items & Tools</h3>
+                <p>Select the items you have available (choose multiple):</p>
+                <div class="checkbox-grid">
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="candles">
+                        <span class="option-emoji">🕯️</span>
+                        <span class="option-label">Candles</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="crystals">
+                        <span class="option-emoji">💎</span>
+                        <span class="option-label">Crystals</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="incense">
+                        <span class="option-emoji">🔥</span>
+                        <span class="option-label">Incense/Sage</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="essential_oils">
+                        <span class="option-emoji">🌿</span>
+                        <span class="option-label">Essential Oils</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="journal">
+                        <span class="option-emoji">📝</span>
+                        <span class="option-label">Journal & Pen</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="water">
+                        <span class="option-emoji">💧</span>
+                        <span class="option-label">Sacred Water</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="mirror">
+                        <span class="option-emoji">🪞</span>
+                        <span class="option-label">Mirror</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="flowers">
+                        <span class="option-emoji">🌸</span>
+                        <span class="option-label">Fresh Flowers</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="music">
+                        <span class="option-emoji">🎵</span>
+                        <span class="option-label">Music/Sounds</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="sunlight">
+                        <span class="option-emoji">☀️</span>
+                        <span class="option-label">Natural Light</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="tarot">
+                        <span class="option-emoji">🔮</span>
+                        <span class="option-label">Oracle/Tarot</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="ritual_items" value="food">
+                        <span class="option-emoji">🍎</span>
+                        <span class="option-label">Sacred Food</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Elemental Focus -->
+            <div class="form-section">
+                <h3>🌟 Elemental Energy</h3>
+                <p>Which element do you want to work with?</p>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="elemental_focus" value="fire" required>
+                        <span class="option-emoji">🔥</span>
+                        <span class="option-label">Fire - Passion</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="elemental_focus" value="water">
+                        <span class="option-emoji">🌊</span>
+                        <span class="option-label">Water - Flow</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="elemental_focus" value="earth">
+                        <span class="option-emoji">🌍</span>
+                        <span class="option-label">Earth - Grounding</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="elemental_focus" value="air">
+                        <span class="option-emoji">💨</span>
+                        <span class="option-label">Air - Clarity</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="elemental_focus" value="spirit">
+                        <span class="option-emoji">✨</span>
+                        <span class="option-label">Spirit - Unity</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Ritual Intensity -->
+            <div class="form-section">
+                <h3>⚡ Ritual Intensity</h3>
+                <p>How deep do you want to go?</p>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="ritual_intensity" value="gentle" required>
+                        <span class="option-emoji">🌸</span>
+                        <span class="option-label">Gentle & Nurturing</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="ritual_intensity" value="moderate">
+                        <span class="option-emoji">🌟</span>
+                        <span class="option-label">Moderate Power</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="ritual_intensity" value="intense">
+                        <span class="option-emoji">⚡</span>
+                        <span class="option-label">High Intensity</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="ritual_intensity" value="transformational">
+                        <span class="option-emoji">🔥</span>
+                        <span class="option-label">Deep Transformation</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Ritual Focus Area -->
+            <div class="form-section">
+                <h3>🎯 Primary Focus</h3>
+                <p>What aspect of yourself needs attention?</p>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="focus_area" value="self_love" required>
+                        <span class="option-emoji">💖</span>
+                        <span class="option-label">Self-Love</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="focus_area" value="manifestation">
+                        <span class="option-emoji">🌟</span>
+                        <span class="option-label">Manifestation</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="focus_area" value="shadow_work">
+                        <span class="option-emoji">🌑</span>
+                        <span class="option-label">Shadow Work</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="focus_area" value="intuition">
+                        <span class="option-emoji">🔮</span>
+                        <span class="option-label">Intuition</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="focus_area" value="creativity">
+                        <span class="option-emoji">🎨</span>
+                        <span class="option-label">Creative Flow</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="focus_area" value="boundaries">
+                        <span class="option-emoji">🛡️</span>
+                        <span class="option-label">Boundaries</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="focus_area" value="purpose">
+                        <span class="option-emoji">🧭</span>
+                        <span class="option-label">Life Purpose</span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="focus_area" value="relationships">
+                        <span class="option-emoji">💞</span>
+                        <span class="option-label">Relationships</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn">🔮 Create My Ritual</button>
+        </form>
+    </div>
+
+    <script>
+        // Handle option card selection (radio buttons)
+        document.querySelectorAll('.option-card, .duration-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                const name = radio.name;
+                
+                // Remove selected class from all cards with same name
+                document.querySelectorAll(`input[name="${name}"]`).forEach(input => {
+                    input.closest('.option-card, .duration-card').classList.remove('selected');
+                });
+                
+                // Add selected class to clicked card
+                this.classList.add('selected');
+                radio.checked = true;
+            });
+        });
+
+        // Handle checkbox card selection (multiple items)
+        document.querySelectorAll('.checkbox-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                
+                // Toggle checkbox state
+                checkbox.checked = !checkbox.checked;
+                
+                // Toggle selected class
+                if (checkbox.checked) {
+                    this.classList.add('selected');
+                } else {
+                    this.classList.remove('selected');
+                }
+            });
+        });
+
+        // Form validation
+        document.getElementById('ritualForm').addEventListener('submit', function(e) {
+            // Only require the most essential fields
+            const requiredFields = [
+                'duration', 'movement_type', 'breathing_style', 'intensity_level'
+            ];
+            let isValid = true;
+            let missingFields = [];
+
+            requiredFields.forEach(field => {
+                const input = document.querySelector(`[name="${field}"]:checked, [name="${field}"]`);
+                if (!input || !input.value) {
+                    isValid = false;
+                    missingFields.push(field.replace('_', ' '));
+                }
+            });
+
+            // Check if at least one body area is selected (recommended)
+            const bodyAreas = document.querySelectorAll('input[name="body_areas"]:checked');
+            if (bodyAreas.length === 0) {
+                const confirmNoAreas = confirm('No specific body areas selected. Your ritual will include full-body movements. Continue?');
+                if (!confirmNoAreas) {
+                    e.preventDefault();
+                    return;
+                }
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                alert(`Please complete these required fields:\n- ${missingFields.join('\n- ')}`);
+                return;
+            }
+
+            // Show loading state
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.textContent = 'Creating Your Ritual...';
+                submitButton.disabled = true;
+            }
+        });
+
+        // Show ritual complexity indicator
+        function updateComplexityIndicator() {
+            const selectedItems = document.querySelectorAll('input[name="ritual_items"]:checked').length;
+            const complexity = selectedItems < 3 ? 'Simple' : selectedItems < 6 ? 'Moderate' : 'Advanced';
+            
+            // You can add a complexity indicator element if desired
+            console.log(`Ritual Complexity: ${complexity} (${selectedItems} items selected)`);
+        }
+
+        // Update complexity when items are selected
+        document.querySelectorAll('input[name="ritual_items"]').forEach(item => {
+            item.addEventListener('change', updateComplexityIndicator);
+        });
+    </script>
+</body>
+</html>

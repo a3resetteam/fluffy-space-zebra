@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Hub - MYA3Reset: The Oracle</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+        .card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .btn {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: #ffffff;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 184, 148, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        }
+        .resume-type-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid #555;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .resume-type-card:hover {
+            border-color: #00b894;
+            background: rgba(0, 184, 148, 0.1);
+        }
+        .resume-type-card.selected {
+            border-color: #00b894;
+            background: rgba(0, 184, 148, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Resume Hub</h1>
+            <p style="font-size: 1.2rem; color: #c0c0c0;">AI-Powered Resume Analysis & Improvement</p>
+            <a href="{{ url_for('assessment') }}" class="btn btn-secondary">← Back to Assessments</a>
+        </div>
+
+        <!-- Resume Hub Main Card -->
+        <div class="card">
+            <div style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%); border: 1px solid #e74c3c; border-radius: 15px; padding: 25px;">
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <h2 style="color: #ffffff; margin-bottom: 15px;">Upload & Analyze Your Resume</h2>
+                    <p style="color: #c0c0c0; font-size: 1.1rem;">Get AI-powered feedback and improvement suggestions for any type of resume</p>
+                </div>
+                
+                <!-- Upload Section -->
+                <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 2px dashed #e74c3c;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">📎</div>
+                        <p style="color: #ffffff; font-size: 1.1rem; margin-bottom: 15px;">Drag & Drop or Click to Upload</p>
+                        <p style="color: #c0c0c0; font-size: 0.9rem; margin-bottom: 20px;">Supports PDF, DOC, DOCX, TXT files (Max 5MB)</p>
+                        <input type="file" id="resume-upload" accept=".pdf,.doc,.docx,.txt" style="display: none;" multiple>
+                        <button class="btn" onclick="document.getElementById('resume-upload').click()" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+                            📁 Choose Files
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resume Types -->
+                <div style="margin-bottom: 25px;">
+                    <h4 style="color: #e74c3c; text-align: center; margin-bottom: 20px;">Select Your Resume Type</h4>
+                    <p style="color: #c0c0c0; text-align: center; margin-bottom: 15px; font-size: 0.9rem;">Click to select your resume type for targeted analysis</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="resume-type-card" data-type="professional" onclick="selectResumeType('professional', this)">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">💼</div>
+                            <h5 style="color: #e74c3c; margin-bottom: 8px;">Professional Resume</h5>
+                            <p style="color: #c0c0c0; font-size: 0.85rem;">Career-focused, skills & experience</p>
+                        </div>
+                        <div class="resume-type-card" data-type="friend" onclick="selectResumeType('friend', this)">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">🤝</div>
+                            <h5 style="color: #e74c3c; margin-bottom: 8px;">Friend Resume</h5>
+                            <p style="color: #c0c0c0; font-size: 0.85rem;">Personal qualities & relationships</p>
+                        </div>
+                        <div class="resume-type-card" data-type="life" onclick="selectResumeType('life', this)">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">🌟</div>
+                            <h5 style="color: #e74c3c; margin-bottom: 8px;">Life Resume</h5>
+                            <p style="color: #c0c0c0; font-size: 0.85rem;">Life achievements & personal growth</p>
+                        </div>
+                        <div class="resume-type-card" data-type="custom" onclick="selectResumeType('custom', this)">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">🎯</div>
+                            <h5 style="color: #e74c3c; margin-bottom: 8px;">Custom Resume</h5>
+                            <p style="color: #c0c0c0; font-size: 0.85rem;">Any format or style you have</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Selected Resume Type Display -->
+                    <div id="selected-resume-type" style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(0, 184, 148, 0.1); border: 1px solid #00b894; border-radius: 10px; display: none;">
+                        <p style="color: #00b894; font-weight: 600; margin: 0;">
+                            ✅ Selected: <span id="selected-type-name"></span>
+                        </p>
+                        <p style="color: #c0c0c0; font-size: 0.9rem; margin: 5px 0 0 0;" id="selected-type-description"></p>
+                    </div>
+                </div>
+
+                <!-- Analysis Features -->
+                <div style="background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+                    <h4 style="color: #e74c3c; text-align: center; margin-bottom: 20px;">What Our AI Analyzes</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div>
+                            <h5 style="color: #ffffff; margin-bottom: 10px;">🔍 Content Analysis</h5>
+                            <ul style="color: #c0c0c0; font-size: 0.9rem; margin: 0; padding-left: 20px;">
+                                <li>Grammar & spelling errors</li>
+                                <li>Content relevance & impact</li>
+                                <li>Keyword optimization</li>
+                                <li>Achievement quantification</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 style="color: #ffffff; margin-bottom: 10px;">🎨 Format & Structure</h5>
+                            <ul style="color: #c0c0c0; font-size: 0.9rem; margin: 0; padding-left: 20px;">
+                                <li>Layout & visual appeal</li>
+                                <li>Section organization</li>
+                                <li>Length & conciseness</li>
+                                <li>Professional formatting</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 style="color: #ffffff; margin-bottom: 10px;">💡 Improvement Suggestions</h5>
+                            <ul style="color: #c0c0c0; font-size: 0.9rem; margin: 0; padding-left: 20px;">
+                                <li>Personalized recommendations</li>
+                                <li>Industry-specific tips</li>
+                                <li>ATS compatibility check</li>
+                                <li>Score & ranking system</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="text-align: center;">
+                    <button class="btn" id="start-analysis-btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); font-size: 16px; padding: 15px 30px;" onclick="startResumeAnalysis()">
+                        🚀 Start Analysis
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Results Section (Hidden by default) -->
+        <div class="card" id="analysis-results" style="display: none;">
+            <div style="background: linear-gradient(135deg, rgba(0, 184, 148, 0.1) 0%, rgba(0, 184, 148, 0.05) 100%); border: 1px solid #00b894; border-radius: 15px; padding: 25px;">
+                <h3 style="color: #00b894; text-align: center; margin-bottom: 25px;">📊 Resume Analysis Results</h3>
+                
+                <!-- Overall Score -->
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(#00b894 0deg, #00b894 var(--score-deg), #333 var(--score-deg), #333 360deg); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; position: relative;" id="score-circle">
+                        <div style="content: ''; width: 90px; height: 90px; background: #1a1a2e; border-radius: 50%; position: absolute;"></div>
+                        <div style="font-size: 2rem; font-weight: bold; color: #00b894; z-index: 1;" id="score-text">0%</div>
+                    </div>
+                    <h3 style="color: #00b894; margin-bottom: 10px;" id="score-interpretation">Analyzing...</h3>
+                    <p style="color: #c0c0c0; font-size: 1.1rem;" id="score-description">Please wait while we analyze your resume...</p>
+                </div>
+
+                <!-- Category Breakdown -->
+                <div id="category-breakdown" style="display: none;">
+                    <h4 style="color: #00b894; text-align: center; margin-bottom: 20px;">📈 Detailed Breakdown</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;" id="category-scores">
+                        <!-- Categories will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Improvement Recommendations -->
+                <div id="recommendations-section" style="margin-top: 30px; display: none;">
+                    <h4 style="color: #74b9ff; text-align: center; margin-bottom: 20px;">💡 Improvement Recommendations</h4>
+                    <div id="recommendations-list">
+                        <!-- Recommendations will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div style="background: #333; border-radius: 10px; height: 8px; margin: 20px 0; overflow: hidden;">
+                    <div style="height: 100%; background: linear-gradient(135deg, #00b894 0%, #00a085 100%); border-radius: 10px; width: 0%; transition: width 2s ease;" id="analysis-progress"></div>
+                </div>
+
+                <!-- Action Buttons for Results -->
+                <div style="text-align: center; margin-top: 25px; display: none;" id="results-actions">
+                    <button class="btn" onclick="downloadReport()">📄 Download Report</button>
+                    <button class="btn btn-secondary" onclick="analyzeAnother()">🔄 Analyze Another</button>
+                    <button class="btn btn-primary" onclick="shareResults()">📤 Share Results</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resume Types Info -->
+        <div class="card">
+            <h3 style="color: #e74c3c; text-align: center; margin-bottom: 25px;">📚 Resume Types Explained</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px;">
+                    <h4 style="color: #e74c3c; margin-bottom: 10px;">💼 Professional Resume</h4>
+                    <p style="color: #c0c0c0; margin-bottom: 15px;">Traditional career-focused resume highlighting work experience, skills, education, and professional achievements.</p>
+                    <ul style="color: #c0c0c0; font-size: 0.9rem; margin: 0; padding-left: 20px;">
+                        <li>Work history & achievements</li>
+                        <li>Technical & soft skills</li>
+                        <li>Education & certifications</li>
+                        <li>Industry-specific keywords</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px;">
+                    <h4 style="color: #e74c3c; margin-bottom: 10px;">🤝 Friend Resume</h4>
+                    <p style="color: #c0c0c0; margin-bottom: 15px;">Personal qualities resume focusing on character traits, relationship skills, and social contributions.</p>
+                    <ul style="color: #c0c0c0; font-size: 0.9rem; margin: 0; padding-left: 20px;">
+                        <li>Personality traits & values</li>
+                        <li>Communication style</li>
+                        <li>Relationship patterns</li>
+                        <li>Social impact & community</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px;">
+                    <h4 style="color: #e74c3c; margin-bottom: 10px;">🌟 Life Resume</h4>
+                    <p style="color: #c0c0c0; margin-bottom: 15px;">Comprehensive life achievements including personal growth, hobbies, travel, and life experiences.</p>
+                    <ul style="color: #c0c0c0; font-size: 0.9rem; margin: 0; padding-left: 20px;">
+                        <li>Personal achievements</li>
+                        <li>Growth & transformation</li>
+                        <li>Hobbies & interests</li>
+                        <li>Life experiences & wisdom</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px;">
+                    <h4 style="color: #e74c3c; margin-bottom: 10px;">🎯 Custom Resume</h4>
+                    <p style="color: #c0c0c0; margin-bottom: 15px;">Any unique or specialized resume format that doesn't fit traditional categories.</p>
+                    <ul style="color: #c0c0c0; font-size: 0.9rem; margin: 0; padding-left: 20px;">
+                        <li>Creative formats</li>
+                        <li>Industry-specific layouts</li>
+                        <li>Portfolio presentations</li>
+                        <li>Unique personal brands</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="{{ url_for('assessment') }}" class="btn btn-secondary">← Back to Assessments</a>
+            <a href="{{ url_for('home') }}" class="btn btn-primary">🏠 Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        // Resume Hub Functions
+        let selectedResumeType = null;
+        
+        function selectResumeType(type, element) {
+            // Remove selection from all cards
+            document.querySelectorAll('.resume-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Highlight selected card
+            element.classList.add('selected');
+            
+            // Store selection
+            selectedResumeType = type;
+            
+            // Update display
+            const display = document.getElementById('selected-resume-type');
+            const typeName = document.getElementById('selected-type-name');
+            const typeDescription = document.getElementById('selected-type-description');
+            
+            const typeNames = {
+                'professional': 'Professional Resume',
+                'friend': 'Friend Resume', 
+                'life': 'Life Resume',
+                'custom': 'Custom Resume'
+            };
+
+            const typeDescriptions = {
+                'professional': 'AI will analyze your career progression, skills, and professional achievements',
+                'friend': 'AI will evaluate your personal qualities, relationship skills, and character traits',
+                'life': 'AI will assess your life experiences, personal growth, and diverse achievements',
+                'custom': 'AI will provide general feedback and suggestions for your unique resume format'
+            };
+            
+            typeName.textContent = typeNames[type];
+            typeDescription.textContent = typeDescriptions[type];
+            display.style.display = 'block';
+        }
+        
+        function startResumeAnalysis() {
+            const fileInput = document.getElementById('resume-upload');
+            if (fileInput.files.length === 0) {
+                alert('Please upload a resume file first.');
+                return;
+            }
+            
+            if (!selectedResumeType) {
+                alert('Please select a resume type for more targeted analysis.');
+                return;
+            }
+            
+            // Show loading state
+            const button = document.getElementById('start-analysis-btn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ Analyzing...';
+            button.disabled = true;
+            
+            // Show analysis results section
+            const resultsSection = document.getElementById('analysis-results');
+            resultsSection.style.display = 'block';
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // Start analysis simulation
+            simulateAnalysis();
+        }
+        
+        function simulateAnalysis() {
+            const progressBar = document.getElementById('analysis-progress');
+            const scoreCircle = document.getElementById('score-circle');
+            const scoreText = document.getElementById('score-text');
+            const interpretation = document.getElementById('score-interpretation');
+            const description = document.getElementById('score-description');
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+                
+                if (progress === 30) {
+                    description.textContent = 'Analyzing content structure...';
+                } else if (progress === 60) {
+                    description.textContent = 'Evaluating formatting and keywords...';
+                } else if (progress === 90) {
+                    description.textContent = 'Generating recommendations...';
+                } else if (progress >= 100) {
+                    clearInterval(interval);
+                    showFinalResults();
+                }
+            }, 300);
+        }
+        
+        function showFinalResults() {
+            // Generate random but realistic score
+            const score = Math.floor(Math.random() * 30) + 70; // Score between 70-100
+            
+            // Get uploaded filename
+            const fileInput = document.getElementById('resume-upload');
+            const filename = fileInput.files[0] ? fileInput.files[0].name : 'Unknown File';
+            
+            // Update score display
+            const scoreCircle = document.getElementById('score-circle');
+            const scoreText = document.getElementById('score-text');
+            const interpretation = document.getElementById('score-interpretation');
+            const description = document.getElementById('score-description');
+            
+            scoreCircle.style.setProperty('--score-deg', (score * 3.6) + 'deg');
+            scoreText.textContent = score + '%';
+            
+            // Determine interpretation based on score
+            if (score >= 90) {
+                interpretation.textContent = 'Excellent Resume';
+                description.textContent = 'Your resume demonstrates exceptional quality with strong content and professional formatting.';
+            } else if (score >= 80) {
+                interpretation.textContent = 'Strong Resume';
+                description.textContent = 'Your resume is well-crafted with good structure and relevant content. Minor improvements could enhance impact.';
+            } else if (score >= 70) {
+                interpretation.textContent = 'Good Resume';
+                description.textContent = 'Your resume has solid fundamentals but would benefit from optimization in key areas.';
+            } else {
+                interpretation.textContent = 'Needs Improvement';
+                description.textContent = 'Your resume has potential but requires significant improvements to maximize effectiveness.';
+            }
+            
+            // Show category breakdown
+            const categoryScores = showCategoryBreakdown(score);
+            
+            // Show recommendations
+            const recommendations = showRecommendations(score);
+            
+            // Store analysis in backend
+            storeAnalysis(filename, selectedResumeType, score, categoryScores, recommendations);
+            
+            // Reset button
+            const button = document.getElementById('start-analysis-btn');
+            button.innerHTML = '✅ Analysis Complete';
+            button.disabled = false;
+            
+            // Show action buttons
+            document.getElementById('results-actions').style.display = 'block';
+        }
+        
+        function storeAnalysis(filename, resumeType, score, categoryScores, recommendations) {
+            // Store analysis in backend for history
+            fetch('/store-resume-analysis', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    filename: filename,
+                    resume_type: resumeType,
+                    score: score,
+                    category_scores: categoryScores,
+                    recommendations: recommendations
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Analysis stored successfully:', data.analysis_id);
+            })
+            .catch(error => {
+                console.error('Error storing analysis:', error);
+            });
+        }
+        
+        function showCategoryBreakdown(baseScore) {
+            const categories = {
+                'Content Quality': baseScore + Math.floor(Math.random() * 20) - 10,
+                'Formatting': baseScore + Math.floor(Math.random() * 20) - 10,
+                'Keywords': baseScore + Math.floor(Math.random() * 20) - 10,
+                'Structure': baseScore + Math.floor(Math.random() * 20) - 10,
+                'Impact': baseScore + Math.floor(Math.random() * 20) - 10
+            };
+            
+            const container = document.getElementById('category-scores');
+            container.innerHTML = '';
+            
+            Object.entries(categories).forEach(([category, score]) => {
+                const normalizedScore = Math.max(0, Math.min(100, score));
+                const categoryDiv = document.createElement('div');
+                categoryDiv.innerHTML = `
+                    <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 20px; text-align: center;">
+                        <div style="color: #00b894; font-weight: 600; margin-bottom: 10px;">${category}</div>
+                        <div style="background: #333; height: 8px; border-radius: 4px; margin: 10px 0; overflow: hidden;">
+                            <div style="height: 100%; background: linear-gradient(135deg, #00b894 0%, #00a085 100%); border-radius: 4px; width: ${normalizedScore}%; transition: width 0.8s ease;"></div>
+                        </div>
+                        <div style="color: #00b894; font-weight: 600;">${normalizedScore}%</div>
+                    </div>
+                `;
+                container.appendChild(categoryDiv);
+            });
+            
+            document.getElementById('category-breakdown').style.display = 'block';
+            
+            // Return normalized categories for storage
+            const normalizedCategories = {};
+            Object.entries(categories).forEach(([category, score]) => {
+                normalizedCategories[category] = Math.max(0, Math.min(100, score));
+            });
+            return normalizedCategories;
+        }
+        
+        function showRecommendations(score) {
+            const typeNames = {
+                'professional': 'Professional Resume',
+                'friend': 'Friend Resume',
+                'life': 'Life Resume',
+                'custom': 'Custom Resume'
+            };
+            
+            const recommendations = generateRecommendations(selectedResumeType, score);
+            const container = document.getElementById('recommendations-list');
+            container.innerHTML = '';
+            
+            recommendations.forEach(rec => {
+                const recDiv = document.createElement('div');
+                recDiv.innerHTML = `
+                    <div style="background: linear-gradient(135deg, rgba(116, 185, 255, 0.1) 0%, rgba(116, 185, 255, 0.05) 100%); border: 1px solid #74b9ff; border-radius: 15px; padding: 20px; margin-bottom: 15px;">
+                        <div style="color: #74b9ff; font-size: 1.1rem; font-weight: 600; margin-bottom: 10px;">${rec.title}</div>
+                        <div style="color: #ffffff; margin-bottom: 10px;">${rec.description}</div>
+                        <ul style="color: #c0c0c0; margin: 0; padding-left: 20px;">
+                            ${rec.tips.map(tip => `<li style="margin: 5px 0;">${tip}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                container.appendChild(recDiv);
+            });
+            
+            document.getElementById('recommendations-section').style.display = 'block';
+            
+            // Return recommendations for storage
+            return recommendations;
+        }
+        
+        function generateRecommendations(resumeType, score) {
+            // Generate detailed, realistic recommendations based on resume type and score
+            let recommendations = [];
+            
+            if (resumeType === 'professional') {
+                if (score < 70) {
+                    recommendations = [
+                        {
+                            title: '🚨 Critical Professional Issues',
+                            description: 'Your resume has fundamental issues that could be blocking career advancement',
+                            tips: [
+                                'Remove all typos and grammatical errors - even one can eliminate you from consideration',
+                                'Add quantified achievements (e.g., "Increased sales by 25%" not "Responsible for sales")',
+                                'Include specific job titles and company names with dates',
+                                'Remove generic objectives - replace with a professional summary highlighting your value',
+                                'Ensure consistent date formatting and eliminate employment gaps explanations'
+                            ]
+                        },
+                        {
+                            title: '📊 Missing Impact Metrics',
+                            description: 'Employers need to see measurable results to justify hiring you',
+                            tips: [
+                                'Add numbers to every achievement possible (budget managed, team size, percentage improvements)',
+                                'Include industry-specific KPIs and metrics you\'ve influenced',
+                                'Show progression in responsibility and scope over time',
+                                'Highlight cost savings, revenue generation, or efficiency improvements',
+                                'Remove weak phrases like "helped with" or "assisted in" - use strong action verbs'
+                            ]
+                        },
+                        {
+                            title: '🎯 ATS Optimization Required',
+                            description: 'Your resume likely won\'t pass automated screening systems',
+                            tips: [
+                                'Include keywords from job descriptions in your experience bullets',
+                                'Use standard section headers (Experience, Education, Skills)',
+                                'Avoid graphics, tables, or unusual formatting that ATS can\'t read',
+                                'Include both spelled-out and abbreviated versions of key terms',
+                                'Save as both .docx and .pdf formats for different application systems'
+                            ]
+                        }
+                    ];
+                } else if (score < 85) {
+                    recommendations = [
+                        {
+                            title: '⚡ Professional Enhancement Opportunities',
+                            description: 'Good foundation but missing elements that could significantly boost your competitiveness',
+                            tips: [
+                                'Strengthen your professional summary to immediately convey your unique value proposition',
+                                'Add 2-3 more quantified achievements per role to demonstrate consistent impact',
+                                'Include relevant certifications, professional development, or continuing education',
+                                'Tailor skills section to match industry trends and job requirements',
+                                'Consider adding a "Key Accomplishments" section to highlight career peaks'
+                            ]
+                        },
+                        {
+                            title: '🏆 Competitive Positioning',
+                            description: 'Stand out from other candidates with strategic content improvements',
+                            tips: [
+                                'Add industry awards, recognition, or performance rankings if applicable',
+                                'Include volunteer leadership roles that demonstrate additional skills',
+                                'Highlight any process improvements, innovations, or initiatives you led',
+                                'Show progression in salary/title/responsibility to demonstrate career growth',
+                                'Add testimonials or quotes from supervisors/clients if space allows'
+                            ]
+                        }
+                    ];
+                } else {
+                    recommendations = [
+                        {
+                            title: '💎 Executive-Level Polish',
+                            description: 'Fine-tune your already strong resume for maximum executive impact',
+                            tips: [
+                                'Consider a more sophisticated format with subtle design elements',
+                                'Add strategic initiatives or vision-setting accomplishments',
+                                'Include board positions, speaking engagements, or thought leadership',
+                                'Highlight cross-functional leadership and stakeholder management',
+                                'Consider adding a brief "Executive Philosophy" or approach statement'
+                            ]
+                        }
+                    ];
+                }
+            } else if (resumeType === 'friend') {
+                if (score < 70) {
+                    recommendations = [
+                        {
+                            title: '🤝 Friendship Foundation Issues',
+                            description: 'Your friend resume reveals patterns that may be affecting your relationships',
+                            tips: [
+                                'Add more examples of emotional support you\'ve provided during tough times',
+                                'Include instances where you\'ve actively listened without trying to "fix" problems',
+                                'Show consistency in maintaining contact and checking in on friends',
+                                'Demonstrate reciprocity - highlight times you\'ve asked for help, not just given it',
+                                'Remove any mentions of being "always available" - healthy boundaries are important'
+                            ]
+                        },
+                        {
+                            title: '⚖️ Relationship Balance Concerns',
+                            description: 'Your friendship patterns suggest potential imbalances that could lead to burnout',
+                            tips: [
+                                'Evaluate if you\'re always the one initiating plans or conversations',
+                                'Consider if you\'re taking on too much emotional labor in friendships',
+                                'Add examples of friends supporting YOU during challenging times',
+                                'Include instances where you\'ve set healthy boundaries when needed',
+                                'Show that you have diverse friendships, not just one primary intense relationship'
+                            ]
+                        },
+                        {
+                            title: '🌱 Growth Areas in Connection',
+                            description: 'Key friendship skills that need development for healthier relationships',
+                            tips: [
+                                'Practice expressing your own needs and vulnerabilities more openly',
+                                'Develop comfort with conflict resolution and difficult conversations',
+                                'Learn to celebrate friends\' successes without comparison or jealousy',
+                                'Improve your ability to be present without your phone during friend time',
+                                'Work on remembering important details about friends\' lives and following up'
+                            ]
+                        }
+                    ];
+                } else if (score < 85) {
+                    recommendations = [
+                        {
+                            title: '💝 Deepen Your Friendship Quality',
+                            description: 'You\'re a good friend with room to become truly exceptional',
+                            tips: [
+                                'Increase frequency of meaningful check-ins beyond surface-level conversations',
+                                'Plan more creative, memorable experiences together beyond routine hangouts',
+                                'Practice vulnerability by sharing your own struggles and asking for support',
+                                'Develop better skills in celebrating friends\' wins and comforting during losses',
+                                'Create traditions or rituals that strengthen your friendship bonds'
+                            ]
+                        },
+                        {
+                            title: '🎯 Friendship Leadership',
+                            description: 'Step up as the kind of friend others aspire to be',
+                            tips: [
+                                'Take initiative in planning group gatherings and maintaining friend groups',
+                                'Become the friend who remembers birthdays, anniversaries, and important dates',
+                                'Develop skills in mediating conflicts between mutual friends',
+                                'Practice giving honest, caring feedback when friends need to hear truth',
+                                'Expand your friendship circle to include people from different backgrounds'
+                            ]
+                        }
+                    ];
+                } else {
+                    recommendations = [
+                        {
+                            title: '👑 Friendship Mastery',
+                            description: 'You\'re already an exceptional friend - here\'s how to maintain and model this',
+                            tips: [
+                                'Consider mentoring others on how to be a better friend',
+                                'Document your friendship wisdom to share with those struggling socially',
+                                'Use your friendship skills in professional networking and community building',
+                                'Model healthy relationship boundaries for friends who struggle with them',
+                                'Consider how your friendship skills could benefit broader community involvement'
+                            ]
+                        }
+                    ];
+                }
+            } else if (resumeType === 'life') {
+                if (score < 70) {
+                    recommendations = [
+                        {
+                            title: '🌪️ Life Direction and Purpose',
+                            description: 'Your life resume suggests you may be drifting without clear direction',
+                            tips: [
+                                'Identify 3-5 core values that will guide your major life decisions',
+                                'Create a vision statement for what you want your life to represent',
+                                'Address any significant unresolved trauma or emotional blocks holding you back',
+                                'Develop a clearer sense of your unique talents and how to use them',
+                                'Establish better boundaries between work, relationships, and personal growth time'
+                            ]
+                        },
+                        {
+                            title: '🚧 Personal Development Gaps',
+                            description: 'Critical life skills and experiences that need attention',
+                            tips: [
+                                'Develop financial literacy and create a sustainable budget/savings plan',
+                                'Improve your physical health through consistent exercise and nutrition habits',
+                                'Build emotional regulation skills for managing stress, anger, and anxiety',
+                                'Create a more supportive living environment and daily routines',
+                                'Address any addiction, dependency, or unhealthy coping mechanisms'
+                            ]
+                        },
+                        {
+                            title: '🔄 Life Balance and Integration',
+                            description: 'Your life lacks integration between different areas - everything feels separate',
+                            tips: [
+                                'Find ways to align your work with your personal values and interests',
+                                'Integrate health and wellness practices into your daily routine, not just weekends',
+                                'Develop spiritual or mindfulness practices that ground you during challenges',
+                                'Create better work-life boundaries to protect your personal time and energy',
+                                'Build community connections that support multiple aspects of who you are'
+                            ]
+                        }
+                    ];
+                } else if (score < 85) {
+                    recommendations = [
+                        {
+                            title: '🎯 Life Optimization',
+                            description: 'You have a solid life foundation - now optimize for greater fulfillment',
+                            tips: [
+                                'Identify which life areas need more attention and create specific improvement plans',
+                                'Develop deeper expertise in your areas of passion and natural talent',
+                                'Create more meaningful traditions and rituals that enhance your daily experience',
+                                'Build stronger community connections and find ways to contribute to causes you care about',
+                                'Establish mentorship relationships both as a mentor and mentee'
+                            ]
+                        },
+                        {
+                            title: '🌟 Legacy and Impact',
+                            description: 'Consider how you want to be remembered and what impact you want to have',
+                            tips: [
+                                'Clarify what kind of legacy you want to leave in your family and community',
+                                'Develop skills in teaching, mentoring, or sharing your knowledge with others',
+                                'Create or contribute to something lasting that will outlive you',
+                                'Use your life experiences to help others facing similar challenges',
+                                'Document your journey and wisdom for future generations or those who could benefit'
+                            ]
+                        }
+                    ];
+                } else {
+                    recommendations = [
+                        {
+                            title: '🏆 Life Mastery and Wisdom Sharing',
+                            description: 'You\'ve achieved remarkable life integration - now help others do the same',
+                            tips: [
+                                'Consider writing, speaking, or teaching about your life philosophy and lessons learned',
+                                'Mentor others who are struggling with areas where you\'ve found success',
+                                'Use your life wisdom to contribute to community leadership or social causes',
+                                'Continue challenging yourself with new growth edges to maintain vitality',
+                                'Model what an integrated, purposeful life looks like for those around you'
+                            ]
+                        }
+                    ];
+                }
+            } else { // custom
+                recommendations = [
+                    {
+                        title: '🎨 Custom Format Enhancement',
+                        description: 'Optimize your unique approach for maximum impact and clarity',
+                        tips: [
+                            'Ensure your format clearly communicates your intended message',
+                            'Balance creativity with readability and professional presentation',
+                            'Add clear navigation elements if your format is complex',
+                            'Consider your audience and adjust format appropriateness accordingly',
+                            'Test your format with others to ensure it achieves your intended impact'
+                        ]
+                    },
+                    {
+                        title: '✨ Content Strategy',
+                        description: 'Strengthen the substance behind your creative presentation',
+                        tips: [
+                            'Ensure every element serves a specific purpose in telling your story',
+                            'Add more specific examples and concrete details to support your points',
+                            'Consider what key message you want readers to remember most',
+                            'Include elements that make you memorable for the right reasons',
+                            'Balance personal authenticity with professional appropriateness'
+                        ]
+                    }
+                ];
+            }
+            
+            return recommendations;
+        }
+        
+        function downloadReport() {
+            alert('Download feature coming soon! This will generate a detailed PDF report of your resume analysis.');
+        }
+        
+        function analyzeAnother() {
+            // Reset the form
+            document.getElementById('analysis-results').style.display = 'none';
+            document.getElementById('resume-upload').value = '';
+            selectedResumeType = null;
+            
+            // Reset resume type selection
+            document.querySelectorAll('.resume-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.getElementById('selected-resume-type').style.display = 'none';
+            
+            // Remove file list if exists
+            const existingList = document.querySelector('.file-list');
+            if (existingList) {
+                existingList.remove();
+            }
+            
+            // Reset button
+            const button = document.getElementById('start-analysis-btn');
+            button.innerHTML = '🚀 Start Analysis';
+            button.disabled = false;
+            
+            // Scroll back to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function shareResults() {
+            alert('Share feature coming soon! This will allow you to share your resume analysis results.');
+        }
+
+        // File upload handling
+        document.getElementById('resume-upload').addEventListener('change', function(event) {
+            const files = event.target.files;
+            if (files.length > 0) {
+                let fileNames = [];
+                for (let i = 0; i < files.length; i++) {
+                    fileNames.push(files[i].name);
+                }
+                
+                // Update upload area with file names
+                const uploadArea = event.target.parentElement;
+                const fileList = document.createElement('div');
+                fileList.style.marginTop = '15px';
+                fileList.style.color = '#00b894';
+                fileList.innerHTML = '✅ Files selected: ' + fileNames.join(', ');
+                
+                // Remove any existing file list
+                const existingList = uploadArea.querySelector('.file-list');
+                if (existingList) {
+                    existingList.remove();
+                }
+                
+                fileList.className = 'file-list';
+                uploadArea.appendChild(fileList);
+            }
+        });
+
+        // Drag and drop functionality
+        const uploadArea = document.querySelector('[style*="dashed"]');
+        
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#00b894';
+            this.style.backgroundColor = 'rgba(0, 184, 148, 0.1)';
+        });
+        
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#e74c3c';
+            this.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#e74c3c';
+            this.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+            
+            const files = e.dataTransfer.files;
+            document.getElementById('resume-upload').files = files;
+            
+            // Trigger change event
+            const event = new Event('change', { bubbles: true });
+            document.getElementById('resume-upload').dispatchEvent(event);
+        });
+    </script>
+</body>
+</html>

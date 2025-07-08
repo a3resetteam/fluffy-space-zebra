@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oracle Admin Panel - CEO Dashboard</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .stat-label {
+            color: #c0c0c0;
+            font-size: 0.9rem;
+        }
+        .total-users { color: #74b9ff; }
+        .active-subs { color: #00b894; }
+        .trial-users { color: #fdcb6e; }
+        .failed-payments { color: #e17055; }
+        .revenue { color: #fd79a8; }
+        
+        .controls {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: #ffffff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 184, 148, 0.3);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+        }
+        .btn-info {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        }
+        
+        .users-table {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th {
+            background: rgba(116, 185, 255, 0.1);
+            color: #74b9ff;
+            font-weight: 600;
+        }
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-active { background: #00b894; color: white; }
+        .status-trial { background: #fdcb6e; color: black; }
+        .status-expired { background: #e17055; color: white; }
+        .status-failed { background: #d63031; color: white; }
+        
+        .search-filter {
+            margin-bottom: 20px;
+        }
+        .search-filter input, .search-filter select {
+            background: #2d3436;
+            border: 1px solid #636e72;
+            border-radius: 8px;
+            color: white;
+            padding: 10px;
+            margin-right: 10px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 500px;
+            border: 1px solid #333;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover { color: #fff; }
+        
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination button {
+            background: #2d3436;
+            border: 1px solid #636e72;
+            color: white;
+            padding: 8px 12px;
+            margin: 0 2px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .pagination button.active {
+            background: #74b9ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔮 Oracle Admin Panel</h1>
+            <p style="color: #c0c0c0; font-size: 1.1rem;">CEO Dashboard - User & Subscription Management</p>
+            <p style="color: #74b9ff; font-size: 0.9rem;">Logged in as: {{ current_user.email }}</p>
+            <a href="/admin/logout" class="btn btn-danger">🚪 Logout</a>
+        </div>
+
+        <!-- Statistics Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number total-users">{{ stats.total_users }}</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number active-subs">{{ stats.active_subscriptions }}</div>
+                <div class="stat-label">Active Subscriptions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number trial-users">{{ stats.trial_users }}</div>
+                <div class="stat-label">Trial Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number failed-payments">{{ stats.failed_payments }}</div>
+                <div class="stat-label">Failed Payments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number revenue">${{ "%.2f"|format(stats.monthly_revenue) }}</div>
+                <div class="stat-label">Monthly Revenue</div>
+            </div>
+        </div>
+
+        <!-- Admin Controls -->
+        <div class="controls">
+            <h3 style="color: #74b9ff; margin-bottom: 20px;">⚡ Admin Actions</h3>
+            <button class="btn btn-warning" onclick="processFailedPayments()">💳 Process Failed Payments</button>
+            <button class="btn btn-info" onclick="exportUsers()">📊 Export Users CSV</button>
+            <button class="btn btn-danger" onclick="confirmMassAction('expire_trials')">⏰ Expire All Trials</button>
+            <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
+            <button class="btn btn-info" onclick="testAdmin()">🧪 Test Admin Connection</button>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="users-table">
+            <div class="search-filter">
+                <input type="text" id="searchInput" placeholder="Search by email or username..." onkeyup="filterUsers()">
+                <select id="statusFilter" onchange="filterUsers()">
+                    <option value="">All Statuses</option>
+                    <option value="active">Active</option>
+                    <option value="trial">Trial</option>
+                    <option value="expired">Expired</option>
+                    <option value="failed">Failed Payment</option>
+                </select>
+                <button class="btn btn-info" onclick="filterUsers()">🔍 Filter</button>
+            </div>
+
+            <h3 style="color: #74b9ff; margin-bottom: 20px;">👥 User Management</h3>
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Last Login</th>
+                        <th>Trial End</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    {% for user in users %}
+                    <tr data-user-id="{{ user.customer_id }}">
+                        <td>{{ user.customer_id[:8] }}...</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>
+                            <span class="status-badge status-{{ user.status_class }}">
+                                {{ user.subscription_status|title }}
+                            </span>
+                        </td>
+                        <td>{{ user.created_at[:10] if user.created_at else 'N/A' }}</td>
+                        <td>{{ user.last_login[:10] if user.last_login else 'Never' }}</td>
+                        <td>{{ user.trial_end[:10] if user.trial_end else 'N/A' }}</td>
+                        <td>
+                            <button class="btn btn-info" onclick="viewUser('{{ user.customer_id }}')">👁️</button>
+                            <button class="btn btn-warning" onclick="forceLogout('{{ user.customer_id }}')">🚪</button>
+                            <button class="btn btn-danger" onclick="suspendUser('{{ user.customer_id }}')">⛔</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 style="color: #74b9ff;">User Details</h3>
+            <div id="userDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        const usersPerPage = 20;
+        let allUsers = {{ users|tojson }};
+        let filteredUsers = allUsers;
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            filteredUsers = allUsers.filter(user => {
+                const matchesSearch = user.email.toLowerCase().includes(searchTerm) || 
+                                    user.username.toLowerCase().includes(searchTerm);
+                const matchesStatus = !statusFilter || user.subscription_status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+            
+            currentPage = 1;
+            displayUsers();
+        }
+
+        function displayUsers() {
+            const startIndex = (currentPage - 1) * usersPerPage;
+            const endIndex = startIndex + usersPerPage;
+            const usersToShow = filteredUsers.slice(startIndex, endIndex);
+            
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = usersToShow.map(user => `
+                <tr data-user-id="${user.customer_id}">
+                    <td>${user.customer_id.substring(0, 8)}...</td>
+                    <td>${user.email}</td>
+                    <td>${user.username}</td>
+                    <td><span class="status-badge status-${user.status_class}">${user.subscription_status}</span></td>
+                    <td>${user.created_at ? user.created_at.substring(0, 10) : 'N/A'}</td>
+                    <td>${user.last_login ? user.last_login.substring(0, 10) : 'Never'}</td>
+                    <td>${user.trial_end ? user.trial_end.substring(0, 10) : 'N/A'}</td>
+                    <td>
+                        <button class="btn btn-info" onclick="viewUser('${user.customer_id}')">👁️</button>
+                        <button class="btn btn-warning" onclick="forceLogout('${user.customer_id}')">🚪</button>
+                        <button class="btn btn-danger" onclick="suspendUser('${user.customer_id}')">⛔</button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+            const pagination = document.getElementById('pagination');
+            
+            let paginationHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHTML += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            pagination.innerHTML = paginationHTML;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            displayUsers();
+        }
+
+        function viewUser(customerId) {
+            fetch(`/admin/user/${customerId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('userDetails').innerHTML = `
+                        <p><strong>Customer ID:</strong> ${data.customer_id}</p>
+                        <p><strong>Email:</strong> ${data.email}</p>
+                        <p><strong>Username:</strong> ${data.username}</p>
+                        <p><strong>Status:</strong> ${data.subscription_status}</p>
+                        <p><strong>Stripe Customer:</strong> ${data.stripe_customer_id || 'N/A'}</p>
+                        <p><strong>Created:</strong> ${data.created_at}</p>
+                        <p><strong>Last Login:</strong> ${data.last_login || 'Never'}</p>
+                        <p><strong>Trial End:</strong> ${data.subscription_end || 'N/A'}</p>
+                        <hr style="border-color: #333;">
+                        <button class="btn btn-warning" onclick="forceLogout('${customerId}')">🚪 Force Logout</button>
+                        <button class="btn btn-danger" onclick="suspendUser('${customerId}')">⛔ Suspend User</button>
+                    `;
+                    document.getElementById('userModal').style.display = 'block';
+                });
+        }
+
+        function forceLogout(customerId) {
+            if (confirm('Force logout this user? They will need to log in again.')) {
+                console.log('Attempting to force logout user:', customerId);
+                fetch(`/admin/force-logout/${customerId}`, { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    alert(data.message || 'User logged out successfully');
+                    refreshData();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error: ' + error.message);
+                });
+            }
+        }
+
+        function suspendUser(customerId) {
+            if (confirm('Suspend this user? This will deactivate their account.')) {
+                console.log('Attempting to suspend user:', customerId);
+                fetch(`/admin/suspend-user/${customerId}`, { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    alert(data.message || 'User suspended successfully');
+                    refreshData();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error: ' + error.message);
+                });
+            }
+        }
+
+        function processFailedPayments() {
+            if (confirm('Process all failed payments? This will attempt to charge expired trial users.')) {
+                console.log('Processing failed payments...');
+                fetch('/admin/process-failed-payments', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    alert(`Processed ${data.processed} payments. ${data.successful} successful, ${data.failed} failed.`);
+                    refreshData();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error: ' + error.message);
+                });
+            }
+        }
+
+        function exportUsers() {
+            window.location.href = '/admin/export-users';
+        }
+
+        function confirmMassAction(action) {
+            if (confirm('This action affects all users. Are you sure?')) {
+                console.log('Executing mass action:', action);
+                fetch(`/admin/mass-action/${action}`, { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    alert(data.message || 'Mass action completed');
+                    refreshData();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error: ' + error.message);
+                });
+            }
+        }
+
+        function refreshData() {
+            location.reload();
+        }
+
+        function testAdmin() {
+            console.log('Testing admin connection...');
+            fetch('/admin/test', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => {
+                console.log('Test response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Test success:', data);
+                alert('✅ Admin connection working! ' + data.message);
+            })
+            .catch(error => {
+                console.error('Test error:', error);
+                alert('❌ Admin connection failed: ' + error.message);
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        // Initialize
+        displayUsers();
+    </script>
+</body>
+</html>

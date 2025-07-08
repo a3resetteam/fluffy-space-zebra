@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Communication Exercise</title>
+    <style>body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;margin:0;padding:0;}.container{max-width:700px;margin:40px auto;background:#181818;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.4);padding:32px 24px;}h1{color:#00a8ff;text-align:center;margin-bottom:16px;}.exercise-card{background:#111;border:1px solid #00a8ff;border-radius:12px;padding:24px;margin-bottom:24px;}.btn{background:linear-gradient(135deg,#00a8ff 0%,#00ff88 100%);color:#fff;padding:12px 28px;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:20px;display:block;margin-left:auto;margin-right:auto;transition:all 0.2s;}.btn:hover{background:linear-gradient(135deg,#00ff88 0%,#00a8ff 100%);transform:translateY(-2px);}.back-link{display:block;text-align:center;margin-top:32px;color:#00a8ff;text-decoration:none;}.back-link:hover{text-decoration:underline;}</style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Executive Communication Exercise</h1>
+        <div class="exercise-card">
+            <h2 style="color:#00ff88;">Scenario</h2>
+            <p style="font-size:1.1rem; color:#c0c0c0;">You must deliver a high-stakes message to your team about a major organizational change. Craft a brief executive summary (2-3 sentences) that is clear, motivating, and addresses potential concerns.</p>
+            <form method="post" action="#" onsubmit="showModel(); return false;">
+                <label for="response" style="color:#fff;">Your Executive Summary:</label><br>
+                <textarea id="response" name="response" rows="4" style="width:100%; border-radius:8px; margin-top:8px; padding:8px;"></textarea>
+                <button class="btn" type="submit">Submit</button>
+            </form>
+            <div id="model-answer" style="display:none; background:#222; border:1px solid #00ff88; border-radius:10px; margin-top:28px; padding:20px;">
+                <h3 style="color:#00ff88; text-align:center;">Model Executive Summary</h3>
+                <p style="color:#fff; font-size:1.05rem;">"Our organization is entering an exciting new phase of growth, which will require us to adapt and innovate together. While change can be challenging, I am confident in our team's ability to succeed and support one another. Let's embrace this opportunity and move forward as one."</p>
+            </div>
+        </div>
+        <a href="/alpha-elite/strategic-mastery/communication-mastery" class="back-link">← Back to Communication Mastery</a>
+    </div>
+    <script>
+        function showModel() {
+            document.getElementById('model-answer').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

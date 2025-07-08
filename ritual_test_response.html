@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ritual Session - The Oracle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #333;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+        .ritual-info {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .ritual-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .meta-item {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .meta-label {
+            color: #c0c0c0;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+        .meta-value {
+            color: #ffffff;
+            font-weight: 500;
+        }
+        .countdown-container {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 1px solid #444;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .countdown-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .countdown-timer {
+            font-size: 4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .countdown-label {
+            color: #c0c0c0;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+        .progress-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            z-index: 0;
+        }
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+        }
+        .progress-ring .background {
+            stroke: #333;
+        }
+        .progress-ring .progress {
+            stroke: url(#gradient);
+            stroke-dasharray: 628;
+            stroke-dashoffset: 628;
+            transition: stroke-dashoffset 1s linear;
+        }
+        .current-step {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            border: 2px solid #c0c0c0;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(192,192,192,0.1);
+        }
+        .step-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+        .step-instruction {
+            font-size: 1.1rem;
+            color: #c0c0c0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .step-duration {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.9rem;
+            color: #ffffff;
+        }
+        .upcoming-steps {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 25px;
+        }
+        .upcoming-title {
+            color: #ffffff;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .step-preview {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .step-preview:last-child {
+            margin-bottom: 0;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #c0c0c0 0%, #ffffff 100%);
+            color: #000000;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .step-preview-content {
+            flex: 1;
+        }
+        .step-preview-title {
+            color: #ffffff;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+        .step-preview-duration {
+            color: #c0c0c0;
+            font-size: 0.8rem;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #c0c0c0 0%, #ffffff 100%);
+            color: #000000;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.2);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            color: #c0c0c0;
+            border: 1px solid #444;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #3d3d3d 0%, #2d2d2d 100%);
+            color: #ffffff;
+            border-color: #666;
+        }
+        .completion-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #0d4d1a 0%, #1a3d0d 100%);
+            border: 2px solid #4CAF50;
+            border-radius: 16px;
+            margin-top: 30px;
+        }
+        .completion-message.show {
+            display: block;
+        }
+        .completion-emoji {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .completion-title {
+            color: #4CAF50;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .completion-text {
+            color: #c0c0c0;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .countdown-timer {
+                font-size: 3rem;
+            }
+            .progress-ring {
+                width: 150px;
+                height: 150px;
+            }
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔮 Your Personal Ritual</h1>
+        </div>
+
+        <div class="ritual-info">
+            <h2>Your Personalized Restorative Yoga Ritual</h2>
+            <div class="ritual-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Duration</div>
+                    <div class="meta-value">15 minutes</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Intensity</div>
+                    <div class="meta-value">Gentle Restoration</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Breathing Style</div>
+                    <div class="meta-value">Calming Breath</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Total Steps</div>
+                    <div class="meta-value">4</div>
+                </div>
+            </div>
+            
+            <div class="focus-areas">
+                
+                <span class="focus-area-tag">Neck Shoulders</span>
+                
+                <span class="focus-area-tag">Spine Back</span>
+                
+            </div>
+            
+        </div>
+
+        <div class="countdown-container">
+            <svg class="progress-ring">
+                <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#c0c0c0;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <circle class="background" cx="100" cy="100" r="90"></circle>
+                <circle class="progress" cx="100" cy="100" r="90"></circle>
+            </svg>
+            <div class="countdown-timer" id="countdownTimer">--:--</div>
+            <div class="countdown-label">Time Remaining</div>
+        </div>
+
+        <div class="ritual-steps" id="ritualSteps">
+            
+            <div class="ritual-step" data-step="0" id="step0">
+                <div class="step-header">
+                    <div class="step-emoji">🌅</div>
+                    <div class="step-info">
+                        <h3>Sacred Space Creation</h3>
+                        <div class="step-phase">Opening Phase</div>
+                    </div>
+                    <div class="step-duration">1 min</div>
+                </div>
+                
+                <ul class="step-instructions">
+                    
+                    <li>🕯️ Light candles or set intention</li>
+                    
+                    <li>🧘‍♀️ Take 3 deep breaths to arrive</li>
+                    
+                    <li>💫 Set clear intention for your practice</li>
+                    
+                    <li>🙏 Honor your body and this sacred time</li>
+                    
+                </ul>
+                
+                
+                
+                
+            </div>
+            
+            <div class="ritual-step" data-step="1" id="step1">
+                <div class="step-header">
+                    <div class="step-emoji">🌬️</div>
+                    <div class="step-info">
+                        <h3>4-7-8 Calming Breath</h3>
+                        <div class="step-phase">Breath Work Phase</div>
+                    </div>
+                    <div class="step-duration">3 min</div>
+                </div>
+                
+                <ul class="step-instructions">
+                    
+                    <li>💨 Inhale through nose for 4 counts</li>
+                    
+                    <li>🫁 Hold breath gently for 7 counts</li>
+                    
+                    <li>🌬️ Exhale through mouth for 8 counts</li>
+                    
+                    <li>😌 Repeat 8-12 cycles</li>
+                    
+                    <li>🧘‍♀️ Focus on the lengthening exhale</li>
+                    
+                </ul>
+                
+                
+                <div class="step-benefits">
+                    <div class="benefits-label">Benefits</div>
+                    <div class="benefits-text">Activates parasympathetic nervous system, reduces anxiety, promotes deep relaxation</div>
+                </div>
+                
+                
+                
+            </div>
+            
+            <div class="ritual-step" data-step="2" id="step2">
+                <div class="step-header">
+                    <div class="step-emoji">💃</div>
+                    <div class="step-info">
+                        <h3>Restorative Yoga Sequence</h3>
+                        <div class="step-phase">Movement Phase</div>
+                    </div>
+                    <div class="step-duration">9 min</div>
+                </div>
+                
+                <ul class="step-instructions">
+                    
+                    <li>🕊️ Supported fish pose with bolster (3 minutes)</li>
+                    
+                    <li>😌 Gentle neck massage with fingertips (2 minutes)</li>
+                    
+                    <li>🌸 Shoulder melting at the wall (2 minutes each arm)</li>
+                    
+                    <li>🌙 Supported child&#39;s pose (4 minutes)</li>
+                    
+                    <li>🌊 Gentle supine spinal twist (3 minutes each side)</li>
+                    
+                    <li>💎 Legs up the wall pose (5 minutes)</li>
+                    
+                    <li>💤 Hold each position gently, breathe deeply</li>
+                    
+                    <li>🌸 Move slowly and mindfully</li>
+                    
+                </ul>
+                
+                
+                
+                
+                <div class="focus-areas">
+                    
+                    <span class="focus-area-tag">Neck Shoulders</span>
+                    
+                    <span class="focus-area-tag">Spine Back</span>
+                    
+                </div>
+                
+            </div>
+            
+            <div class="ritual-step" data-step="3" id="step3">
+                <div class="step-header">
+                    <div class="step-emoji">✨</div>
+                    <div class="step-info">
+                        <h3>Sacred Integration</h3>
+                        <div class="step-phase">Integration Phase</div>
+                    </div>
+                    <div class="step-duration">1 min</div>
+                </div>
+                
+                <ul class="step-instructions">
+                    
+                    <li>🧘‍♀️ Sit or lie in comfortable stillness</li>
+                    
+                    <li>💫 Feel the effects of your practice</li>
+                    
+                    <li>🙏 Express gratitude for your body</li>
+                    
+                    <li>📝 Set intention for carrying this energy forward</li>
+                    
+                </ul>
+                
+                
+                
+                
+            </div>
+            
+        </div>
+
+        <div class="controls">
+            <button id="startPauseBtn" class="btn">▶️ Start Ritual</button>
+            <button id="skipBtn" class="btn btn-secondary" style="display: none;">⏭️ Next Step</button>
+            <a href="/ritual-creator" class="btn btn-secondary">🔄 Create New Ritual</a>
+        </div>
+
+        <div class="completion-message" id="completionMessage">
+            <div class="completion-emoji">🌟</div>
+            <div class="completion-title">Ritual Complete!</div>
+            <div class="completion-text">You've successfully completed your personalized transformation ritual. Take a moment to integrate this energy.</div>
+            <a href="/" class="btn">Return to Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        // Ritual data from server
+        const ritualSteps = [{"duration": 1, "emoji": "\ud83c\udf05", "instructions": ["\ud83d\udd6f\ufe0f Light candles or set intention", "\ud83e\uddd8\u200d\u2640\ufe0f Take 3 deep breaths to arrive", "\ud83d\udcab Set clear intention for your practice", "\ud83d\ude4f Honor your body and this sacred time"], "phase": "Opening", "title": "Sacred Space Creation"}, {"benefits": "Activates parasympathetic nervous system, reduces anxiety, promotes deep relaxation", "duration": 3, "emoji": "\ud83c\udf2c\ufe0f", "instructions": ["\ud83d\udca8 Inhale through nose for 4 counts", "\ud83e\udec1 Hold breath gently for 7 counts", "\ud83c\udf2c\ufe0f Exhale through mouth for 8 counts", "\ud83d\ude0c Repeat 8-12 cycles", "\ud83e\uddd8\u200d\u2640\ufe0f Focus on the lengthening exhale"], "phase": "Breath Work", "title": "4-7-8 Calming Breath"}, {"duration": 9, "emoji": "\ud83d\udc83", "focus_areas": ["neck_shoulders", "spine_back"], "instructions": ["\ud83d\udd4a\ufe0f Supported fish pose with bolster (3 minutes)", "\ud83d\ude0c Gentle neck massage with fingertips (2 minutes)", "\ud83c\udf38 Shoulder melting at the wall (2 minutes each arm)", "\ud83c\udf19 Supported child\u0027s pose (4 minutes)", "\ud83c\udf0a Gentle supine spinal twist (3 minutes each side)", "\ud83d\udc8e Legs up the wall pose (5 minutes)", "\ud83d\udca4 Hold each position gently, breathe deeply", "\ud83c\udf38 Move slowly and mindfully"], "phase": "Movement", "title": "Restorative Yoga Sequence"}, {"duration": 1, "emoji": "\u2728", "instructions": ["\ud83e\uddd8\u200d\u2640\ufe0f Sit or lie in comfortable stillness", "\ud83d\udcab Feel the effects of your practice", "\ud83d\ude4f Express gratitude for your body", "\ud83d\udcdd Set intention for carrying this energy forward"], "phase": "Integration", "title": "Sacred Integration"}];
+        const totalDuration = 15;
+        
+        let currentStepIndex = 0;
+        let isRunning = false;
+        let isPaused = false;
+        let timeRemaining = 0;
+        let stepTimeRemaining = 0;
+        let timerInterval;
+        
+        // DOM elements
+        const countdownTimer = document.getElementById('countdownTimer');
+        const currentStepDiv = document.getElementById('currentStep');
+        const stepTitle = document.getElementById('stepTitle');
+        const stepInstruction = document.getElementById('stepInstruction');
+        const stepDuration = document.getElementById('stepDuration');
+        const startPauseBtn = document.getElementById('startPauseBtn');
+        const skipBtn = document.getElementById('skipBtn');
+        const completionMessage = document.getElementById('completionMessage');
+        const progressCircle = document.querySelector('.progress-ring .progress');
+        
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function updateProgressRing(current, total) {
+            const percentage = (total - current) / total;
+            const offset = 628 - (percentage * 628);
+            progressCircle.style.strokeDashoffset = offset;
+        }
+        
+        function displayCurrentStep() {
+            if (currentStepIndex >= ritualSteps.length) {
+                completeRitual();
+                return;
+            }
+            
+            const step = ritualSteps[currentStepIndex];
+            stepTitle.textContent = step.title;
+            stepInstruction.textContent = step.instruction;
+            stepDuration.textContent = `${step.duration} minutes`;
+            stepTimeRemaining = step.duration * 60;
+            
+            // Highlight current step in upcoming list
+            document.querySelectorAll('.step-preview').forEach((preview, index) => {
+                if (index === currentStepIndex) {
+                    preview.style.background = 'rgba(192,192,192,0.2)';
+                    preview.style.border = '1px solid #c0c0c0';
+                } else if (index < currentStepIndex) {
+                    preview.style.background = 'rgba(76,175,80,0.2)';
+                    preview.style.border = '1px solid #4CAF50';
+                } else {
+                    preview.style.background = 'rgba(255,255,255,0.05)';
+                    preview.style.border = 'none';
+                }
+            });
+        }
+        
+        function startTimer() {
+            if (currentStepIndex >= ritualSteps.length) return;
+            
+            timerInterval = setInterval(() => {
+                if (timeRemaining > 0 && stepTimeRemaining > 0) {
+                    timeRemaining--;
+                    stepTimeRemaining--;
+                    
+                    countdownTimer.textContent = formatTime(timeRemaining);
+                    updateProgressRing(timeRemaining, totalDuration * 60);
+                    
+                    // Check if current step is complete
+                    if (stepTimeRemaining <= 0) {
+                        nextStep();
+                    }
+                } else {
+                    completeRitual();
+                }
+            }, 1000);
+        }
+        
+        function pauseTimer() {
+            clearInterval(timerInterval);
+        }
+        
+        function nextStep() {
+            currentStepIndex++;
+            displayCurrentStep();
+            
+            if (currentStepIndex >= ritualSteps.length) {
+                completeRitual();
+            }
+        }
+        
+        function completeRitual() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            currentStepDiv.style.display = 'none';
+            completionMessage.classList.add('show');
+            startPauseBtn.style.display = 'none';
+            skipBtn.style.display = 'none';
+            
+            // Confetti effect (optional)
+            updateProgressRing(0, totalDuration * 60);
+        }
+        
+        // Event listeners
+        startPauseBtn.addEventListener('click', () => {
+            if (!isRunning) {
+                // Start ritual
+                isRunning = true;
+                timeRemaining = totalDuration * 60;
+                currentStepIndex = 0;
+                displayCurrentStep();
+                startTimer();
+                startPauseBtn.textContent = '⏸️ Pause';
+                skipBtn.style.display = 'inline-block';
+                countdownTimer.textContent = formatTime(timeRemaining);
+            } else if (isPaused) {
+                // Resume
+                isPaused = false;
+                startTimer();
+                startPauseBtn.textContent = '⏸️ Pause';
+            } else {
+                // Pause
+                isPaused = true;
+                pauseTimer();
+                startPauseBtn.textContent = '▶️ Resume';
+            }
+        });
+        
+        skipBtn.addEventListener('click', () => {
+            if (isRunning && !isPaused) {
+                nextStep();
+            }
+        });
+        
+        // Initialize display
+        displayCurrentStep();
+        countdownTimer.textContent = formatTime(totalDuration * 60);
+        updateProgressRing(totalDuration * 60, totalDuration * 60);
+    </script>
+</body>
+</html>

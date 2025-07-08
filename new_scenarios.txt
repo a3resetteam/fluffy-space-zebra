@@ -1,0 +1,140 @@
+# New Romantic Scenarios
+{
+    'situation': 'You and your partner disagree about having children in the future, which you\'ve just discovered after a year together.',
+    'options': [
+        {'text': 'Avoid the topic and hope they\'ll change their mind eventually', 'outcome': 'avoidant', 'feedback': 'Avoiding fundamental compatibility issues leads to greater pain later. Address core values directly.'},
+        {'text': 'Have an open conversation about both perspectives and possible compromises', 'outcome': 'secure', 'feedback': 'Excellent approach! Deep value discussions require patience, empathy, and willingness to hear difficult truths.'},
+        {'text': 'Tell them they\'ll regret their position and try to convince them you\'re right', 'outcome': 'reactive', 'feedback': 'Pressuring someone on fundamental life choices damages trust and respect. These differences require mutual understanding.'},
+        {'text': 'Silently plan to trick them into your preference later in the relationship', 'outcome': 'manipulative', 'feedback': 'Deception on major life decisions violates consent and trust. Honest communication is essential for ethical relationships.'}
+    ]
+},
+{
+    'situation': 'Your partner\'s family member makes a racist comment at dinner. Your partner says nothing.',
+    'options': [
+        {'text': 'Confront the family member directly and call out the racism', 'outcome': 'assertive', 'feedback': 'Standing against racism shows integrity, though this approach may create tension. Consider discussing with your partner first.'},
+        {'text': 'Say nothing during dinner, but discuss with your partner privately later', 'outcome': 'secure', 'feedback': 'Good approach! Private conversation allows your partner to understand your perspective and develop a unified response.'},
+        {'text': 'Join in to fit in with their family even though you\'re uncomfortable', 'outcome': 'passive', 'feedback': 'Compromising your values for acceptance damages self-respect and enables harmful behavior. Healthy relationships support your integrity.'},
+        {'text': 'Immediately leave the dinner without explanation', 'outcome': 'reactive', 'feedback': 'While boundaries are important, abrupt exits without communication create confusion. Clear expression of concerns is more effective.'}
+    ]
+},
+{
+    'situation': 'You\'ve been struggling with depression but haven\'t told your partner. They\'ve noticed you\'re withdrawn.',
+    'options': [
+        {'text': 'Tell them it\'s just work stress and change the subject', 'outcome': 'avoidant', 'feedback': 'Hiding mental health struggles prevents support and deepens isolation. Vulnerability strengthens intimate connections.'},
+        {'text': 'Open up about your depression and how they can support you', 'outcome': 'secure', 'feedback': 'Excellent! Sharing mental health challenges allows your partner to understand and support you appropriately.'},
+        {'text': 'Accuse them of being too demanding when you\'re obviously struggling', 'outcome': 'reactive', 'feedback': 'Deflecting through blame prevents meaningful connection and support. Your partner can\'t understand what you don\'t communicate.'},
+        {'text': 'Say you\'re fine but drop hints hoping they\'ll figure it out', 'outcome': 'passive', 'feedback': 'Indirect communication about important issues creates frustration. Clear expression of needs enables appropriate support.'}
+    ]
+},
+{
+    'situation': 'Your partner receives a job offer that would advance their career but require moving to another city, disrupting your own career.',
+    'options': [
+        {'text': 'Tell them to take it while secretly resenting the sacrifice you\'ll make', 'outcome': 'passive', 'feedback': 'Unexpressed resentment grows toxic over time. Honest discussion of both partners\' needs is essential for major decisions.'},
+        {'text': 'Discuss how this impacts both your goals and explore compromise options', 'outcome': 'secure', 'feedback': 'Perfect approach! Complex life decisions require weighing both partners\' priorities and creative problem-solving.'},
+        {'text': 'Refuse to move and tell them to choose between you or the job', 'outcome': 'reactive', 'feedback': 'Ultimatums damage trust and cooperation. Major life decisions benefit from collaborative exploration of options.'},
+        {'text': 'Agree to long-distance without discussing if that actually works for you', 'outcome': 'avoidant', 'feedback': 'Avoiding difficult conversations about relationship structure leads to misaligned expectations and disappointment.'}
+    ]
+},
+{
+    'situation': 'You discover your partner has significantly more debt than they initially disclosed to you.',
+    'options': [
+        {'text': 'Immediately confront them and accuse them of lying', 'outcome': 'reactive', 'feedback': 'While dishonesty is concerning, accusatory approaches shut down productive conversation about sensitive issues like finances.'},
+        {'text': 'Ignore it since money shouldn\'t matter in a loving relationship', 'outcome': 'avoidant', 'feedback': 'Financial compatibility and transparency are important aspects of long-term relationships. Ignoring significant issues doesn\'t resolve them.'},
+        {'text': 'Have a calm conversation about financial transparency and future planning', 'outcome': 'secure', 'feedback': 'Excellent approach! Financial discussions require sensitivity while still maintaining expectations of honesty and shared goals.'},
+        {'text': 'Start hiding your own finances since they weren\'t honest with you', 'outcome': 'retaliatory', 'feedback': 'Responding to dishonesty with more dishonesty creates a cycle of mistrust that undermines relationship stability.'}
+    ]
+}
+
+# New Friendship Scenarios
+{
+    'situation': 'Your friend is dating someone who you believe is emotionally manipulative based on behaviors you\'ve observed.',
+    'options': [
+        {'text': 'Tell your friend directly that their partner is toxic and they should break up', 'outcome': 'reactive', 'feedback': 'While well-intentioned, direct criticism of a partner can trigger defensiveness. Consider a more supportive approach.'},
+        {'text': 'Ask thoughtful questions about how they feel in the relationship and express specific concerns', 'outcome': 'secure', 'feedback': 'Excellent approach! This shows respect for their autonomy while offering perspective that helps them reach their own conclusions.'},
+        {'text': 'Say nothing because it\'s not your place to interfere in their relationship', 'outcome': 'avoidant', 'feedback': 'While respecting boundaries is important, true friends offer perspective when they see potential harm. Choose a sensitive approach.'},
+        {'text': 'Subtly undermine their relationship by highlighting negative aspects whenever possible', 'outcome': 'manipulative', 'feedback': 'Manipulation, even with good intentions, damages trust. Direct, compassionate communication respects your friend\'s agency.'}
+    ]
+},
+{
+    'situation': 'Your friend group has started excluding someone who used to be part of the circle. You\'re uncomfortable with this.',
+    'options': [
+        {'text': 'Privately reach out to the excluded friend while maintaining your other friendships', 'outcome': 'compassionate', 'feedback': 'This shows integrity and compassion by not participating in exclusion while maintaining relationships. Consider also addressing the pattern.'},
+        {'text': 'Speak up in the group about the pattern you\'ve noticed and ask why it\'s happening', 'outcome': 'secure', 'feedback': 'Excellent! Addressing group dynamics directly allows for honest conversation and potential resolution of underlying issues.'},
+        {'text': 'Go along with the exclusion to avoid creating waves in the friend group', 'outcome': 'passive', 'feedback': 'Participating in behavior that conflicts with your values leads to internal conflict and enables harmful social patterns.'},
+        {'text': 'Dramatically call everyone out and threaten to leave the group if they don\'t include the person', 'outcome': 'reactive', 'feedback': 'While standing up for others is admirable, confrontational approaches often backfire. Thoughtful engagement is more effective.'}
+    ]
+},
+{
+    'situation': 'You discover your friend has been spreading a false rumor about another friend in your social circle.',
+    'options': [
+        {'text': 'Immediately text everyone in the group to expose the lie', 'outcome': 'reactive', 'feedback': 'Public callouts often escalate conflict rather than resolve it. Consider addressing the source directly first.'},
+        {'text': 'Speak to your friend privately about what you\'ve heard and your concern', 'outcome': 'secure', 'feedback': 'Perfect approach! Direct, private conversation allows for understanding and correction without unnecessary public shame.'},
+        {'text': 'Pretend you never heard the rumor to avoid getting involved', 'outcome': 'avoidant', 'feedback': 'Ignoring harmful behavior enables it to continue. True friendship sometimes requires uncomfortable conversations.'},
+        {'text': 'Start your own counter-rumor about the friend who\'s spreading lies', 'outcome': 'retaliatory', 'feedback': 'Fighting deception with deception damages your integrity and escalates destructive group dynamics.'}
+    ]
+},
+{
+    'situation': 'Your friend is going through a serious personal crisis but refuses to seek professional help.',
+    'options': [
+        {'text': 'Keep insisting they need therapy every time you talk to them', 'outcome': 'forceful', 'feedback': 'While well-intentioned, repeated unsolicited advice often creates resistance. Support and patience may be more effective.'},
+        {'text': 'Listen supportively while occasionally sharing resources or offering to help find support', 'outcome': 'secure', 'feedback': 'Excellent balance! This approach offers support without pressure, respecting their autonomy while showing genuine care.'},
+        {'text': 'Distance yourself because their problems are too intense for you to handle', 'outcome': 'avoidant', 'feedback': 'While boundaries are important, abruptly withdrawing support during crisis can be harmful. Consider balanced support options.'},
+        {'text': 'Try to solve all their problems yourself even though you feel overwhelmed', 'outcome': 'overcommitted', 'feedback': 'Taking responsibility for others\' wellbeing beyond your capacity can lead to burnout and unhealthy dependency.'}
+    ]
+},
+{
+    'situation': 'Your long-distance friend always contacts you when they need support but rarely responds when you reach out.',
+    'options': [
+        {'text': 'Call them out for being a selfish friend and demand equal attention', 'outcome': 'reactive', 'feedback': 'While imbalance should be addressed, accusatory approaches often trigger defensiveness rather than understanding.'},
+        {'text': 'Stop responding to their messages to teach them a lesson', 'outcome': 'passive-aggressive', 'feedback': 'Indirect methods of expressing dissatisfaction rarely lead to positive change and often damage relationships further.'},
+        {'text': 'Have an honest conversation about how you value the friendship but need more reciprocity', 'outcome': 'secure', 'feedback': 'Perfect! Direct, non-accusatory communication about your needs gives the friendship a chance to become more balanced.'},
+        {'text': 'Continue the one-sided dynamic while growing increasingly resentful', 'outcome': 'passive', 'feedback': 'Suppressing legitimate needs and feelings leads to resentment that eventually damages relationships beyond repair.'}
+    ]
+}
+
+# New Professional Scenarios
+{
+    'situation': 'You notice a significant ethical issue in your company\'s new product that leadership seems to be ignoring.',
+    'options': [
+        {'text': 'Anonymously leak the information to the press', 'outcome': 'whistleblower', 'feedback': 'While whistleblowing is sometimes necessary, exploring internal channels first is usually the appropriate first step.'},
+        {'text': 'Document your concerns and present them through proper channels first', 'outcome': 'secure', 'feedback': 'Excellent approach! This demonstrates integrity while following professional protocol and gives the organization a chance to address the issue.'},
+        {'text': 'Ignore it since bringing it up could jeopardize your career advancement', 'outcome': 'avoidant', 'feedback': 'Overlooking ethical concerns for personal gain can lead to greater problems and potential complicity in harmful outcomes.'},
+        {'text': 'Complain about it to colleagues but take no direct action', 'outcome': 'passive', 'feedback': 'Venting without action doesn\'t resolve issues and can create a toxic environment of helplessness and cynicism.'}
+    ]
+},
+{
+    'situation': 'Your supervisor takes credit for your idea in a meeting with senior leadership.',
+    'options': [
+        {'text': 'Interrupt the meeting to correct them and claim ownership', 'outcome': 'confrontational', 'feedback': 'While ownership matters, public confrontation can damage professional relationships. Consider more strategic approaches.'},
+        {'text': 'Speak to your supervisor privately afterward and establish expectations moving forward', 'outcome': 'secure', 'feedback': 'Excellent approach! This addresses the issue directly while maintaining professional decorum and giving them a chance to correct course.'},
+        {'text': 'Document your contributions more thoroughly in the future but say nothing now', 'outcome': 'adaptive', 'feedback': 'Improving documentation is wise, though addressing the current situation directly would also be beneficial for setting expectations.'},
+        {'text': 'Start undermining your supervisor in subtle ways to get revenge', 'outcome': 'retaliatory', 'feedback': 'Retaliatory behavior creates toxic workplace dynamics and often backfires, potentially harming your own reputation.'}
+    ]
+},
+{
+    'situation': 'You strongly disagree with a strategic decision made by your team that you believe will fail.',
+    'options': [
+        {'text': 'Keep expressing your disagreement at every opportunity', 'outcome': 'undermining', 'feedback': 'Persistent opposition after a decision has been made can be perceived as undermining team cohesion and effectiveness.'},
+        {'text': 'Voice your concerns once clearly, then commit to supporting the team direction', 'outcome': 'secure', 'feedback': 'Perfect balance! This ensures your perspective is heard while demonstrating professionalism and team loyalty.'},
+        {'text': 'Quietly work on your own alternative solution without telling anyone', 'outcome': 'independent', 'feedback': 'Working in isolation rather than collaboratively can create confusion and duplication of effort. Transparency is usually more effective.'},
+        {'text': 'Distance yourself from the project to avoid being blamed when it fails', 'outcome': 'avoidant', 'feedback': 'Strategic disassociation can appear as lack of commitment. Consider how to remain engaged while managing professional risk.'}
+    ]
+},
+{
+    'situation': 'A junior colleague asks for mentoring, but you\'re already overwhelmed with your workload.',
+    'options': [
+        {'text': 'Agree to full mentoring despite your bandwidth issues', 'outcome': 'overcommitted', 'feedback': 'While generous, overcommitting leads to poor results, burnout, and disappointment for both parties. Setting realistic boundaries is professional.'},
+        {'text': 'Offer limited but focused support with clear boundaries', 'outcome': 'secure', 'feedback': 'Excellent approach! This balances generosity with realistic capacity, allowing you to provide quality mentoring without burnout.'},
+        {'text': 'Tell them you\'re too busy and they should find someone else', 'outcome': 'dismissive', 'feedback': 'Abrupt refusal without alternatives may appear dismissive. Consider offering some guidance even with limitations.'},
+        {'text': 'Agree reluctantly but then repeatedly cancel your mentoring sessions', 'outcome': 'unreliable', 'feedback': 'Making commitments you can\'t fulfill damages your reputation and the junior colleague\'s development. Clear boundaries from the start are more respectful.'}
+    ]
+},
+{
+    'situation': 'You\'ve received a job offer with higher pay, but your current workplace counters with a promotion if you stay.',
+    'options': [
+        {'text': 'Use the offer to negotiate even more from your current employer', 'outcome': 'strategic', 'feedback': 'While negotiation is appropriate, excessive leveraging can damage relationships. Consider what truly matters beyond compensation.'},
+        {'text': 'Carefully evaluate both opportunities based on long-term career goals, not just salary', 'outcome': 'secure', 'feedback': 'Excellent approach! Thoughtful career decisions consider comprehensive factors including growth potential, culture, and work-life balance.'},
+        {'text': 'Accept your current employer\'s offer immediately out of loyalty', 'outcome': 'impulsive', 'feedback': 'While loyalty is admirable, career decisions benefit from careful evaluation of all factors. Take time to consider fully.'},
+        {'text': 'Accept the new job but maintain ambiguous status with your current employer as backup', 'outcome': 'dishonest', 'feedback': 'Lack of transparency creates professional reputation risks and burns bridges. Clear communication maintains professional integrity.'}
+    ]
+}

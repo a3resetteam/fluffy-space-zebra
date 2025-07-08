@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}Resume Samples - MYA3Reset: The Oracle{% endblock %}
+
+{% block content %}
+<style>
+    .sample-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid #333;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+    }
+    .sample-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        border-color: #74b9ff;
+    }
+    .resume-preview {
+        background: #1a1a2e;
+        border: 1px solid #333;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        font-family: 'Times New Roman', serif;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        color: #ffffff;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .resume-header {
+        text-align: center;
+        border-bottom: 2px solid #74b9ff;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+    .resume-section {
+        margin-bottom: 20px;
+    }
+    .resume-section h3 {
+        color: #74b9ff;
+        border-bottom: 1px solid #74b9ff;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+    }
+    .type-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+    .type-professional { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+    .type-friend { background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); }
+    .type-life { background: linear-gradient(135deg, #ffc107 0%, #fd79a8 100%); }
+    .type-custom { background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); }
+</style>
+
+<div class="header">
+    <h1 style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">📋 Resume Samples</h1>
+    <p>Examples of Professional, Friend, Life, and Custom resume formats</p>
+    <a href="{{ url_for('resume_hub') }}" class="btn btn-secondary">← Back to Resume Hub</a>
+</div>
+
+<!-- Professional Resume Sample -->
+<div class="sample-card">
+    <div class="type-badge type-professional">💼 Professional Resume</div>
+    <h3 style="color: #e74c3c; margin-bottom: 15px;">Sample: Marketing Manager Resume</h3>
+    <p style="color: #c0c0c0; margin-bottom: 20px;">Traditional career-focused resume highlighting work experience, skills, and achievements</p>
+    
+    <div class="resume-preview">
+        <div class="resume-header">
+            <h2 style="color: #ffffff; margin: 0;">SARAH JOHNSON</h2>
+            <p style="margin: 5px 0; color: #c0c0c0;">Marketing Manager | Digital Strategy Expert</p>
+            <p style="margin: 0; font-size: 0.8rem; color: #c0c0c0;">sarah.johnson@email.com | (555) 123-4567 | LinkedIn: sarah-johnson</p>
+        </div>
+        
+        <div class="resume-section">
+            <h3>PROFESSIONAL SUMMARY</h3>
+            <p>Results-driven Marketing Manager with 7+ years of experience developing and executing digital marketing strategies. Proven track record of increasing brand awareness by 150% and generating $2M+ in revenue growth.</p>
+        </div>
+        
+        <div class="resume-section">
+            <h3>WORK EXPERIENCE</h3>
+            <p><strong>Senior Marketing Manager</strong> - TechCorp Inc. (2020-Present)</p>
+            <ul>
+                <li>Led digital marketing campaigns resulting in 45% increase in lead generation</li>
+                <li>Managed $500K annual marketing budget with 15% cost reduction</li>
+                <li>Built and mentored team of 5 marketing specialists</li>
+            </ul>
+            
+            <p><strong>Marketing Specialist</strong> - GrowthCo (2018-2020)</p>
+            <ul>
+                <li>Developed social media strategy increasing followers by 200%</li>
+                <li>Created content calendar resulting in 85% engagement rate improvement</li>
+            </ul>
+        </div>
+        
+        <div class="resume-section">
+            <h3>SKILLS</h3>
+            <p>Digital Marketing • SEO/SEM • Google Analytics • Content Strategy • Team Leadership • Budget Management • A/B Testing • CRM Software</p>
+        </div>
+        
+        <div class="resume-section">
+            <h3>EDUCATION</h3>
+            <p><strong>Bachelor of Business Administration</strong> - Marketing<br>University of Business (2018)</p>
+        </div>
+    </div>
+    
+    <div style="text-align: center;">
+        <button class="btn" onclick="downloadSample('professional')" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">📄 Download Template</button>
+    </div>
+</div>
+
+<!-- Friend Resume Sample -->
+<div class="sample-card">
+    <div class="type-badge type-friend">🤝 Friend Resume</div>
+    <h3 style="color: #74b9ff; margin-bottom: 15px;">Sample: Personal Qualities Resume</h3>
+    <p style="color: #c0c0c0; margin-bottom: 20px;">Focus on character traits, relationship skills, and personal values</p>
+    
+    <div class="resume-preview">
+        <div class="resume-header">
+            <h2 style="color: #ffffff; margin: 0;">ALEX RIVERA</h2>
+            <p style="margin: 5px 0; color: #c0c0c0;">Loyal Friend | Supportive Companion | Adventure Partner</p>
+            <p style="margin: 0; font-size: 0.8rem; color: #c0c0c0;">"The friend who's always there when you need them most"</p>
+        </div>
+        
+        <div class="resume-section">
+            <h3>FRIENDSHIP PHILOSOPHY</h3>
+            <p>I believe in authentic connections, unwavering loyalty, and creating meaningful memories together. My approach to friendship is built on trust, empathy, and genuine care for others' wellbeing.</p>
+        </div>
+        
+        <div class="resume-section">
+            <h3>CORE QUALITIES</h3>
+            <ul>
+                <li><strong>Reliability:</strong> Always available for late-night calls and emergency support</li>
+                <li><strong>Empathy:</strong> Excellent listener who provides emotional support without judgment</li>
+                <li><strong>Loyalty:</strong> Stands by friends through thick and thin, never breaks confidence</li>
+                <li><strong>Humor:</strong> Uses wit and positivity to brighten difficult moments</li>
+                <li><strong>Adventure Spirit:</strong> Always up for trying new experiences and making memories</li>
+            </ul>
+        </div>
+        
+        <div class="resume-section">
+            <h3>FRIENDSHIP EXPERIENCE</h3>
+            <p><strong>Best Friend & Confidant</strong> - Multiple Long-term Friendships (2010-Present)</p>
+            <ul>
+                <li>Maintained 15+ year friendships with 95% satisfaction rate</li>
+                <li>Successfully mediated conflicts in friend groups</li>
+                <li>Organized 50+ memorable group activities and celebrations</li>
+            </ul>
+        </div>
+        
+        <div class="resume-section">
+            <h3>SPECIAL SKILLS</h3>
+            <p>Active Listening • Conflict Resolution • Party Planning • Emotional Support • Secret Keeping • Memory Making • Adventure Planning • Crisis Management</p>
+        </div>
+        
+        <div class="resume-section">
+            <h3>TESTIMONIALS</h3>
+            <p><em>"Alex is the friend everyone wishes they had - always positive, incredibly supportive, and genuinely cares about your happiness."</em> - Sarah M.</p>
+        </div>
+    </div>
+    
+    <div style="text-align: center;">
+        <button class="btn" onclick="downloadSample('friend')" style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);">📄 Download Template</button>
+    </div>
+</div>
+
+<!-- Life Resume Sample -->
+<div class="sample-card">
+    <div class="type-badge type-life">🌟 Life Resume</div>
+    <h3 style="color: #ffc107; margin-bottom: 15px;">Sample: Life Achievements Resume</h3>
+    <p style="color: #c0c0c0; margin-bottom: 20px;">Comprehensive life experiences, personal growth, and diverse accomplishments</p>
+    
+    <div class="resume-preview">
+        <div class="resume-header">
+            <h2 style="color: #ffffff; margin: 0;">MAYA CHEN</h2>
+            <p style="margin: 5px 0; color: #c0c0c0;">Life Explorer | Growth Seeker | Story Collector</p>
+            <p style="margin: 0; font-size: 0.8rem; color: #c0c0c0;">"Living life as a series of meaningful adventures and connections"</p>
+        </div>
+        
+        <div class="resume-section">
+            <h3>LIFE MISSION</h3>
+            <p>To live authentically, grow continuously, and make a positive impact on others while exploring the world's beauty and complexity. I believe in collecting experiences over possessions and wisdom over wealth.</p>
+        </div>
+        
+        <div class="resume-section">
+            <h3>MAJOR LIFE ACHIEVEMENTS</h3>
+            <ul>
+                <li><strong>Personal Growth:</strong> Overcame social anxiety through mindfulness and therapy</li>
+                <li><strong>Adventure:</strong> Completed solo backpacking trip through 12 countries</li>
+                <li><strong>Creativity:</strong> Self-published poetry book with 1,000+ copies sold</li>
+                <li><strong>Community:</strong> Volunteered 500+ hours at local animal shelter</li>
+                <li><strong>Learning:</strong> Became fluent in Spanish and conversational in Italian</li>
+            </ul>
+        </div>
+        
+        <div class="resume-section">
+            <h3>TRANSFORMATIVE EXPERIENCES</h3>
+            <p><strong>Solo Travel Journey</strong> - Europe & South America (2019-2020)</p>
+            <ul>
+                <li>Developed independence, cultural awareness, and adaptability</li>
+                <li>Built connections with people from 25+ different countries</li>
+                <li>Documented journey through photography and storytelling</li>
+            </ul>
+            
+            <p><strong>Marathon Training & Completion</strong> - Chicago Marathon (2021)</p>
+            <ul>
+                <li>Demonstrated discipline, perseverance, and goal achievement</li>
+                <li>Raised $5,000 for mental health awareness</li>
+            </ul>
+        </div>
+        
+        <div class="resume-section">
+            <h3>LIFE SKILLS & PASSIONS</h3>
+            <p>Photography • Creative Writing • Cooking International Cuisine • Rock Climbing • Meditation • Language Learning • Sustainable Living • Community Building</p>
+        </div>
+        
+        <div class="resume-section">
+            <h3>WISDOM GAINED</h3>
+            <p><em>"Every challenge is an opportunity for growth, every person has a story worth hearing, and every day is a chance to choose kindness over judgment."</em></p>
+        </div>
+    </div>
+    
+    <div style="text-align: center;">
+        <button class="btn" onclick="downloadSample('life')" style="background: linear-gradient(135deg, #ffc107 0%, #fd79a8 100%);">📄 Download Template</button>
+    </div>
+</div>
+
+<!-- Custom Resume Sample -->
+<div class="sample-card">
+    <div class="type-badge type-custom">🎯 Custom Resume</div>
+    <h3 style="color: #6c5ce7; margin-bottom: 15px;">Sample: Creative Portfolio Resume</h3>
+    <p style="color: #c0c0c0; margin-bottom: 20px;">Unique format combining visual elements with traditional resume content</p>
+    
+    <div class="resume-preview">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+            <div style="background: rgba(108, 92, 231, 0.1); padding: 15px; border-radius: 8px;">
+                <div class="resume-header" style="border: none; text-align: left;">
+                    <h2 style="color: #6c5ce7; margin: 0;">JORDAN TAYLOR</h2>
+                    <p style="margin: 5px 0; color: #a29bfe;">Creative Designer</p>
+                </div>
+                
+                <div class="resume-section">
+                    <h3 style="color: #6c5ce7; font-size: 1rem;">CONTACT</h3>
+                    <p style="font-size: 0.8rem;">jordan@creative.com<br>(555) 987-6543<br>Portfolio: jordantaylor.design</p>
+                </div>
+                
+                <div class="resume-section">
+                    <h3 style="color: #6c5ce7; font-size: 1rem;">SKILLS</h3>
+                    <div style="font-size: 0.8rem;">
+                        <p>Adobe Creative Suite ●●●●●</p>
+                        <p>UI/UX Design ●●●●○</p>
+                        <p>Branding ●●●●●</p>
+                        <p>Web Design ●●●○○</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="resume-section">
+                    <h3 style="color: #6c5ce7;">CREATIVE PHILOSOPHY</h3>
+                    <p style="font-size: 0.85rem;">Design is storytelling through visual language. Every project is an opportunity to solve problems creatively while evoking emotion and driving action.</p>
+                </div>
+                
+                <div class="resume-section">
+                    <h3 style="color: #6c5ce7;">FEATURED PROJECTS</h3>
+                    <p style="font-size: 0.85rem;"><strong>Brand Identity - EcoLife Co.</strong><br>
+                    Complete rebrand resulting in 40% increase in brand recognition</p>
+                    
+                    <p style="font-size: 0.85rem;"><strong>App Design - FitTracker</strong><br>
+                    UI/UX design for fitness app with 100K+ downloads</p>
+                </div>
+                
+                <div class="resume-section">
+                    <h3 style="color: #6c5ce7;">CREATIVE AWARDS</h3>
+                    <p style="font-size: 0.85rem;">• Design Excellence Award 2023<br>• Featured in Creative Quarterly<br>• Client Satisfaction: 98%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="text-align: center;">
+        <button class="btn" onclick="downloadSample('custom')" style="background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);">📄 Download Template</button>
+    </div>
+</div>
+
+<!-- Navigation -->
+<div style="text-align: center; margin-top: 40px;">
+    <a href="{{ url_for('resume_hub') }}" class="btn btn-secondary">← Back to Resume Hub</a>
+    <a href="{{ url_for('assessment') }}" class="btn">📊 Assessments</a>
+    <a href="{{ url_for('home') }}" class="btn btn-primary">🏠 Dashboard</a>
+</div>
+
+<script>
+    function downloadSample(type) {
+        const typeNames = {
+            'professional': 'Professional Resume Template',
+            'friend': 'Friend Resume Template',
+            'life': 'Life Resume Template',
+            'custom': 'Creative Resume Template'
+        };
+        
+        alert(`Download ${typeNames[type]} coming soon! This will provide you with an editable template file.`);
+        // In real implementation: window.location.href = `/download-template/${type}`;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="header">
+    <h1>🌑 Shadow Work Journal</h1>
+    <p>Deep Self-Discovery Through Reflection</p>
+</div>
+
+<div class="card">
+    <div class="shadow-work-header" style="text-align: center; margin-bottom: 30px;">
+        <h2 style="color: #ffffff; margin-bottom: 15px;">Day {{ prompt_number }} of {{ total_prompts }}</h2>
+        <div class="progress-bar" style="height: 12px; margin: 20px 0;">
+            <div class="progress-fill" style="width: {{ ((prompt_number / total_prompts) * 100)|round }}%;"></div>
+        </div>
+        <p style="color: #c0c0c0; margin-bottom: 30px;">Take your time with this reflection. There are no wrong answers.</p>
+    </div>
+
+    <div class="prompt-section" style="background: linear-gradient(135deg, #2d3436 0%, #636e72 100%); padding: 30px; border-radius: 15px; margin-bottom: 30px;">
+        <h3 style="color: #74b9ff; margin-bottom: 20px; font-size: 1.4rem;">Today's Reflection Prompt:</h3>
+        <p style="color: #ffffff; font-size: 1.2rem; line-height: 1.6; font-style: italic;">
+            "{{ prompt }}"
+        </p>
+    </div>
+
+    <form method="POST" action="{{ url_for('submit_shadow_work') }}" style="margin-bottom: 30px;">
+        <input type="hidden" name="prompt_id" value="{{ prompt_number - 1 }}">
+        
+        <div class="form-group">
+            <label for="response" style="font-size: 1.2rem; color: #ffffff; margin-bottom: 15px;">Your Reflection:</label>
+            <textarea 
+                id="response" 
+                name="response" 
+                rows="8" 
+                placeholder="Take your time to explore this question deeply. Write whatever comes to mind - there's no judgment here..."
+                style="width: 100%; padding: 20px; border: 2px solid #333; border-radius: 12px; background: #1a1a2e; color: #ffffff; font-size: 16px; line-height: 1.6; resize: vertical; min-height: 200px;"
+                required
+            ></textarea>
+        </div>
+        
+        <div class="form-group" style="margin-top: 20px;">
+            <label for="emotional_intensity" style="font-size: 1.1rem; color: #ffffff; margin-bottom: 10px;">Emotional Intensity (1-10):</label>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="color: #c0c0c0;">Low</span>
+                <input 
+                    type="range" 
+                    id="emotional_intensity" 
+                    name="emotional_intensity" 
+                    min="1" 
+                    max="10" 
+                    value="5"
+                    style="flex-grow: 1; margin: 0 15px; accent-color: #74b9ff;"
+                >
+                <span style="color: #c0c0c0;">High</span>
+                <span id="intensity-value" style="margin-left: 10px; color: #74b9ff; font-weight: bold;">5</span>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label for="insight_gained" style="font-size: 1.1rem; color: #ffffff; margin-bottom: 10px;">Key Insight Gained:</label>
+            <textarea 
+                id="insight_gained" 
+                name="insight_gained" 
+                rows="3" 
+                placeholder="What was your main realization or insight from this reflection?"
+                style="width: 100%; padding: 15px; border: 2px solid #333; border-radius: 12px; background: #1a1a2e; color: #ffffff; font-size: 16px; line-height: 1.5; resize: vertical;"
+            ></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label for="healing_action" style="font-size: 1.1rem; color: #ffffff; margin-bottom: 10px;">Healing Action Step:</label>
+            <textarea 
+                id="healing_action" 
+                name="healing_action" 
+                rows="3" 
+                placeholder="What small action could you take to integrate this insight into your life?"
+                style="width: 100%; padding: 15px; border: 2px solid #333; border-radius: 12px; background: #1a1a2e; color: #ffffff; font-size: 16px; line-height: 1.5; resize: vertical;"
+            ></textarea>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" class="btn" style="padding: 15px 40px; font-size: 18px;">
+                💫 Save Reflection
+            </button>
+        </div>
+    </form>
+
+    <div class="shadow-work-tips" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 25px; border-radius: 15px; border-left: 4px solid #74b9ff;">
+        <h4 style="color: #74b9ff; margin-bottom: 15px;">💡 Reflection Tips:</h4>
+        <ul style="color: #c0c0c0; line-height: 1.8;">
+            <li>Write without censoring yourself - let your thoughts flow freely</li>
+            <li>Notice any resistance or emotions that come up</li>
+            <li>There are no right or wrong answers - only your truth</li>
+            <li>Take breaks if you need them - healing isn't linear</li>
+            <li>Come back to these reflections later for new insights</li>
+        </ul>
+    </div>
+
+    <!-- Previous Reflections Section -->
+    {% if previous_responses %}
+    <div class="shadow-journal-history" style="margin-top: 40px; border-top: 1px solid #333; padding-top: 30px;">
+        <h3 style="color: #74b9ff; margin-bottom: 20px;">💭 Your Shadow Work Journey</h3>
+        
+        <div class="accordion">
+            {% for entry in previous_responses %}
+            <div class="accordion-item" style="margin-bottom: 15px; border-radius: 10px; overflow: hidden; background: rgba(26, 26, 46, 0.7);">
+                <div class="accordion-header" style="padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 style="margin: 0; color: #fff; font-size: 1rem;">
+                        "{{ entry.prompt|truncate(70) }}"
+                    </h4>
+                    <span style="color: #c0c0c0; font-size: 0.9rem;">{{ entry.date.split(' ')[0] }}</span>
+                </div>
+                <div class="accordion-content" style="display: none; padding: 20px; border-top: 1px solid #333; background: rgba(22, 33, 62, 0.5);">
+                    <p style="color: #e0e0e0; margin-bottom: 15px;">{{ entry.response|nl2br }}</p>
+                    
+                    {% if entry.emotional_intensity is not none %}
+                    <div style="margin-top: 15px; display: flex; align-items: center;">
+                        <span style="color: #c0c0c0; min-width: 140px;">Emotional Intensity:</span>
+                        <div class="intensity-bar" style="flex-grow: 1; height: 8px; background: #333; border-radius: 4px; overflow: hidden;">
+                            <div style="width: {{ entry.emotional_intensity * 10 }}%; height: 100%; background: linear-gradient(90deg, #74b9ff, #0984e3);"></div>
+                        </div>
+                        <span style="margin-left: 10px; color: #74b9ff; font-weight: bold;">{{ entry.emotional_intensity }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if entry.insight_gained %}
+                    <div style="margin-top: 15px;">
+                        <span style="color: #c0c0c0; display: block; margin-bottom: 5px;">Insight Gained:</span>
+                        <p style="color: #e0e0e0; margin-left: 10px; font-style: italic;">{{ entry.insight_gained }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if entry.healing_action %}
+                    <div style="margin-top: 15px;">
+                        <span style="color: #c0c0c0; display: block; margin-bottom: 5px;">Healing Action:</span>
+                        <p style="color: #e0e0e0; margin-left: 10px;">{{ entry.healing_action }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if entry.follow_up %}
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #333;">
+                        <span style="color: #74b9ff; display: block; margin-bottom: 5px;">Follow-up Reflection:</span>
+                        <p style="color: #e0e0e0; margin-left: 10px;">{{ entry.follow_up|nl2br }}</p>
+                    </div>
+                    {% else %}
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #333;">
+                        <form method="POST" action="{{ url_for('shadow_work_follow_up') }}">
+                            <input type="hidden" name="response_id" value="{{ entry.id }}">
+                            <label for="follow_up" style="color: #74b9ff; display: block; margin-bottom: 10px;">Add a follow-up reflection:</label>
+                            <textarea 
+                                id="follow_up" 
+                                name="follow_up" 
+                                rows="3" 
+                                placeholder="Has anything new emerged for you since this initial reflection?"
+                                style="width: 100%; padding: 15px; border: 1px solid #333; border-radius: 8px; background: rgba(26, 26, 46, 0.7); color: #ffffff;"
+                            ></textarea>
+                            <div style="text-align: right; margin-top: 10px;">
+                                <button type="submit" class="btn-small" style="padding: 8px 15px; font-size: 14px; background: rgba(116, 185, 255, 0.2);">
+                                    Add Reflection
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Healing Insights Section -->
+    {% if healing_insights and completed_count >= 3 %}
+    <div class="healing-insights" style="margin-top: 40px; border-top: 1px solid #333; padding-top: 30px;">
+        <h3 style="color: #74b9ff; margin-bottom: 20px;">✨ Your Healing Insights</h3>
+        <p style="color: #c0c0c0; margin-bottom: 25px;">Based on your shadow work journey, the oracle has identified these patterns that may help guide your healing:</p>
+        
+        <div class="insights-container">
+            {% for insight in healing_insights %}
+            <div class="insight-card" style="background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #74b9ff;">
+                <h4 style="color: #74b9ff; margin-bottom: 10px;">{{ insight.theme }}</h4>
+                <p style="color: #e0e0e0; margin-bottom: 15px;">{{ insight.insight }}</p>
+                <p style="color: #c0c0c0; font-style: italic;">💫 <strong>Healing Direction:</strong> {{ insight.healing_direction }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{{ url_for('situationship_mode') }}" class="btn btn-secondary">
+            ← Back to Situationship Mode
+        </a>
+    </div>
+</div>
+
+<style>
+    .prompt-section {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .prompt-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    }
+    
+    .shadow-work-tips ul {
+        padding-left: 20px;
+    }
+    
+    .shadow-work-tips li {
+        margin-bottom: 8px;
+    }
+    
+    textarea:focus {
+        outline: none;
+        border-color: #74b9ff !important;
+        box-shadow: 0 0 20px rgba(116, 185, 255, 0.3) !important;
+    }
+    
+    .progress-fill {
+        background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        height: 100%;
+        transition: width 0.6s ease;
+        border-radius: 8px;
+        position: relative;
+    }
+    
+    .progress-fill::after {
+        content: '{{ ((prompt_number / total_prompts) * 100)|round }}%';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+    }
+</style>
+
+<script>
+    // Update the displayed intensity value
+    document.addEventListener('DOMContentLoaded', function() {
+        const intensitySlider = document.getElementById('emotional_intensity');
+        const intensityValue = document.getElementById('intensity-value');
+        
+        if (intensitySlider && intensityValue) {
+            intensitySlider.addEventListener('input', function() {
+                intensityValue.textContent = this.value;
+            });
+        }
+        
+        // Setup accordions for previous responses
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                if (content.style.display === 'none' || content.style.display === '') {
+                    content.style.display = 'block';
+                } else {
+                    content.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

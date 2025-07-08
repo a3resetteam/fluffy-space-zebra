@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="header">
+    <h1>📜 Terms of Service</h1>
+    <p>MYA3Reset: The Oracle - Important Legal Information & Disclaimers</p>
+</div>
+
+<div class="card">
+    <div style="background: rgba(231, 112, 85, 0.1); border-left: 4px solid #e17055; padding: 20px; margin-bottom: 30px; border-radius: 0 10px 10px 0;">
+        <h3 style="color: #e17055; margin-top: 0;">🚨 1. Crisis Support Notice</h3>
+        <p style="margin-bottom: 0;">
+            If you are experiencing emotional distress or a mental health crisis, please contact a licensed mental health professional or call a local crisis line immediately. This platform is not intended for emergency use or therapeutic intervention.
+        </p>
+    </div>
+
+    <div style="background: rgba(116, 185, 255, 0.1); border-left: 4px solid #74b9ff; padding: 20px; margin-bottom: 30px; border-radius: 0 10px 10px 0;">
+        <h3 style="color: #74b9ff; margin-top: 0;">⚖️ 2. Results and Responsibility</h3>
+        <p style="margin-bottom: 0;">
+            Individual results may vary. You are solely responsible for your use of this platform and any actions or decisions taken based on the information provided. Alchemy3 makes no guarantees about outcomes or improvements resulting from using our platform, products, or guidance.
+        </p>
+    </div>
+
+    <div style="background: rgba(0, 255, 136, 0.1); border-left: 4px solid #00ff88; padding: 20px; margin-bottom: 30px; border-radius: 0 10px 10px 0;">
+        <h3 style="color: #00ff88; margin-top: 0;">🤖 3. AI Companion & Insight Disclaimer</h3>
+        <p style="margin-bottom: 0;">
+            The Alchemy3 AI Companion is a digital wellness assistant designed to offer guidance rooted in mindfulness, affirmations, and personal reflection. While it references insights inspired by wellness coaches, spiritual mentors, and scientific studies, it does not replace professional advice from licensed therapists, counselors, trainers, or spiritual leaders. All interactions with the AI are intended for personal growth and reflection, not for crisis support or professional consultation.
+        </p>
+    </div>
+
+    <div style="background: rgba(253, 121, 168, 0.1); border-left: 4px solid #fd79a8; padding: 20px; margin-bottom: 30px; border-radius: 0 10px 10px 0;">
+        <h3 style="color: #fd79a8; margin-top: 0;">🏥 4. General Wellness Disclaimer</h3>
+        <p style="margin-bottom: 0;">
+            The information provided on this site, including but not limited to text, graphics, audio, video, and AI-generated insights, is for informational and wellness purposes only. It is not intended to diagnose, treat, cure, or prevent any disease or substitute professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified healthcare provider with any questions you may have regarding a medical condition.
+        </p>
+    </div>
+
+    <div style="background: rgba(116, 185, 255, 0.1); border-left: 4px solid #74b9ff; padding: 20px; margin-bottom: 30px; border-radius: 0 10px 10px 0;">
+        <h3 style="color: #74b9ff; margin-top: 0;">💳 5. Subscription Terms</h3>
+        <p style="margin-bottom: 15px;">
+            <strong>Free Trial:</strong> Your 3-day free trial begins immediately upon registration. No charges will be made during this period.
+        </p>
+        <p style="margin-bottom: 15px;">
+            <strong>Billing:</strong> After your free trial ends, your card will be automatically charged $19.99 per month until you cancel.
+        </p>
+        <p style="margin-bottom: 15px;">
+            <strong>Cancellation:</strong> You may cancel your subscription at any time through your account settings or by contacting support. Cancellation takes effect at the end of your current billing period.
+        </p>
+        <p style="margin-bottom: 0;">
+            <strong>Refunds:</strong> We offer a 7-day money-back guarantee from your first paid charge (after the free trial period).
+        </p>
+    </div>
+
+    <div style="background: rgba(99, 110, 114, 0.1); border-left: 4px solid #636e72; padding: 20px; margin-bottom: 30px; border-radius: 0 10px 10px 0;">
+        <h3 style="color: #636e72; margin-top: 0;">📧 6. Contact Information</h3>
+        <p style="margin-bottom: 15px;">
+            For questions about these terms or to request account cancellation, please contact us at:
+        </p>
+        <p style="margin-bottom: 10px;">
+            <strong>Email:</strong> support@mya3reset.com
+        </p>
+        <p style="margin-bottom: 0;">
+            <strong>Response Time:</strong> We aim to respond within 24 hours during business days.
+        </p>
+    </div>
+
+    <div style="background: rgba(99, 110, 114, 0.1); border-left: 4px solid #636e72; padding: 20px; margin-bottom: 0; border-radius: 0 10px 10px 0;">
+        <h3 style="color: #636e72; margin-top: 0;">📅 Effective Date</h3>
+        <p style="margin-bottom: 0;">
+            These terms are effective as of June 27, 2025. By using MYA3Reset: The Oracle, you acknowledge that you have read, understood, and agree to be bound by these terms and disclaimers.
+        </p>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{{ url_for('register') }}" class="btn">🔙 Back to Registration</a>
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">🏠 Home</a>
+    </div>
+</div>
+{% endblock %}

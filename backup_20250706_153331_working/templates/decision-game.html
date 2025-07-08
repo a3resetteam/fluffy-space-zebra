@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="header">
+    <h1>🎯 Decision Game</h1>
+    <p>Practice Making Better Relationship Choices</p>
+</div>
+
+<div class="card" style="margin-bottom: 30px;">
+    <h2 style="text-align: center; margin-bottom: 20px; color: #ffffff;">Choose Relationship Type</h2>
+    
+    {% set type_icons = {
+        'romantic': '❤️',
+        'friendship': '👥',
+        'professional': '💼'
+    } %}
+    
+    {% set type_titles = {
+        'romantic': 'Romantic Relationships',
+        'friendship': 'Friendships',
+        'professional': 'Professional Relationships'
+    } %}
+    
+    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
+        {% for type in available_types %}
+        <a href="{{ url_for('decision_game', type=type) }}" 
+           class="relationship-type-button {% if relationship_type == type %}active{% endif %}"
+           style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, {% if relationship_type == type %}#0984e3 0%, #74b9ff{% else %}#1a1a2e 0%, #16213e{% endif %} 100%);
+            border: 2px solid {% if relationship_type == type %}#74b9ff{% else %}#333{% endif %};
+            border-radius: 15px;
+            padding: 15px;
+            min-width: 140px;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: {% if relationship_type == type %}0 10px 20px rgba(116, 185, 255, 0.3){% else %}none{% endif %};
+           "
+           onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 20px rgba(116, 185, 255, 0.2)';"
+           onmouseout="this.style.transform='{% if relationship_type == type %}translateY(-3px){% else %}none{% endif %}'; this.style.boxShadow='{% if relationship_type == type %}0 10px 20px rgba(116, 185, 255, 0.3){% else %}none{% endif %}';"
+        >
+            <span style="font-size: 2rem; margin-bottom: 8px;">{{ type_icons.get(type, '🔮') }}</span>
+            <span style="color: #ffffff; font-weight: 500;">{{ type_titles.get(type, type.title()) }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="text-align: center; margin-bottom: 30px; color: #ffffff;">
+        {{ type_icons.get(relationship_type, '🔮') }} {{ type_titles.get(relationship_type, 'Relationship') }} Scenario
+    </h2>
+    
+    <div style="background: linear-gradient(135deg, #2d3436 0%, #636e72 100%); padding: 25px; border-radius: 15px; margin-bottom: 30px;">
+        <p style="font-size: 1.2rem; color: #ffffff; line-height: 1.6; margin: 0;">
+            {{ scenario.situation }}
+        </p>
+    </div>
+    
+    <h3 style="color: #74b9ff; margin-bottom: 20px; text-align: center;">How would you respond?</h3>
+    
+    <form method="POST" action="{{ url_for('decision_choice') }}" id="decision-form">
+        <input type="hidden" name="scenario_id" value="{{ scenario_id }}">
+        <input type="hidden" name="relationship_type" value="{{ relationship_type }}">
+        
+        <div style="display: grid; gap: 15px;">
+            {% for option in scenario.options %}
+            <div class="option-card" onclick="selectOption({{ loop.index0 }})" style="
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                border: 2px solid #333;
+                border-radius: 15px;
+                padding: 20px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                position: relative;
+            ">
+                <input type="radio" name="choice" value="{{ loop.index0 }}" id="option{{ loop.index0 }}" style="display: none;">
+                <label for="option{{ loop.index0 }}" style="
+                    display: block;
+                    font-size: 1.1rem;
+                    color: #ffffff;
+                    cursor: pointer;
+                    margin: 0;
+                    line-height: 1.5;
+                ">
+                    <span style="
+                        display: inline-block;
+                        width: 25px;
+                        height: 25px;
+                        border: 2px solid #74b9ff;
+                        border-radius: 50%;
+                        margin-right: 15px;
+                        vertical-align: middle;
+                        position: relative;
+                    ">
+                        <span class="radio-inner" style="
+                            display: block;
+                            width: 15px;
+                            height: 15px;
+                            background: #74b9ff;
+                            border-radius: 50%;
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                        "></span>
+                    </span>
+                    {{ option.text }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" class="btn" id="submit-btn" disabled>
+                🎯 Make Your Choice
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="card" style="background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);">
+    <h3 style="color: #74b9ff; margin-bottom: 15px;">💡 About This Exercise</h3>
+    <p style="color: #ffffff; margin: 0; line-height: 1.6;">
+        This decision game helps you practice identifying healthy relationship responses. 
+        Each choice reveals different attachment styles and communication patterns. 
+        The goal is to develop more secure, confident responses to relationship challenges.
+    </p>
+</div>
+
+<style>
+.option-card:hover {
+    border-color: #74b9ff;
+    box-shadow: 0 5px 15px rgba(116, 185, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.option-card.selected {
+    border-color: #74b9ff;
+    background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+    box-shadow: 0 10px 25px rgba(116, 185, 255, 0.4);
+}
+
+.option-card.selected .radio-inner {
+    opacity: 1;
+}
+
+#submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+</style>
+
+<script>
+function selectOption(index) {
+    // Remove previous selections
+    document.querySelectorAll('.option-card').forEach(card => {
+        card.classList.remove('selected');
+        card.querySelector('.radio-inner').style.opacity = '0';
+    });
+    
+    // Select current option
+    const selectedCard = document.querySelectorAll('.option-card')[index];
+    selectedCard.classList.add('selected');
+    selectedCard.querySelector('.radio-inner').style.opacity = '1';
+    
+    // Check the radio button
+    document.getElementById('option' + index).checked = true;
+    
+    // Enable submit button
+    document.getElementById('submit-btn').disabled = false;
+}
+
+// Add click handlers to radio buttons
+document.querySelectorAll('input[name="choice"]').forEach((radio, index) => {
+    radio.addEventListener('change', () => {
+        selectOption(index);
+    });
+});
+</script>
+{% endblock %}
