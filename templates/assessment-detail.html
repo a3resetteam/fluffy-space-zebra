@@ -128,7 +128,7 @@
         <div class="header">
             <h1>{{ title }}</h1>
             <p style="font-size: 1.1rem; color: #c0c0c0;">{{ description }}</p>
-            <a href="{{ url_for('assessment') }}" class="btn btn-secondary">← Back to Assessments</a>
+            <a href="/assessment" class="btn btn-secondary">← Back to Assessments</a>
         </div>
 
         <!-- Assessment Info -->
@@ -152,7 +152,7 @@
         </div>
 
         <!-- Assessment Form -->
-        <form id="assessment-form" method="POST" action="{{ url_for('submit_assessment') }}">
+        <form id="assessment-form" method="POST" action="#">
             <input type="hidden" name="assessment_type" value="{{ assessment_type }}">
             
             <div class="question-counter" id="question-counter">

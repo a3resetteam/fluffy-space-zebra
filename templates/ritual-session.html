@@ -363,7 +363,7 @@
             <h2>🎉 Ritual Complete!</h2>
             <p>You have successfully completed your {{ ritual_data.ritual_need }} ritual. Feel the transformation within you.</p>
             <div style="margin-top: 20px;">
-                <a href="{{ url_for('ritual_creator') }}" class="btn">🔮 Create Another Ritual</a>
+                <a href="{{ url_for('mode_page', mode_name='rituals') }}" class="btn">🔮 Create Another Ritual</a>
                 <a href="{{ url_for('home') }}" class="btn btn-secondary">🏠 Return Home</a>
             </div>
         </div>
@@ -371,7 +371,7 @@
 
     <div class="ritual-controls" id="ritual-controls">
         <button class="btn btn-success" id="complete-step-btn" onclick="completeCurrentStep()" style="display: none;">✅ Complete Step</button>
-        <a href="{{ url_for('ritual_creator') }}" class="btn btn-secondary">🔙 Back to Creator</a>
+        <a href="{{ url_for('mode_page', mode_name='rituals') }}" class="btn btn-secondary">🔙 Back to Creator</a>
     </div>
 
     <script>
