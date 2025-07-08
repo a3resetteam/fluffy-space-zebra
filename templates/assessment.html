@@ -4,22 +4,32 @@
     <meta charset="UTF-8">
     <title>A3Reset Assessment Mode</title>
     <style>
-        body { font-family: 'Inter', sans-serif; background: #181a20; color: #fff; text-align: center; padding: 40px; }
-        .card { background: #23263a; border-radius: 16px; padding: 32px; max-width: 500px; margin: 40px auto; box-shadow: 0 4px 24px #0003; }
-        h1 { color: #00b894; }
-        .btn { background: #00b894; color: #fff; border: none; border-radius: 8px; padding: 12px 32px; font-size: 1.1rem; cursor: pointer; margin-top: 24px; }
-        .btn:hover { background: #009e7a; }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>🧠 A3Reset Assessment Mode</h1>
-        <p>Welcome to the A3Reset Assessment!<br>Track your transformation journey and get personalized insights.</p>
-        <p><b>Progress:</b> {{ progress.completion_percentage if progress else 0 }}%</p>
-        <button class="btn" onclick="alert('Assessment coming soon!')">Start Assessment</button>
-    </div>
-</body>
-</html>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #181a20; 
+            color: #fff; 
+            margin: 0; 
+            padding: 20px; 
+            line-height: 1.6; 
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: #23263a;
+            border-radius: 16px;
+            padding: 32px;
+            margin: 20px 0;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+        .assessment-grid {
+            display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
             margin-bottom: 30px;
@@ -95,7 +105,7 @@
                 <h3 style="color: #00b894; margin-bottom: 15px;">🧩 Personality Profile</h3>
                 <p style="color: #c0c0c0; margin-bottom: 20px;">Discover your core personality traits, strengths, and areas for growth using advanced psychometric analysis.</p>
                 <div style="color: #00b894; font-size: 14px; margin-bottom: 15px;">📊 40 Questions • 15 minutes</div>
-                <a href="{{ url_for('personality_profile') }}" class="btn">Start Assessment</a>
+                <a href="#" class="btn" onclick="alert('Personality Profile coming soon!')">Start Assessment</a>
             </div>
 
             <div class="assessment-card">
