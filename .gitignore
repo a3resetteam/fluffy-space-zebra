@@ -1,18 +1,48 @@
-# Ignore Python cache and environment files
+# Python virtual environment and cache files
+venv/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.py[cod]
+*$py.class
 
-# Ignore environment and secret files
+# Environment and secret files
 .env
-oracle.db
-*.sqlite3
-*.log
-uploads/
 
-# Ignore backup and temp files
+# Database files
+*.sqlite3
+*.db-journal
+oracle.db
+
+# Log files
+*.log
+app.log
+flask.log
+
+# Cache directories
+.cache/
+cache/
+
+# Node.js dependencies
+node_modules/
+
+# macOS system files
+.DS_Store
+
+# Russian locale files
+*.рус
+
+# Large files
+*10g
+
+# Backup and temp files
 backup_*/
 Untitled Folder/
 *.txt
-*.log
+*.bak
+*.tmp
+*.backup
+
+# Upload directories
+uploads/
