@@ -1,0 +1,678 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="header">
+    <h1>🔮 Oracle Assessment</h1>
+    <p>Discover your path to transformation</p>
+</div>
+
+<div class="card">
+    <div id="assessment-selection" style="display: block;">
+        <h2 style="text-align: center; margin-bottom: 30px; color: #ffffff;">Choose Your Assessment</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+            <div class="assessment-card" onclick="startAssessment('alpha')" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 1px solid #444; border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#666'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#444'; this.style.transform='translateY(0)'">
+                <h3 style="color: #ffffff; margin-bottom: 15px;">👑 Alpha Elite Assessment</h3>
+                <p style="color: #c0c0c0; font-size: 14px;">Measure your confidence, leadership presence, and elite mindset</p>
+            </div>
+            
+            <div class="assessment-card" onclick="startAssessment('situationship')" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 1px solid #444; border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#666'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#444'; this.style.transform='translateY(0)'">
+                <h3 style="color: #ffffff; margin-bottom: 15px;">💝 Situationship Assessment</h3>
+                <p style="color: #c0c0c0; font-size: 14px;">Evaluate your relationship patterns and boundary-setting skills</p>
+            </div>
+            
+            <div class="assessment-card" onclick="startAssessment('mindset')" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 1px solid #444; border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#666'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#444'; this.style.transform='translateY(0)'">
+                <h3 style="color: #ffffff; margin-bottom: 15px;">🧠 Mindset Mastery Assessment</h3>
+                <p style="color: #c0c0c0; font-size: 14px;">Identify limiting beliefs and mental resilience levels</p>
+            </div>
+            
+            <div class="assessment-card" onclick="startAssessment('wealth')" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 1px solid #444; border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#666'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#444'; this.style.transform='translateY(0)'">
+                <h3 style="color: #ffffff; margin-bottom: 15px;">💰 Wealth Builder Assessment</h3>
+                <p style="color: #c0c0c0; font-size: 14px;">Assess your money mindset and abundance beliefs</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assessment Content -->
+    <div id="assessment-content" style="display: none;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 id="assessment-title" style="color: #ffffff;"></h2>
+            <p style="color: #c0c0c0;">Question <span id="current-question">1</span> of <span id="total-questions">10</span></p>
+            <div style="background: #333; border-radius: 10px; height: 8px; margin: 20px 0;">
+                <div id="progress-bar" style="background: linear-gradient(135deg, #c0c0c0 0%, #ffffff 100%); height: 100%; border-radius: 10px; width: 10%; transition: width 0.3s ease;"></div>
+            </div>
+        </div>
+
+        <div id="question-container">
+            <h3 id="question-text" style="color: #ffffff; margin-bottom: 30px; text-align: center;"></h3>
+            
+            <div id="answers-container" style="max-width: 600px; margin: 0 auto;">
+                <!-- Answer options will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="next-btn" onclick="nextQuestion()" style="background: linear-gradient(135deg, #c0c0c0 0%, #ffffff 100%); color: #000000; padding: 15px 30px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; opacity: 0.5;" disabled>
+                Next Question
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Page -->
+    <div id="results-content" style="display: none;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="color: #ffffff; margin-bottom: 20px;">🎯 Your Assessment Results</h2>
+            <div id="results-summary" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #666; border-radius: 20px; padding: 25px; margin: 20px 0;">
+                <!-- Results will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button onclick="restartAssessment()" style="background: linear-gradient(135deg, #c0c0c0 0%, #ffffff 100%); color: #000000; padding: 15px 30px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin: 10px;">
+                Take Another Assessment
+            </button>
+            <button onclick="window.location.href='{{ url_for('oracle') }}'" style="background: linear-gradient(135deg, #444 0%, #666 100%); color: #ffffff; padding: 15px 30px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin: 10px;">
+                Return to Oracle
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentAssessment = '';
+let currentQuestionIndex = 0;
+let userAnswers = [];
+let assessmentQuestions = {};
+
+// Assessment Questions Database
+assessmentQuestions = {
+    alpha: {
+        title: "👑 Alpha Elite Assessment",
+        questions: [
+            {
+                question: "When entering a room full of strangers, how do you typically feel?",
+                answers: [
+                    { text: "Excited and energized to meet new people", score: 4 },
+                    { text: "Confident but selective about who I approach", score: 3 },
+                    { text: "Somewhat nervous but I push through", score: 2 },
+                    { text: "Anxious and prefer to stay in the background", score: 1 }
+                ]
+            },
+            {
+                question: "How do you handle criticism or negative feedback?",
+                answers: [
+                    { text: "I use it as fuel to improve and prove them wrong", score: 4 },
+                    { text: "I consider it carefully and take what's useful", score: 3 },
+                    { text: "It bothers me but I try to learn from it", score: 2 },
+                    { text: "It affects me deeply and I struggle to move past it", score: 1 }
+                ]
+            },
+            {
+                question: "When making important decisions, what drives you most?",
+                answers: [
+                    { text: "My vision for elite success and dominance", score: 4 },
+                    { text: "Logic, strategy, and calculated risks", score: 3 },
+                    { text: "A mix of emotions and practical considerations", score: 2 },
+                    { text: "Fear of making the wrong choice", score: 1 }
+                ]
+            },
+            {
+                question: "How do others typically perceive your presence?",
+                answers: [
+                    { text: "As a natural leader who commands respect", score: 4 },
+                    { text: "As confident and someone they look up to", score: 3 },
+                    { text: "As friendly but not particularly influential", score: 2 },
+                    { text: "As quiet and easy to overlook", score: 1 }
+                ]
+            },
+            {
+                question: "When facing a major challenge, your mindset is:",
+                answers: [
+                    { text: "This is my chance to prove I'm elite", score: 4 },
+                    { text: "I have the skills to figure this out", score: 3 },
+                    { text: "I hope I can handle this", score: 2 },
+                    { text: "I'm probably going to struggle with this", score: 1 }
+                ]
+            },
+            {
+                question: "How do you approach goal setting?",
+                answers: [
+                    { text: "I set audacious goals that others think are impossible", score: 4 },
+                    { text: "I set challenging but achievable goals", score: 3 },
+                    { text: "I set modest goals to avoid disappointment", score: 2 },
+                    { text: "I rarely set specific goals", score: 1 }
+                ]
+            },
+            {
+                question: "In group settings, you typically:",
+                answers: [
+                    { text: "Naturally take charge and lead discussions", score: 4 },
+                    { text: "Contribute valuable insights when needed", score: 3 },
+                    { text: "Participate but rarely take the lead", score: 2 },
+                    { text: "Prefer to listen and follow others", score: 1 }
+                ]
+            },
+            {
+                question: "How do you view failure?",
+                answers: [
+                    { text: "Failure is not an option - only learning experiences", score: 4 },
+                    { text: "Failure is data that helps me improve", score: 3 },
+                    { text: "Failure is disappointing but part of life", score: 2 },
+                    { text: "Failure confirms my fears about not being good enough", score: 1 }
+                ]
+            },
+            {
+                question: "Your relationship with competition is:",
+                answers: [
+                    { text: "I thrive on it and use it to dominate", score: 4 },
+                    { text: "I enjoy it and perform well under pressure", score: 3 },
+                    { text: "I can handle it but prefer collaboration", score: 2 },
+                    { text: "I avoid competitive situations when possible", score: 1 }
+                ]
+            },
+            {
+                question: "When it comes to your standards for yourself:",
+                answers: [
+                    { text: "Excellence is the minimum, perfection is the goal", score: 4 },
+                    { text: "I maintain high standards and work to meet them", score: 3 },
+                    { text: "I try my best but accept 'good enough'", score: 2 },
+                    { text: "I often settle for less than I'm capable of", score: 1 }
+                ]
+            }
+        ]
+    },
+    situationship: {
+        title: "💝 Situationship Assessment",
+        questions: [
+            {
+                question: "When someone you're dating doesn't text back for hours, you:",
+                answers: [
+                    { text: "Continue with my day - I have my own life to focus on", score: 4 },
+                    { text: "Notice but don't let it affect my mood", score: 3 },
+                    { text: "Feel a bit anxious but try not to overthink it", score: 2 },
+                    { text: "Analyze every possible reason and feel stressed", score: 1 }
+                ]
+            },
+            {
+                question: "How clearly do you communicate your relationship needs?",
+                answers: [
+                    { text: "I'm direct and upfront about what I want", score: 4 },
+                    { text: "I communicate them but sometimes hesitate", score: 3 },
+                    { text: "I hint at them but avoid difficult conversations", score: 2 },
+                    { text: "I rarely express my needs directly", score: 1 }
+                ]
+            },
+            {
+                question: "When someone treats you as an option rather than a priority:",
+                answers: [
+                    { text: "I immediately address it or walk away", score: 4 },
+                    { text: "I set clear boundaries about my expectations", score: 3 },
+                    { text: "I feel hurt but often accept it hoping things change", score: 2 },
+                    { text: "I make excuses for their behavior and stay", score: 1 }
+                ]
+            },
+            {
+                question: "Your approach to modern dating apps and casual dating is:",
+                answers: [
+                    { text: "I use them strategically while maintaining my standards", score: 4 },
+                    { text: "I engage but stay true to what I'm looking for", score: 3 },
+                    { text: "I often get confused about what I want", score: 2 },
+                    { text: "I settle for whatever attention I can get", score: 1 }
+                ]
+            },
+            {
+                question: "How do you handle mixed signals from someone you're interested in?",
+                answers: [
+                    { text: "I call it out directly and ask for clarity", score: 4 },
+                    { text: "I give them a chance to be clear, then decide", score: 3 },
+                    { text: "I try to decode their behavior and wait", score: 2 },
+                    { text: "I assume the worst and blame myself", score: 1 }
+                ]
+            },
+            {
+                question: "When it comes to physical intimacy, you:",
+                answers: [
+                    { text: "Know exactly what you want and communicate it", score: 4 },
+                    { text: "Have clear boundaries and stick to them", score: 3 },
+                    { text: "Sometimes compromise your comfort to please others", score: 2 },
+                    { text: "Often go along with what the other person wants", score: 1 }
+                ]
+            },
+            {
+                question: "How do you define your worth in relationships?",
+                answers: [
+                    { text: "By how well I'm treated and respected", score: 4 },
+                    { text: "By the quality of connection I create", score: 3 },
+                    { text: "By how much the other person likes me", score: 2 },
+                    { text: "By whether someone chooses to stay with me", score: 1 }
+                ]
+            },
+            {
+                question: "Your response to 'breadcrumbing' or minimal effort is:",
+                answers: [
+                    { text: "I cut it off immediately - I deserve better", score: 4 },
+                    { text: "I address it once, then act based on their response", score: 3 },
+                    { text: "I feel frustrated but hope they'll change", score: 2 },
+                    { text: "I accept it because some attention is better than none", score: 1 }
+                ]
+            },
+            {
+                question: "How do you handle jealousy or fear of being replaced?",
+                answers: [
+                    { text: "I focus on my own value and what I bring", score: 4 },
+                    { text: "I acknowledge the feeling but don't let it control me", score: 3 },
+                    { text: "I try to compete or change myself to keep them", score: 2 },
+                    { text: "I become anxious and start acting out of fear", score: 1 }
+                ]
+            },
+            {
+                question: "Your philosophy on 'the right person' is:",
+                answers: [
+                    { text: "The right person will choose me consistently and clearly", score: 4 },
+                    { text: "The right person and I will both put in equal effort", score: 3 },
+                    { text: "I need to work hard to keep the right person interested", score: 2 },
+                    { text: "I'm lucky if anyone good shows interest in me", score: 1 }
+                ]
+            }
+        ]
+    },
+    mindset: {
+        title: "🧠 Mindset Mastery Assessment",
+        questions: [
+            {
+                question: "When you face a setback, your first thought is usually:",
+                answers: [
+                    { text: "What can I learn from this to grow stronger?", score: 4 },
+                    { text: "This is temporary - I'll figure out a solution", score: 3 },
+                    { text: "Why does this always happen to me?", score: 2 },
+                    { text: "I'm probably not capable of handling this", score: 1 }
+                ]
+            },
+            {
+                question: "How do you view your abilities and intelligence?",
+                answers: [
+                    { text: "They can always be developed through effort and learning", score: 4 },
+                    { text: "I can improve in most areas with practice", score: 3 },
+                    { text: "Some things I'm good at, others I'm just not", score: 2 },
+                    { text: "I'm limited by my natural talents", score: 1 }
+                ]
+            },
+            {
+                question: "When you compare yourself to others:",
+                answers: [
+                    { text: "I use it as inspiration for my own growth", score: 4 },
+                    { text: "I focus on my own journey and progress", score: 3 },
+                    { text: "I sometimes feel inadequate but try to stay positive", score: 2 },
+                    { text: "I usually feel like I'm falling behind", score: 1 }
+                ]
+            },
+            {
+                question: "Your inner dialogue tends to be:",
+                answers: [
+                    { text: "Encouraging and solution-focused", score: 4 },
+                    { text: "Generally positive with occasional doubts", score: 3 },
+                    { text: "Mixed between supportive and critical", score: 2 },
+                    { text: "Often harsh and self-defeating", score: 1 }
+                ]
+            },
+            {
+                question: "When someone achieves something you want:",
+                answers: [
+                    { text: "I study their path and apply it to my journey", score: 4 },
+                    { text: "I feel motivated to work harder on my goals", score: 3 },
+                    { text: "I feel a mix of inspiration and envy", score: 2 },
+                    { text: "I assume they're just luckier or more talented", score: 1 }
+                ]
+            },
+            {
+                question: "How do you handle uncertainty about the future?",
+                answers: [
+                    { text: "I focus on what I can control and prepare for possibilities", score: 4 },
+                    { text: "I make plans while staying flexible", score: 3 },
+                    { text: "I worry but try to stay optimistic", score: 2 },
+                    { text: "I catastrophize and expect the worst", score: 1 }
+                ]
+            },
+            {
+                question: "Your relationship with taking risks is:",
+                answers: [
+                    { text: "I embrace calculated risks as growth opportunities", score: 4 },
+                    { text: "I take reasonable risks when the potential is worth it", score: 3 },
+                    { text: "I'm cautious but sometimes push my comfort zone", score: 2 },
+                    { text: "I avoid risks because I'm afraid of failing", score: 1 }
+                ]
+            },
+            {
+                question: "When you make a mistake:",
+                answers: [
+                    { text: "I own it, learn from it, and move forward quickly", score: 4 },
+                    { text: "I acknowledge it and try to do better next time", score: 3 },
+                    { text: "I feel bad about it but eventually move on", score: 2 },
+                    { text: "I replay it over and over, feeling ashamed", score: 1 }
+                ]
+            },
+            {
+                question: "How do you respond to negative thoughts?",
+                answers: [
+                    { text: "I challenge them and reframe them positively", score: 4 },
+                    { text: "I acknowledge them but don't let them control me", score: 3 },
+                    { text: "I try to ignore them but they often persist", score: 2 },
+                    { text: "I believe them and they spiral into worse thoughts", score: 1 }
+                ]
+            },
+            {
+                question: "Your belief about change and personal growth is:",
+                answers: [
+                    { text: "I can transform any aspect of myself with commitment", score: 4 },
+                    { text: "Significant positive change is possible with effort", score: 3 },
+                    { text: "Some change is possible but I have limitations", score: 2 },
+                    { text: "People don't really change - I am who I am", score: 1 }
+                ]
+            }
+        ]
+    },
+    wealth: {
+        title: "💰 Wealth Builder Assessment",
+        questions: [
+            {
+                question: "When you think about money, your dominant feeling is:",
+                answers: [
+                    { text: "Excitement about the opportunities it creates", score: 4 },
+                    { text: "Confidence in my ability to earn and manage it", score: 3 },
+                    { text: "Anxiety about having enough or managing it well", score: 2 },
+                    { text: "Fear or shame around money topics", score: 1 }
+                ]
+            },
+            {
+                question: "Your relationship with spending money is:",
+                answers: [
+                    { text: "I invest strategically in things that grow my wealth", score: 4 },
+                    { text: "I spend thoughtfully on what adds value to my life", score: 3 },
+                    { text: "I'm often conflicted between saving and enjoying", score: 2 },
+                    { text: "I feel guilty about spending money on myself", score: 1 }
+                ]
+            },
+            {
+                question: "When it comes to asking for raises or charging your worth:",
+                answers: [
+                    { text: "I confidently advocate for my value", score: 4 },
+                    { text: "I prepare well and make my case", score: 3 },
+                    { text: "I find it uncomfortable but do it when necessary", score: 2 },
+                    { text: "I avoid these conversations and accept what's offered", score: 1 }
+                ]
+            },
+            {
+                question: "How do you view wealthy people?",
+                answers: [
+                    { text: "I admire their success and study their strategies", score: 4 },
+                    { text: "I see them as examples of what's possible", score: 3 },
+                    { text: "I have mixed feelings - some earned it, others were lucky", score: 2 },
+                    { text: "I assume they're greedy or got there unfairly", score: 1 }
+                ]
+            },
+            {
+                question: "Your approach to financial planning is:",
+                answers: [
+                    { text: "I actively strategize and optimize for wealth building", score: 4 },
+                    { text: "I plan ahead and make informed decisions", score: 3 },
+                    { text: "I do basic planning but could be more organized", score: 2 },
+                    { text: "I avoid planning because it overwhelms me", score: 1 }
+                ]
+            },
+            {
+                question: "When opportunities to make money arise:",
+                answers: [
+                    { text: "I evaluate them quickly and act decisively", score: 4 },
+                    { text: "I research them and take calculated risks", score: 3 },
+                    { text: "I hesitate and often miss out while overthinking", score: 2 },
+                    { text: "I assume they're too good to be true or not for me", score: 1 }
+                ]
+            },
+            {
+                question: "How do you talk about money with others?",
+                answers: [
+                    { text: "Openly and strategically to learn and grow", score: 4 },
+                    { text: "Comfortably when relevant to the conversation", score: 3 },
+                    { text: "Awkwardly - I prefer to avoid the topic", score: 2 },
+                    { text: "I never discuss money - it feels inappropriate", score: 1 }
+                ]
+            },
+            {
+                question: "Your belief about deserving wealth is:",
+                answers: [
+                    { text: "I absolutely deserve abundance for the value I create", score: 4 },
+                    { text: "I deserve wealth if I work hard and smart", score: 3 },
+                    { text: "I hope I can earn enough to be comfortable", score: 2 },
+                    { text: "I don't need much and shouldn't want more", score: 1 }
+                ]
+            },
+            {
+                question: "When faced with financial stress:",
+                answers: [
+                    { text: "I focus on creating solutions and new income streams", score: 4 },
+                    { text: "I assess the situation and make a plan", score: 3 },
+                    { text: "I worry but try to cut expenses and work harder", score: 2 },
+                    { text: "I panic and feel hopeless about my situation", score: 1 }
+                ]
+            },
+            {
+                question: "Your vision of your financial future is:",
+                answers: [
+                    { text: "Building generational wealth and financial freedom", score: 4 },
+                    { text: "Achieving financial security and independence", score: 3 },
+                    { text: "Having enough to live comfortably", score: 2 },
+                    { text: "Just hoping to get by and pay the bills", score: 1 }
+                ]
+            }
+        ]
+    }
+};
+
+function startAssessment(type) {
+    currentAssessment = type;
+    currentQuestionIndex = 0;
+    userAnswers = [];
+    
+    document.getElementById('assessment-selection').style.display = 'none';
+    document.getElementById('assessment-content').style.display = 'block';
+    document.getElementById('results-content').style.display = 'none';
+    
+    document.getElementById('assessment-title').textContent = assessmentQuestions[type].title;
+    document.getElementById('total-questions').textContent = assessmentQuestions[type].questions.length;
+    
+    showQuestion();
+}
+
+function showQuestion() {
+    const question = assessmentQuestions[currentAssessment].questions[currentQuestionIndex];
+    const currentNum = currentQuestionIndex + 1;
+    const total = assessmentQuestions[currentAssessment].questions.length;
+    
+    document.getElementById('current-question').textContent = currentNum;
+    document.getElementById('question-text').textContent = question.question;
+    
+    const progress = (currentNum / total) * 100;
+    document.getElementById('progress-bar').style.width = progress + '%';
+    
+    const answersContainer = document.getElementById('answers-container');
+    answersContainer.innerHTML = '';
+    
+    question.answers.forEach((answer, index) => {
+        const answerDiv = document.createElement('div');
+        answerDiv.className = 'answer-option';
+        answerDiv.style.cssText = `
+            background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #ffffff;
+        `;
+        answerDiv.textContent = answer.text;
+        
+        answerDiv.addEventListener('click', () => selectAnswer(index, answerDiv));
+        answersContainer.appendChild(answerDiv);
+    });
+    
+    document.getElementById('next-btn').disabled = true;
+    document.getElementById('next-btn').style.opacity = '0.5';
+}
+
+function selectAnswer(answerIndex, element) {
+    // Remove previous selections
+    document.querySelectorAll('.answer-option').forEach(el => {
+        el.style.borderColor = '#444';
+        el.style.background = 'linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)';
+    });
+    
+    // Highlight selected answer
+    element.style.borderColor = '#c0c0c0';
+    element.style.background = 'linear-gradient(135deg, #3a3a3a 0%, #4a4a4a 100%)';
+    
+    // Store the answer
+    const question = assessmentQuestions[currentAssessment].questions[currentQuestionIndex];
+    userAnswers[currentQuestionIndex] = question.answers[answerIndex].score;
+    
+    // Enable next button
+    document.getElementById('next-btn').disabled = false;
+    document.getElementById('next-btn').style.opacity = '1';
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    
+    if (currentQuestionIndex < assessmentQuestions[currentAssessment].questions.length) {
+        showQuestion();
+    } else {
+        showResults();
+    }
+}
+
+function showResults() {
+    document.getElementById('assessment-content').style.display = 'none';
+    document.getElementById('results-content').style.display = 'block';
+    
+    const totalScore = userAnswers.reduce((sum, score) => sum + score, 0);
+    const maxScore = assessmentQuestions[currentAssessment].questions.length * 4;
+    const percentage = Math.round((totalScore / maxScore) * 100);
+    
+    let level, description, recommendations;
+    
+    if (percentage >= 85) {
+        level = "Elite Level 🏆";
+        description = getEliteDescription(currentAssessment);
+        recommendations = getEliteRecommendations(currentAssessment);
+    } else if (percentage >= 70) {
+        level = "Advanced Level 🌟";
+        description = getAdvancedDescription(currentAssessment);
+        recommendations = getAdvancedRecommendations(currentAssessment);
+    } else if (percentage >= 50) {
+        level = "Developing Level 📈";
+        description = getDevelopingDescription(currentAssessment);
+        recommendations = getDevelopingRecommendations(currentAssessment);
+    } else {
+        level = "Foundation Level 🌱";
+        description = getFoundationDescription(currentAssessment);
+        recommendations = getFoundationRecommendations(currentAssessment);
+    }
+    
+    document.getElementById('results-summary').innerHTML = `
+        <h3 style="color: #ffffff; margin-bottom: 20px;">${level}</h3>
+        <p style="color: #c0c0c0; font-size: 18px; margin-bottom: 15px;">Score: ${percentage}%</p>
+        <p style="color: #ffffff; margin-bottom: 20px;">${description}</p>
+        <div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; margin-top: 20px;">
+            <h4 style="color: #ffffff; margin-bottom: 10px;">Recommended Next Steps:</h4>
+            <p style="color: #c0c0c0; margin: 0;">${recommendations}</p>
+        </div>
+    `;
+}
+
+function getEliteDescription(type) {
+    const descriptions = {
+        alpha: "You demonstrate exceptional confidence, leadership presence, and an elite mindset. You naturally command respect and inspire others through your actions and energy.",
+        situationship: "You have mastered healthy relationship dynamics with strong boundaries, clear communication, and high self-worth. You attract and maintain high-quality connections.",
+        mindset: "You possess an incredibly resilient and growth-oriented mindset. You see challenges as opportunities and maintain unwavering belief in your ability to improve and succeed.",
+        wealth: "You have an abundant money mindset with confidence in your ability to create and multiply wealth. You see money as a tool for growth and positive impact."
+    };
+    return descriptions[type];
+}
+
+function getAdvancedDescription(type) {
+    const descriptions = {
+        alpha: "You show strong confidence and leadership qualities with room for growth in commanding presence and elite-level thinking patterns.",
+        situationship: "You generally maintain good boundaries and communication in relationships, with some areas where you could strengthen your approach.",
+        mindset: "You have a positive, growth-oriented mindset with occasional limiting beliefs that hold you back from reaching your full potential.",
+        wealth: "You have a healthy relationship with money and some confidence in building wealth, with opportunities to expand your abundance mindset."
+    };
+    return descriptions[type];
+}
+
+function getDevelopingDescription(type) {
+    const descriptions = {
+        alpha: "You show potential for leadership and confidence but inconsistency in your approach. Focus on building more consistent alpha behaviors and mindset.",
+        situationship: "You understand healthy relationship principles but sometimes struggle to implement them consistently, especially under emotional pressure.",
+        mindset: "You have awareness of growth mindset principles but limiting beliefs and negative thought patterns still significantly impact your daily experience.",
+        wealth: "You have basic financial awareness but money anxiety and scarcity thinking limit your wealth-building potential and confidence."
+    };
+    return descriptions[type];
+}
+
+function getFoundationDescription(type) {
+    const descriptions = {
+        alpha: "This is your opportunity to build fundamental confidence and leadership skills. Every elite performer started where you are now.",
+        situationship: "You're at the beginning of your relationship mastery journey. Focus on building self-worth and learning healthy communication patterns.",
+        mindset: "You're ready to begin transforming your thought patterns and beliefs. Small consistent changes will create massive shifts over time.",
+        wealth: "This is the perfect starting point for transforming your money mindset and building the foundation for future financial success."
+    };
+    return descriptions[type];
+}
+
+function getEliteRecommendations(type) {
+    const recommendations = {
+        alpha: "Continue refining your leadership style, mentor others, and take on bigger challenges. Consider advanced performance coaching.",
+        situationship: "Share your wisdom with others, continue modeling healthy relationships, and explore deeper intimacy and connection skills.",
+        mindset: "Focus on teaching and mentoring others while continuing to challenge yourself with bigger goals and visions.",
+        wealth: "Scale your wealth-building strategies, explore investment opportunities, and consider how to create multiple income streams."
+    };
+    return recommendations[type];
+}
+
+function getAdvancedRecommendations(type) {
+    const recommendations = {
+        alpha: "Work on consistency in your confidence and leadership presence. Practice commanding attention in higher-stakes situations.",
+        situationship: "Strengthen your communication skills and practice maintaining boundaries under pressure. Focus on attracting higher-quality connections.",
+        mindset: "Identify and work on remaining limiting beliefs. Practice reframing negative thoughts more consistently.",
+        wealth: "Expand your financial education, increase your income goals, and work on any remaining money blocks or fears."
+    };
+    return recommendations[type];
+}
+
+function getDevelopingRecommendations(type) {
+    const recommendations = {
+        alpha: "Start with daily confidence-building exercises, practice speaking up in groups, and work on your body language and presence.",
+        situationship: "Focus on building self-worth, practice clear communication, and learn to recognize red flags in relationships earlier.",
+        mindset: "Begin a daily mindfulness practice, challenge negative thoughts actively, and surround yourself with more positive influences.",
+        wealth: "Start tracking your money, educate yourself about basic investing, and work on shifting from scarcity to abundance thinking."
+    };
+    return recommendations[type];
+}
+
+function getFoundationRecommendations(type) {
+    const recommendations = {
+        alpha: "Begin with self-confidence basics: posture, eye contact, and speaking clearly. Set small daily challenges to build momentum.",
+        situationship: "Focus on self-love and personal boundaries. Learn what healthy relationships look like before entering new ones.",
+        mindset: "Start with gratitude practices and positive affirmations. Begin noticing and questioning negative thought patterns.",
+        wealth: "Begin with basic financial literacy, create a simple budget, and start a small emergency fund while working on money beliefs."
+    };
+    return recommendations[type];
+}
+
+function restartAssessment() {
+    document.getElementById('assessment-selection').style.display = 'block';
+    document.getElementById('assessment-content').style.display = 'none';
+    document.getElementById('results-content').style.display = 'none';
+}
+</script>
+{% endblock %}

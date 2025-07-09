@@ -43,6 +43,7 @@ def nl2br(value):
 
 app.jinja_env.filters['nl2br'] = nl2br
 
+
 # Stripe configuration
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_your_stripe_secret_key')
 
@@ -984,8 +985,8 @@ def test123():
     return 'Test route is working!'
 @app.route('/assessment')
 def assessment():
-    # Simple route: just render the A3 Assessment Dashboard
-    return render_template('assessment.html')
+    # Simple route: render the working Assessment Test version
+    return render_template('assessment-test.html')
 @app.route('/')
 def home():
     if 'customer_id' not in session:
@@ -1236,7 +1237,6 @@ def situationship_mode():
     log_user_session(customer_id, 'situationship', {'action': 'enter_mode'})
     
     return render_template('situationship.html', progress=mode_progress)
-
 @app.route('/decision-game', methods=['GET', 'POST'])
 @app.route('/decision-game/<relationship_type>', methods=['GET', 'POST'])
 def decision_game(relationship_type='romantic'):
@@ -2715,6 +2715,12 @@ def ritual_session():
     steps.append({'title': 'Closing', 'instruction': 'End your ritual with gratitude and a few deep breaths.'})
 
     return render_template('ritual-session.html', ritual_data=data, ritual_steps=steps)
+
+
+# --- Personality Profile Route ---
+@app.route('/personality-profile')
+def personality_profile():
+    return render_template('personality_profile.html')
 
 # Run the application
 if __name__ == '__main__':
