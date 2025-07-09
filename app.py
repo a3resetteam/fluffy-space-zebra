@@ -985,8 +985,8 @@ def test123():
     return 'Test route is working!'
 @app.route('/assessment')
 def assessment():
-    # Simple route: render the working Assessment Test version
-    return render_template('assessment-test.html')
+    # Simple route: render the assessment page
+    return render_template('assessment.html')
 @app.route('/')
 def home():
     if 'customer_id' not in session:
