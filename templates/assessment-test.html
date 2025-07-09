@@ -30,6 +30,11 @@
                 <h3 style="color: #ffffff; margin-bottom: 15px;">💰 Wealth Builder Assessment</h3>
                 <p style="color: #c0c0c0; font-size: 14px;">Assess your money mindset and abundance beliefs</p>
             </div>
+            
+            <div class="assessment-card" onclick="startAssessment('a3reset')" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 1px solid #444; border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#666'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#444'; this.style.transform='translateY(0)'">
+                <h3 style="color: #00b894; margin-bottom: 15px;">🧠 A3Reset Assessment</h3>
+                <p style="color: #c0c0c0; font-size: 14px;">Evaluate your transformation readiness and potential</p>
+            </div>
         </div>
     </div>
 
@@ -86,6 +91,101 @@ let assessmentQuestions = {};
 
 // Assessment Questions Database
 assessmentQuestions = {
+    a3reset: {
+        title: "🧠 A3Reset Assessment",
+        questions: [
+            {
+                question: "How consistently do you maintain healthy habits like sleep, nutrition, and exercise?",
+                answers: [
+                    { text: "I have established routines that I maintain even during stressful times", score: 4 },
+                    { text: "I maintain healthy habits most of the time with occasional lapses", score: 3 },
+                    { text: "I try to maintain healthy habits but struggle with consistency", score: 2 },
+                    { text: "I rarely maintain healthy habits and feel overwhelmed by them", score: 1 }
+                ]
+            },
+            {
+                question: "When it comes to personal transformation, what has been your experience?",
+                answers: [
+                    { text: "I've successfully transformed multiple areas of my life through sustained effort", score: 4 },
+                    { text: "I've made significant positive changes in at least one major life area", score: 3 },
+                    { text: "I've tried to change but found it difficult to maintain progress", score: 2 },
+                    { text: "I've struggled to create lasting change despite wanting to", score: 1 }
+                ]
+            },
+            {
+                question: "How do you respond when you face setbacks in your personal development?",
+                answers: [
+                    { text: "I see setbacks as valuable data and adjust my approach accordingly", score: 4 },
+                    { text: "I get disappointed but quickly refocus on my goals", score: 3 },
+                    { text: "I feel discouraged but eventually try again", score: 2 },
+                    { text: "I often give up and feel like change isn't possible for me", score: 1 }
+                ]
+            },
+            {
+                question: "How would you describe your current mental clarity and focus?",
+                answers: [
+                    { text: "Sharp and precise - I can direct my focus with intention", score: 4 },
+                    { text: "Generally clear with occasional periods of distraction", score: 3 },
+                    { text: "Somewhat foggy - I struggle with focus and mental clarity", score: 2 },
+                    { text: "Constantly scattered and unfocused", score: 1 }
+                ]
+            },
+            {
+                question: "How do you handle stress and emotional regulation?",
+                answers: [
+                    { text: "I have effective tools to manage stress and emotions proactively", score: 4 },
+                    { text: "I can usually manage stress but sometimes get overwhelmed", score: 3 },
+                    { text: "I struggle with stress management and emotional reactions", score: 2 },
+                    { text: "My stress and emotions frequently feel unmanageable", score: 1 }
+                ]
+            },
+            {
+                question: "When it comes to your current life vision and purpose:",
+                answers: [
+                    { text: "I have crystal clear vision that guides my daily decisions", score: 4 },
+                    { text: "I have a good sense of direction but am still refining it", score: 3 },
+                    { text: "I have some ideas but lack clarity or conviction", score: 2 },
+                    { text: "I feel lost or unclear about my purpose and direction", score: 1 }
+                ]
+            },
+            {
+                question: "How would you rate your self-awareness?",
+                answers: [
+                    { text: "Highly self-aware of my patterns, triggers, and growth areas", score: 4 },
+                    { text: "Good self-awareness with some blind spots", score: 3 },
+                    { text: "Basic awareness but often miss why I behave certain ways", score: 2 },
+                    { text: "Limited self-awareness and frequently surprised by my reactions", score: 1 }
+                ]
+            },
+            {
+                question: "How would you describe your current level of physical energy?",
+                answers: [
+                    { text: "Consistently high energy throughout the day", score: 4 },
+                    { text: "Generally good energy with occasional dips", score: 3 },
+                    { text: "Moderate energy that fluctuates significantly", score: 2 },
+                    { text: "Frequently low energy and fatigue", score: 1 }
+                ]
+            },
+            {
+                question: "How do you approach implementing new information or advice?",
+                answers: [
+                    { text: "I quickly translate knowledge into consistent action", score: 4 },
+                    { text: "I implement key insights but may miss some details", score: 3 },
+                    { text: "I understand concepts but struggle to apply them consistently", score: 2 },
+                    { text: "I collect information but rarely implement it effectively", score: 1 }
+                ]
+            },
+            {
+                question: "How would you describe your belief in your ability to change?",
+                answers: [
+                    { text: "Unwavering belief in my capacity for transformation", score: 4 },
+                    { text: "Generally confident in my ability to change with effort", score: 3 },
+                    { text: "Sometimes doubtful about my ability to truly change", score: 2 },
+                    { text: "Skeptical that I can fundamentally change", score: 1 }
+                ]
+            }
+        ]
+    },
     alpha: {
         title: "👑 Alpha Elite Assessment",
         questions: [
@@ -591,6 +691,7 @@ function showResults() {
 
 function getEliteDescription(type) {
     const descriptions = {
+        a3reset: "You demonstrate exceptional readiness for transformation with excellent self-awareness, emotional regulation, and implementation skills. Your mindset, energy levels, and clarity set you up for powerful change.",
         alpha: "You demonstrate exceptional confidence, leadership presence, and an elite mindset. You naturally command respect and inspire others through your actions and energy.",
         situationship: "You have mastered healthy relationship dynamics with strong boundaries, clear communication, and high self-worth. You attract and maintain high-quality connections.",
         mindset: "You possess an incredibly resilient and growth-oriented mindset. You see challenges as opportunities and maintain unwavering belief in your ability to improve and succeed.",
@@ -601,6 +702,7 @@ function getEliteDescription(type) {
 
 function getAdvancedDescription(type) {
     const descriptions = {
+        a3reset: "You have strong transformation readiness with good habits, self-awareness, and implementation skills. With some refinement in key areas, you're positioned for significant growth.",
         alpha: "You show strong confidence and leadership qualities with room for growth in commanding presence and elite-level thinking patterns.",
         situationship: "You generally maintain good boundaries and communication in relationships, with some areas where you could strengthen your approach.",
         mindset: "You have a positive, growth-oriented mindset with occasional limiting beliefs that hold you back from reaching your full potential.",
@@ -611,6 +713,7 @@ function getAdvancedDescription(type) {
 
 function getDevelopingDescription(type) {
     const descriptions = {
+        a3reset: "You have a foundation for transformation but inconsistency in key areas like habit maintenance, emotional regulation, and implementation holds you back from experiencing deeper change.",
         alpha: "You show potential for leadership and confidence but inconsistency in your approach. Focus on building more consistent alpha behaviors and mindset.",
         situationship: "You understand healthy relationship principles but sometimes struggle to implement them consistently, especially under emotional pressure.",
         mindset: "You have awareness of growth mindset principles but limiting beliefs and negative thought patterns still significantly impact your daily experience.",
@@ -621,6 +724,7 @@ function getDevelopingDescription(type) {
 
 function getFoundationDescription(type) {
     const descriptions = {
+        a3reset: "You're at the beginning of your transformation journey with significant opportunity for growth. Building fundamental habits, self-awareness, and implementation skills will create powerful shifts.",
         alpha: "This is your opportunity to build fundamental confidence and leadership skills. Every elite performer started where you are now.",
         situationship: "You're at the beginning of your relationship mastery journey. Focus on building self-worth and learning healthy communication patterns.",
         mindset: "You're ready to begin transforming your thought patterns and beliefs. Small consistent changes will create massive shifts over time.",
@@ -631,6 +735,7 @@ function getFoundationDescription(type) {
 
 function getEliteRecommendations(type) {
     const recommendations = {
+        a3reset: "Focus on optimizing your already strong transformation practices. Consider advanced mind-body techniques, mentor others, and explore cutting-edge personal development approaches.",
         alpha: "Continue refining your leadership style, mentor others, and take on bigger challenges. Consider advanced performance coaching.",
         situationship: "Share your wisdom with others, continue modeling healthy relationships, and explore deeper intimacy and connection skills.",
         mindset: "Focus on teaching and mentoring others while continuing to challenge yourself with bigger goals and visions.",
@@ -641,16 +746,18 @@ function getEliteRecommendations(type) {
 
 function getAdvancedRecommendations(type) {
     const recommendations = {
+        a3reset: "Strengthen your implementation consistency, deepen your self-awareness practices, and focus on mastering emotional regulation during challenging situations.",
         alpha: "Work on consistency in your confidence and leadership presence. Practice commanding attention in higher-stakes situations.",
-        situationship: "Strengthen your communication skills and practice maintaining boundaries under pressure. Focus on attracting higher-quality connections.",
-        mindset: "Identify and work on remaining limiting beliefs. Practice reframing negative thoughts more consistently.",
-        wealth: "Expand your financial education, increase your income goals, and work on any remaining money blocks or fears."
+        situationship: "Enhance your ability to maintain boundaries and communicate needs clearly. Practice detachment from outcomes.",
+        mindset: "Continue expanding your positive mindset and resilience. Consider mentoring others in their mindset shifts.",
+        wealth: "Broaden your investment knowledge, explore passive income streams, and refine your financial goals."
     };
     return recommendations[type];
 }
 
 function getDevelopingRecommendations(type) {
     const recommendations = {
+        a3reset: "Focus on building consistent daily habits, practice basic emotional regulation techniques, and implement a structured approach to translate knowledge into action.",
         alpha: "Start with daily confidence-building exercises, practice speaking up in groups, and work on your body language and presence.",
         situationship: "Focus on building self-worth, practice clear communication, and learn to recognize red flags in relationships earlier.",
         mindset: "Begin a daily mindfulness practice, challenge negative thoughts actively, and surround yourself with more positive influences.",
@@ -661,6 +768,7 @@ function getDevelopingRecommendations(type) {
 
 function getFoundationRecommendations(type) {
     const recommendations = {
+        a3reset: "Begin with basic self-awareness practices, establish 1-2 core daily habits, and focus on small, consistent implementations rather than overwhelming yourself with too many changes.",
         alpha: "Begin with self-confidence basics: posture, eye contact, and speaking clearly. Set small daily challenges to build momentum.",
         situationship: "Focus on self-love and personal boundaries. Learn what healthy relationships look like before entering new ones.",
         mindset: "Start with gratitude practices and positive affirmations. Begin noticing and questioning negative thought patterns.",
