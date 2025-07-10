@@ -782,5 +782,294 @@ function restartAssessment() {
     document.getElementById('assessment-content').style.display = 'none';
     document.getElementById('results-content').style.display = 'none';
 }
+// Add this script at the end of your assessment-test.html file, right before the closing </body> tag
+
+// Make sure the situationship card has content
+document.addEventListener('DOMContentLoaded', function() {
+    // Fix the empty situationship card
+    const situationshipCard = document.querySelector('.assessment-card[onclick="startAssessment(\'situationship\')"]');
+    if (situationshipCard) {
+        situationshipCard.innerHTML = `
+            <h3 style="color: #ff6b81; margin-bottom: 15px;">💕 Situationship Assessment</h3>
+            <p style="color: #c0c0c0; font-size: 14px;">Evaluate your relationship dynamics and connection</p>
+        `;
+    }
+    
+    // Add the mood tracker functionality
+    if (typeof addMoodTrackerToSituationship !== 'function') {
+        window.addMoodTrackerToSituationship = function() {
+            console.log("Adding mood tracker");
+            
+            // Check if results element exists
+            const resultsElement = document.getElementById('results-summary');
+            if (!resultsElement) {
+                console.error("Results element not found");
+                return;
+            }
+            
+            // Create mood tracker container
+            const moodTrackerContainer = document.createElement('div');
+            moodTrackerContainer.id = 'mood-tracker-container';
+            moodTrackerContainer.style.cssText = `
+                margin-top: 30px;
+                background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                border-radius: 15px;
+                padding: 20px;
+            `;
+            
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            // Create header
+            const header = document.createElement('h3');
+            header.style.cssText = `color: #ffffff; margin-bottom: 20px; text-align: center;`;
+            header.textContent = `🗓️ Relationship Mood Tracker - ${monthNames[currentMonth]} ${currentYear}`;
+            
+            // Create description
+            const description = document.createElement('p');
+            description.style.cssText = `color: #c0c0c0; margin-bottom: 20px; text-align: center;`;
+            description.textContent = 'Track your daily emotions to identify patterns in your relationships';
+            
+            // Create mood legend
+            const legendContainer = document.createElement('div');
+            legendContainer.style.cssText = `
+                display: flex;
+                justify-content: center;
+                margin-bottom: 15px;
+                flex-wrap: wrap;
+            `;
+            
+            const moods = [
+                { emoji: '😍', label: 'Loving', color: '#FF6B81' },
+                { emoji: '😊', label: 'Happy', color: '#FFC048' },
+                { emoji: '😐', label: 'Neutral', color: '#C0C0C0' },
+                { emoji: '😔', label: 'Sad', color: '#70A1FF' },
+                { emoji: '😡', label: 'Angry', color: '#FF4757' }
+            ];
+            
+            moods.forEach(mood => {
+                const legendItem = document.createElement('div');
+                legendItem.style.cssText = `
+                    display: flex;
+                    align-items: center;
+                    margin: 5px 10px;
+                `;
+                
+                const emoji = document.createElement('span');
+                emoji.style.cssText = `font-size: 20px; margin-right: 5px;`;
+                emoji.textContent = mood.emoji;
+                
+                const label = document.createElement('span');
+                label.style.cssText = `color: ${mood.color};`;
+                label.textContent = mood.label;
+                
+                legendItem.appendChild(emoji);
+                legendItem.appendChild(label);
+                legendContainer.appendChild(legendItem);
+            });
+            
+            // Create calendar grid
+            const calendarContainer = document.createElement('div');
+            calendarContainer.style.cssText = `
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 5px;
+                margin-top: 15px;
+            `;
+            
+            // Add weekday headers
+            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            weekdays.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.style.cssText = `
+                    text-align: center;
+                    font-weight: bold;
+                    color: #ffffff;
+                    padding: 5px 0;
+                `;
+                dayHeader.textContent = day;
+                calendarContainer.appendChild(dayHeader);
+            });
+            
+            // Calculate first day of month
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            
+            // Add empty cells for days before the 1st
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.style.cssText = `
+                    height: 40px;
+                    border-radius: 5px;
+                    background: rgba(255,255,255,0.05);
+                `;
+                calendarContainer.appendChild(emptyCell);
+            }
+            
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.style.cssText = `
+                    height: 40px;
+                    border-radius: 5px;
+                    background: rgba(255,255,255,0.1);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    position: relative;
+                `;
+                
+                // Display day number
+                const dayNumber = document.createElement('div');
+                dayNumber.style.cssText = `color: #ffffff; font-size: 12px;`;
+                dayNumber.textContent = day;
+                
+                // Create mood selector
+                const moodSelector = document.createElement('div');
+                moodSelector.className = 'mood-selector';
+                moodSelector.style.cssText = `
+                    display: none;
+                    position: absolute;
+                    bottom: 45px;
+                    background: #333;
+                    border-radius: 10px;
+                    padding: 5px;
+                    z-index: 10;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+                    width: 180px;
+                `;
+                
+                // Create emoji buttons
+                const emojiContainer = document.createElement('div');
+                emojiContainer.style.cssText = `
+                    display: flex;
+                    justify-content: space-around;
+                    padding: 5px 0;
+                `;
+                
+                moods.forEach(mood => {
+                    const emojiBtn = document.createElement('span');
+                    emojiBtn.style.cssText = `
+                        font-size: 24px;
+                        cursor: pointer;
+                        transition: transform 0.2s;
+                    `;
+                    emojiBtn.textContent = mood.emoji;
+                    
+                    emojiBtn.addEventListener('mouseover', () => {
+                        emojiBtn.style.transform = 'scale(1.2)';
+                    });
+                    
+                    emojiBtn.addEventListener('mouseout', () => {
+                        emojiBtn.style.transform = 'scale(1)';
+                    });
+                    
+                    emojiBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        
+                        // Remove existing mood if any
+                        if (dayCell.querySelector('.mood-emoji')) {
+                            dayCell.querySelector('.mood-emoji').remove();
+                        }
+                        
+                        // Add selected mood
+                        const selectedMood = document.createElement('div');
+                        selectedMood.className = 'mood-emoji';
+                        selectedMood.style.cssText = `font-size: 18px;`;
+                        selectedMood.textContent = mood.emoji;
+                        dayCell.appendChild(selectedMood);
+                        
+                        // Hide selector
+                        moodSelector.style.display = 'none';
+                        
+                        // Save mood to localStorage
+                        try {
+                            const moodData = JSON.parse(localStorage.getItem('situationshipMoodTracker') || '{}');
+                            moodData[`${currentYear}-${currentMonth+1}-${day}`] = mood.emoji;
+                            localStorage.setItem('situationshipMoodTracker', JSON.stringify(moodData));
+                        } catch (err) {
+                            console.error("Error saving mood:", err);
+                        }
+                    });
+                    
+                    emojiContainer.appendChild(emojiBtn);
+                });
+                
+                moodSelector.appendChild(emojiContainer);
+                
+                // Toggle mood selector on click
+                dayCell.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    
+                    // Close all other selectors
+                    document.querySelectorAll('.mood-selector').forEach(selector => {
+                        if (selector !== moodSelector) {
+                            selector.style.display = 'none';
+                        }
+                    });
+                    
+                    // Toggle this selector
+                    moodSelector.style.display = moodSelector.style.display === 'block' ? 'none' : 'block';
+                });
+                
+                dayCell.appendChild(dayNumber);
+                dayCell.appendChild(moodSelector);
+                
+                // Load saved mood if any
+                try {
+                    const moodData = JSON.parse(localStorage.getItem('situationshipMoodTracker') || '{}');
+                    const savedMood = moodData[`${currentYear}-${currentMonth+1}-${day}`];
+                    if (savedMood) {
+                        const savedMoodElement = document.createElement('div');
+                        savedMoodElement.className = 'mood-emoji';
+                        savedMoodElement.style.cssText = `font-size: 18px;`;
+                        savedMoodElement.textContent = savedMood;
+                        dayCell.appendChild(savedMoodElement);
+                    }
+                } catch (err) {
+                    console.error("Error loading saved mood:", err);
+                }
+                
+                calendarContainer.appendChild(dayCell);
+            }
+            
+            // Add explanation text
+            const explanation = document.createElement('p');
+            explanation.style.cssText = `color: #c0c0c0; margin-top: 20px; text-align: center; font-size: 14px;`;
+            explanation.textContent = 'Click on any day to track your relationship feelings and identify patterns over time';
+            
+            // Assemble all components
+            moodTrackerContainer.appendChild(header);
+            moodTrackerContainer.appendChild(description);
+            moodTrackerContainer.appendChild(legendContainer);
+            moodTrackerContainer.appendChild(calendarContainer);
+            moodTrackerContainer.appendChild(explanation);
+            
+            // Add to results
+            resultsElement.appendChild(moodTrackerContainer);
+            console.log("Mood tracker added successfully");
+        }
+    }
+    
+    // Override showResults function to add mood tracker
+    const originalShowResults = window.showResults;
+    window.showResults = function() {
+        if (typeof originalShowResults === 'function') {
+            originalShowResults();
+        }
+        
+        // Add mood tracker if this is the situationship assessment
+        if (window.currentAssessment === 'situationship') {
+            setTimeout(() => {
+                addMoodTrackerToSituationship();
+            }, 100); // Small delay to ensure DOM is ready
+        }
+    };
+});
 </script>
 {% endblock %}

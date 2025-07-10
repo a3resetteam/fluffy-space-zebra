@@ -2723,8 +2723,13 @@ def personality_profile():
     return render_template('personality_profile.html')
 
 # Run the application
-if __name__ == '__main__':
+if __name__ == '__master__':
     # Initialize the database
     init_db()
     print("🚀 Starting Oracle Platform on http://0.0.0.0:5000")
     app.run(host='0.0.0.0', port=5000, debug=True)
+import os
+
+if __name__ == '__master__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
