@@ -2,11 +2,17 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+# Copy requirements first
+COPY requirements.txt ./
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy the rest of the application
 COPY . .
 
-EXPOSE $PORT
+# Expose port
+EXPOSE 5000
 
-CMD gunicorn --bind 0.0.0.0:$PORT main:app
+# Run the application
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
