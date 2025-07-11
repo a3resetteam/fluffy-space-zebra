@@ -5,4 +5,4 @@ nixPkgs = ['python310', 'pip']
 cmds = ['pip install -r requirements.txt']
 
 [start]
-cmd = 'python main.py'
+cmd = 'gunicorn --bind 0.0.0.0:$PORT main:app'
