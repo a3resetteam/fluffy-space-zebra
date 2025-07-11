@@ -1,2 +1,1 @@
-echo "web: gunicorn --bind 0.0.0.0:\$PORT main:app" > Procfile
-
+web: gunicorn --bind 0.0.0.0:$PORT main:app
