@@ -311,13 +311,14 @@ def login():
         flash('Invalid email or password')
     
     content = '''
-    <div class="header">
-        <h1>MYA3Reset: The Oracle</h1>
-        <p>🔐 Access Your Transformation Portal</p>
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="font-size: 3rem; color: #ffffff; margin-bottom: 15px;">🔮 MYA3Reset: The Oracle</h1>
+        <p style="font-size: 1.3rem; color: #ffffff; font-weight: 500;">Your Ritual, Your Transformation, Your Alchemy</p>
     </div>
-    
-    <div class="card">
-        <h2 style="text-align: center; margin-bottom: 30px;">Welcome Back, Elite 👑</h2>
+
+    <!-- Login Form -->
+    <div class="card" style="margin-bottom: 40px;">
+        <h2 style="text-align: center; margin-bottom: 25px; color: #ffffff;">Welcome Back, Elite 👑</h2>
         <form method="POST">
             <div class="form-group">
                 <label for="email">📧 Email Address:</label>
@@ -331,8 +332,58 @@ def login():
                 <button type="submit" class="btn">🚀 ENTER THE ORACLE</button>
             </div>
         </form>
-        <div style="text-align: center; margin-top: 30px;">
-            New to the Oracle? <a href="{{ url_for('register') }}" style="color: #74b9ff;">✨ Start Your Journey</a>
+        <div style="text-align: center; margin-top: 25px;">
+            New to the Oracle? 
+            <a href="{{ url_for('register') }}" style="color: #74b9ff; text-decoration: none; font-weight: 600;">✨ Start Your 3-Day Free Trial</a>
+        </div>
+        <div style="background: rgba(116, 185, 255, 0.1); border: 2px solid #74b9ff; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center;">
+            <p style="margin: 0; color: #74b9ff; font-size: 16px;">🎁 <strong>3 Days Free</strong> • Then $19.99/month • Cancel Anytime</p>
+        </div>
+    </div>
+
+    <!-- What The Oracle Offers -->
+    <div style="background: #1a1a2e; border: 2px solid #333333; border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(255, 255, 255, 0.05);">
+        <h2 style="text-align: center; color: #ffffff; margin-bottom: 30px;">🔮 The 4 Transformation Modes Inside The Oracle</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div style="background: #1a1a2e; border: 2px solid #74b9ff; border-radius: 15px; padding: 25px; text-align: center; transition: all 0.3s ease;">
+                <h3 style="color: #74b9ff; margin-bottom: 15px; font-size: 1.4rem;">👑 Alpha Elite Mode</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Master executive presence, strategic decision-making, and high-performance leadership. Develop the mindset, communication skills, and emotional intelligence that separates industry leaders from the competition.</p>
+            </div>
+            <div style="background: #1a1a2e; border: 2px solid #fd79a8; border-radius: 15px; padding: 25px; text-align: center; transition: all 0.3s ease;">
+                <h3 style="color: #fd79a8; margin-bottom: 15px; font-size: 1.4rem;">💝 Situationship Mode</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Navigate complex modern relationships with clarity and confidence. Master boundary setting, emotional intelligence, and authentic communication to attract and maintain meaningful connections that align with your values.</p>
+            </div>
+            <div style="background: #1a1a2e; border: 2px solid #00b894; border-radius: 15px; padding: 25px; text-align: center; transition: all 0.3s ease;">
+                <h3 style="color: #00b894; margin-bottom: 15px; font-size: 1.4rem;">🧠 A3Reset Assessment Mode</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Comprehensive psychological profiling and transformation readiness evaluation. Discover your unique personality matrix, identify limiting patterns, and receive personalized strategies for accelerated personal development.</p>
+            </div>
+            <div style="background: #1a1a2e; border: 2px solid #e17055; border-radius: 15px; padding: 25px; text-align: center; transition: all 0.3s ease;">
+                <h3 style="color: #e17055; margin-bottom: 15px; font-size: 1.4rem;">🎭 Custom Ritual Creator</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Design bespoke transformation protocols tailored to your specific goals and lifestyle. Create powerful daily practices, mindset anchors, and behavioral systems that compound into lasting change.</p>
+            </div>
+        </div>
+        
+        <!-- Exclusive Features -->
+        <div style="background: rgba(116, 185, 255, 0.1); border: 2px solid #74b9ff; border-radius: 15px; padding: 25px; text-align: center;">
+            <h3 style="color: #74b9ff; margin-bottom: 20px; font-size: 1.3rem;">⚡ Plus Exclusive Oracle Features</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px;">
+                <div>
+                    <h4 style="color: #00ff88; margin-bottom: 8px; font-size: 1.1rem;">🤖 AI Coach</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Multiple AI personalities for personalized guidance</p>
+                </div>
+                <div>
+                    <h4 style="color: #fd79a8; margin-bottom: 8px; font-size: 1.1rem;">📊 Progress Tracking</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Advanced analytics to monitor your transformation</p>
+                </div>
+                <div>
+                    <h4 style="color: #e17055; margin-bottom: 8px; font-size: 1.1rem;">🎯 Daily Challenges</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Gamified experiences for consistent growth</p>
+                </div>
+                <div>
+                    <h4 style="color: #74b9ff; margin-bottom: 8px; font-size: 1.1rem;">🌑 Shadow Work</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Deep psychological integration and healing</p>
+                </div>
+            </div>
         </div>
     </div>
     '''
