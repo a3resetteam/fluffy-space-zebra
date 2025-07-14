@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 MYA3Reset: The Oracle - FIXED VERSION FOR IMMEDIATE LAUNCH
 """
@@ -11,14 +12,9 @@ import datetime as dt
 from datetime import datetime, timedelta
 from flask import Flask, request, render_template_string, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-import stripe
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'oracle_secret_key_2024')
-
-# Stripe configuration
-stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_your_key')
-STRIPE_PAYMENT_LINK = "https://buy.stripe.com/4gMcN6g8tczm0EefvO"
 
 # Simple database initialization
 def init_db():
@@ -243,18 +239,24 @@ def register():
             conn.close()
             return redirect(url_for('register'))
         
+        # Create user
+        customer_id = generate_customer_id()
+        password_hash = generate_password_hash(password)
+        
+        cursor.execute('''
+            INSERT INTO users (customer_id, username, email, password_hash)
+            VALUES (?, ?, ?, ?)
+        ''', (customer_id, username, email, password_hash))
+        
+        conn.commit()
         conn.close()
         
-        # Store user data in session for payment process
-        session['pending_user'] = {
-            'username': username,
-            'email': email,
-            'password': password
-        }
+        # Log in user
+        session['customer_id'] = customer_id
+        session['username'] = username
         
-        # Redirect to Stripe payment link with success/cancel URLs
-        stripe_url = f"{STRIPE_PAYMENT_LINK}?prefilled_email={email}&success_url={request.url_root}payment-success&cancel_url={request.url_root}register"
-        return redirect(stripe_url)
+        flash('Registration successful! Welcome to The Oracle.')
+        return redirect(url_for('home'))
     
     content = '''
     <div class="header">
@@ -264,12 +266,6 @@ def register():
     
     <div class="card">
         <h2 style="text-align: center; margin-bottom: 30px;">Join The Elite Circle 🔮</h2>
-        <div style="background: rgba(116, 185, 255, 0.1); border: 2px solid #74b9ff; padding: 20px; border-radius: 10px; margin-bottom: 30px; text-align: center;">
-            <h3 style="color: #74b9ff; margin-bottom: 10px;">🎁 3-Day Free Trial</h3>
-            <p style="color: #ffffff; margin: 0;">Start your transformation journey risk-free. Cancel anytime during trial.</p>
-            <p style="color: #74b9ff; font-weight: bold; margin: 10px 0 0 0;">Then $19.99/month • No hidden fees</p>
-        </div>
-        
         <form method="POST">
             <div class="form-group">
                 <label for="username">👤 Username:</label>
@@ -284,81 +280,11 @@ def register():
                 <input type="password" id="password" name="password" required>
             </div>
             <div style="text-align: center;">
-                <button type="submit" class="btn">🎯 CONTINUE TO PAYMENT</button>
+                <button type="submit" class="btn">🎯 START FREE TRIAL</button>
             </div>
         </form>
         <div style="text-align: center; margin-top: 30px;">
             Already have an account? <a href="{{ url_for('login') }}" style="color: #74b9ff;">🔐 Login Here</a>
-        </div>
-        
-        <div style="margin-top: 30px; text-align: center; font-size: 0.9rem; color: #ffffff;">
-            🔒 Secure payment processing via Stripe<br>
-            ✅ Cancel anytime during your 3-day trial<br>
-            📧 Instant access after payment confirmation
-        </div>
-    </div>
-    '''
-    
-    return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
-
-@app.route('/payment-success')
-def payment_success():
-    if 'pending_user' not in session:
-        return redirect(url_for('register'))
-    
-    try:
-        user_data = session['pending_user']
-        
-        # Create user account after successful payment
-        conn = sqlite3.connect('oracle.db')
-        cursor = conn.cursor()
-        
-        customer_id = generate_customer_id()
-        password_hash = generate_password_hash(user_data['password'])
-        
-        cursor.execute('''
-            INSERT INTO users (customer_id, username, email, password_hash, subscription_status)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (customer_id, user_data['username'], user_data['email'], password_hash, 'trial'))
-        
-        conn.commit()
-        conn.close()
-        
-        # Log in user
-        session['customer_id'] = customer_id
-        session['username'] = user_data['username']
-        
-        # Clear pending user data
-        session.pop('pending_user', None)
-        
-        return redirect(url_for('welcome'))
-        
-    except Exception as e:
-        flash('Account creation failed. Please try again.')
-        return redirect(url_for('register'))
-
-@app.route('/welcome')
-def welcome():
-    if 'customer_id' not in session:
-        return redirect(url_for('login'))
-    
-    content = '''
-    <div class="header">
-        <h1>🎉 Welcome to The Oracle!</h1>
-        <p>Your 3-Day Free Trial Has Started</p>
-    </div>
-    
-    <div class="card">
-        <h2 style="text-align: center; color: #74b9ff;">✨ Trial Activated Successfully!</h2>
-        <div style="text-align: center; margin: 30px 0;">
-            <p style="color: #ffffff; font-size: 1.1rem;">Your transformation journey begins now!</p>
-            <p style="color: #00ff88;">✅ Full access to all Oracle modes</p>
-            <p style="color: #00ff88;">✅ 3 days completely free</p>
-            <p style="color: #74b9ff;">💳 Billing starts after trial ends</p>
-            <p style="color: #fd79a8;">📧 Check your email for confirmation</p>
-        </div>
-        <div style="text-align: center;">
-            <a href="{{ url_for('home') }}" class="btn">🚀 ENTER THE ORACLE</a>
         </div>
     </div>
     '''
