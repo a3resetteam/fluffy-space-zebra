@@ -5,8 +5,14 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install gunicorn if not in requirements
+RUN pip install gunicorn
+
 COPY . .
 
-EXPOSE 8080
+# Initialize database
+RUN python -c "from app_fixed import init_db, create_admin_user; init_db(); create_admin_user()"
 
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "main:app"]
+EXPOSE $PORT
+
+CMD gunicorn --bind 0.0.0.0:$PORT app_fixed:app
