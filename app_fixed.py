@@ -409,6 +409,348 @@ def login():
     
     return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        
+        conn = sqlite3.connect('oracle.db')
+        cursor = conn.cursor()
+        
+        # Check if user exists
+        cursor.execute('SELECT id FROM users WHERE email = ? OR username = ?', (email, username))
+        if cursor.fetchone():
+            flash('User already exists')
+            conn.close()
+            return redirect(url_for('register'))
+        
+        # Create user in database (NO STRIPE)
+        customer_id = generate_customer_id()
+        password_hash = generate_password_hash(password)
+        
+        cursor.execute('''
+            INSERT INTO users (customer_id, username, email, password_hash)
+            VALUES (?, ?, ?, ?)
+        ''', (customer_id, username, email, password_hash))
+        
+        conn.commit()
+        conn.close()
+        
+        # Log in user
+        session['customer_id'] = customer_id
+        session['username'] = username
+        
+        flash('Registration successful! Welcome to The Oracle! 🎉')
+        return redirect(url_for('home'))
+    
+    content = '''
+    <div class="header">
+        <h1>MYA3Reset: The Oracle</h1>
+        <p>🌟 Begin Your Elite Transformation</p>
+    </div>
+    
+    <div class="card">
+        <h2 style="text-align: center; margin-bottom: 30px;">Join The Elite Circle 🔮</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">👤 Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">📧 Email Address:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">🔐 Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div style="text-align: center;">
+                <button type="submit" class="btn">🎯 JOIN THE ORACLE</button>
+            </div>
+        </form>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            Already have an account? <a href="{{ url_for('login') }}" style="color: #74b9ff;">🔐 Login Here</a>
+        </div>
+    </div>
+    '''
+    
+    return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        
+        conn = sqlite3.connect('oracle.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT customer_id, username, password_hash FROM users WHERE email = ?', (email,))
+        user = cursor.fetchone()
+        conn.close()
+        
+        if user and check_password_hash(user[2], password):
+            session['customer_id'] = user[0]
+            session['username'] = user[1]
+            return redirect(url_for('home'))
+        
+        flash('Invalid email or password')
+    
+    content = '''
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="font-size: 3rem; color: #ffffff; margin-bottom: 15px;">🔮 MYA3Reset: The Oracle</h1>
+        <p style="font-size: 1.3rem; color: #ffffff; font-weight: 500;">Your Ritual, Your Transformation, Your Alchemy</p>
+    </div>
+
+    <!-- Login Form -->
+    <div class="card" style="margin-bottom: 40px;">
+        <h2 style="text-align: center; margin-bottom: 25px; color: #ffffff;">Welcome Back, Elite 👑</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label for="email">📧 Email Address:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">🔑 Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div style="text-align: center;">
+                <button type="submit" class="btn">🚀 ENTER THE ORACLE</button>
+            </div>
+        </form>
+        <div style="text-align: center; margin-top: 25px;">
+            New to the Oracle? 
+            <a href="{{ url_for('register') }}" style="color: #74b9ff; text-decoration: none; font-weight: 600;">✨ Start Your 3-Day Free Trial</a>
+        </div>
+        <div style="background: rgba(116, 185, 255, 0.1); border: 2px solid #74b9ff; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center;">
+            <p style="margin: 0; color: #74b9ff; font-size: 16px;">🎁 <strong>3 Days Free</strong> • Then $19.99/month • Cancel Anytime</p>
+        </div>
+    </div>
+
+    <!-- What The Oracle Offers -->
+    <div class="card">
+        <h2 style="text-align: center; color: #ffffff; margin-bottom: 30px;">🔮 The 4 Transformation Modes Inside The Oracle</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #74b9ff; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(116, 185, 255, 0.2);">
+                <h3 style="color: #74b9ff; margin-bottom: 15px; font-size: 1.4rem;">👑 Alpha Elite Mode</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Master executive presence, strategic decision-making, and high-performance leadership. Develop the mindset, communication skills, and emotional intelligence that separates industry leaders from the competition.</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #fd79a8; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(253, 121, 168, 0.2);">
+                <h3 style="color: #fd79a8; margin-bottom: 15px; font-size: 1.4rem;">💝 Situationship Mode</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Navigate complex modern relationships with clarity and confidence. Master boundary setting, emotional intelligence, and authentic communication to attract and maintain meaningful connections that align with your values.</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #00b894; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(0, 184, 148, 0.2);">
+                <h3 style="color: #00b894; margin-bottom: 15px; font-size: 1.4rem;">🧠 A3Reset Assessment Mode</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Comprehensive psychological profiling and transformation readiness evaluation. Discover your unique personality matrix, identify limiting patterns, and receive personalized strategies for accelerated personal development.</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #e17055; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(225, 112, 85, 0.2);">
+                <h3 style="color: #e17055; margin-bottom: 15px; font-size: 1.4rem;">🎭 Custom Ritual Creator</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Design bespoke transformation protocols tailored to your specific goals and lifestyle. Create powerful daily practices, mindset anchors, and behavioral systems that compound into lasting change.</p>
+            </div>
+        </div>
+        
+        <!-- Exclusive Features -->
+        <div style="background: rgba(116, 185, 255, 0.1); border: 2px solid #74b9ff; border-radius: 15px; padding: 25px; text-align: center;">
+            <h3 style="color: #74b9ff; margin-bottom: 20px; font-size: 1.3rem;">⚡ Plus Exclusive Oracle Features</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px;">
+                <div>
+                    <h4 style="color: #00ff88; margin-bottom: 8px; font-size: 1.1rem;">🤖 AI Coach</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Multiple AI personalities for personalized guidance</p>
+                </div>
+                <div>
+                    <h4 style="color: #fd79a8; margin-bottom: 8px; font-size: 1.1rem;">📊 Progress Tracking</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Advanced analytics to monitor your transformation</p>
+                </div>
+                <div>
+                    <h4 style="color: #e17055; margin-bottom: 8px; font-size: 1.1rem;">🎯 Daily Challenges</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Gamified experiences for consistent growth</p>
+                </div>
+                <div>
+                    <h4 style="color: #74b9ff; margin-bottom: 8px; font-size: 1.1rem;">🌑 Shadow Work</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Deep psychological integration and healing</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    '''
+    
+    return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        
+        conn = sqlite3.connect('oracle.db')
+        cursor = conn.cursor()
+        
+        # Check if user exists
+        cursor.execute('SELECT id FROM users WHERE email = ? OR username = ?', (email, username))
+        if cursor.fetchone():
+            flash('User already exists')
+            conn.close()
+            return redirect(url_for('register'))
+        
+        # Create user in database (NO STRIPE)
+        customer_id = generate_customer_id()
+        password_hash = generate_password_hash(password)
+        
+        cursor.execute('''
+            INSERT INTO users (customer_id, username, email, password_hash)
+            VALUES (?, ?, ?, ?)
+        ''', (customer_id, username, email, password_hash))
+        
+        conn.commit()
+        conn.close()
+        
+        # Log in user
+        session['customer_id'] = customer_id
+        session['username'] = username
+        
+        flash('Registration successful! Welcome to The Oracle! 🎉')
+        return redirect(url_for('home'))
+    
+    content = '''
+    <div class="header">
+        <h1>MYA3Reset: The Oracle</h1>
+        <p>🌟 Begin Your Elite Transformation</p>
+    </div>
+    
+    <div class="card">
+        <h2 style="text-align: center; margin-bottom: 30px;">Join The Elite Circle 🔮</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">👤 Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">📧 Email Address:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">🔐 Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div style="text-align: center;">
+                <button type="submit" class="btn">🎯 JOIN THE ORACLE</button>
+            </div>
+        </form>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            Already have an account? <a href="{{ url_for('login') }}" style="color: #74b9ff;">🔐 Login Here</a>
+        </div>
+    </div>
+    '''
+    
+    return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        
+        conn = sqlite3.connect('oracle.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT customer_id, username, password_hash FROM users WHERE email = ?', (email,))
+        user = cursor.fetchone()
+        conn.close()
+        
+        if user and check_password_hash(user[2], password):
+            session['customer_id'] = user[0]
+            session['username'] = user[1]
+            return redirect(url_for('home'))
+        
+        flash('Invalid email or password')
+    
+    content = '''
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="font-size: 3rem; color: #ffffff; margin-bottom: 15px;">🔮 MYA3Reset: The Oracle</h1>
+        <p style="font-size: 1.3rem; color: #ffffff; font-weight: 500;">Your Ritual, Your Transformation, Your Alchemy</p>
+    </div>
+
+    <!-- Login Form -->
+    <div class="card" style="margin-bottom: 40px;">
+        <h2 style="text-align: center; margin-bottom: 25px; color: #ffffff;">Welcome Back, Elite 👑</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label for="email">📧 Email Address:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">🔑 Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div style="text-align: center;">
+                <button type="submit" class="btn">🚀 ENTER THE ORACLE</button>
+            </div>
+        </form>
+        <div style="text-align: center; margin-top: 25px;">
+            New to the Oracle? 
+            <a href="{{ url_for('register') }}" style="color: #74b9ff; text-decoration: none; font-weight: 600;">✨ Start Your 3-Day Free Trial</a>
+        </div>
+        <div style="background: rgba(116, 185, 255, 0.1); border: 2px solid #74b9ff; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center;">
+            <p style="margin: 0; color: #74b9ff; font-size: 16px;">🎁 <strong>3 Days Free</strong> • Then $19.99/month • Cancel Anytime</p>
+        </div>
+    </div>
+
+    <!-- What The Oracle Offers -->
+    <div class="card">
+        <h2 style="text-align: center; color: #ffffff; margin-bottom: 30px;">🔮 The 4 Transformation Modes Inside The Oracle</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #74b9ff; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(116, 185, 255, 0.2);">
+                <h3 style="color: #74b9ff; margin-bottom: 15px; font-size: 1.4rem;">👑 Alpha Elite Mode</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Master executive presence, strategic decision-making, and high-performance leadership. Develop the mindset, communication skills, and emotional intelligence that separates industry leaders from the competition.</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #fd79a8; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(253, 121, 168, 0.2);">
+                <h3 style="color: #fd79a8; margin-bottom: 15px; font-size: 1.4rem;">💝 Situationship Mode</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Navigate complex modern relationships with clarity and confidence. Master boundary setting, emotional intelligence, and authentic communication to attract and maintain meaningful connections that align with your values.</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #00b894; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(0, 184, 148, 0.2);">
+                <h3 style="color: #00b894; margin-bottom: 15px; font-size: 1.4rem;">🧠 A3Reset Assessment Mode</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Comprehensive psychological profiling and transformation readiness evaluation. Discover your unique personality matrix, identify limiting patterns, and receive personalized strategies for accelerated personal development.</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #e17055; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(225, 112, 85, 0.2);">
+                <h3 style="color: #e17055; margin-bottom: 15px; font-size: 1.4rem;">🎭 Custom Ritual Creator</h3>
+                <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Design bespoke transformation protocols tailored to your specific goals and lifestyle. Create powerful daily practices, mindset anchors, and behavioral systems that compound into lasting change.</p>
+            </div>
+        </div>
+        
+        <!-- Exclusive Features -->
+        <div style="background: rgba(116, 185, 255, 0.1); border: 2px solid #74b9ff; border-radius: 15px; padding: 25px; text-align: center;">
+            <h3 style="color: #74b9ff; margin-bottom: 20px; font-size: 1.3rem;">⚡ Plus Exclusive Oracle Features</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px;">
+                <div>
+                    <h4 style="color: #00ff88; margin-bottom: 8px; font-size: 1.1rem;">🤖 AI Coach</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Multiple AI personalities for personalized guidance</p>
+                </div>
+                <div>
+                    <h4 style="color: #fd79a8; margin-bottom: 8px; font-size: 1.1rem;">📊 Progress Tracking</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Advanced analytics to monitor your transformation</p>
+                </div>
+                <div>
+                    <h4 style="color: #e17055; margin-bottom: 8px; font-size: 1.1rem;">🎯 Daily Challenges</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Gamified experiences for consistent growth</p>
+                </div>
+                <div>
+                    <h4 style="color: #74b9ff; margin-bottom: 8px; font-size: 1.1rem;">🌑 Shadow Work</h4>
+                    <p style="color: #ffffff; font-size: 0.9rem; margin: 0;">Deep psychological integration and healing</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    '''
+    
+    return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -547,7 +889,176 @@ def rituals():
     
     return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
 
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        # Check admin credentials
+        conn = sqlite3.connect('oracle.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT customer_id, username, password_hash, is_admin FROM users WHERE username = ? AND is_admin = 1', (username,))
+        admin = cursor.fetchone()
+        conn.close()
+        
+        if admin and check_password_hash(admin[2], password):
+            session['customer_id'] = admin[0]
+            session['username'] = admin[1]
+            session['is_admin'] = True
+            flash('Welcome back, Admin! 👑')
+            return redirect(url_for('admin_dashboard'))
+        
+        flash('Invalid admin credentials')
+    
+    content = '''
+    <div class="header">
+        <h1>🔐 Admin Portal</h1>
+        <p>Oracle Administration</p>
+    </div>
+    
+    <div class="card">
+        <h2 style="text-align: center; margin-bottom: 30px;">Admin Login 👑</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">👤 Admin Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">🔑 Admin Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div style="text-align: center;">
+                <button type="submit" class="btn">🚀 ADMIN LOGIN</button>
+            </div>
+        </form>
+        
+        <div style="text-align: center; margin-top: 25px;">
+            <a href="{{ url_for('login') }}" style="color: #74b9ff;">← Back to User Login</a>
+        </div>
+    </div>
+    '''
+    
+    return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
+
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    if 'customer_id' not in session or not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+    
+    # Get user statistics
+    conn = sqlite3.connect('oracle.db')
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT COUNT(*) FROM users')
+    total_users = cursor.fetchone()[0]
+    
+    cursor.execute('SELECT COUNT(*) FROM users WHERE created_at >= date("now", "-7 days")')
+    new_users_week = cursor.fetchone()[0]
+    
+    cursor.execute('SELECT COUNT(*) FROM shadow_work_responses')
+    total_responses = cursor.fetchone()[0]
+    
+    cursor.execute('SELECT username, email, created_at FROM users ORDER BY created_at DESC LIMIT 10')
+    recent_users = cursor.fetchall()
+    
+    conn.close()
+    
+    content = f'''
+    <div class="header">
+        <h1>👑 Admin Dashboard</h1>
+        <p>Oracle Platform Management</p>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">
+        <div class="card" style="text-align: center;">
+            <h3 style="color: #74b9ff;">👥 Total Users</h3>
+            <p style="font-size: 2rem; font-weight: bold; margin: 10px 0; color: #ffffff;">{total_users}</p>
+        </div>
+        <div class="card" style="text-align: center;">
+            <h3 style="color: #00b894;">📈 New This Week</h3>
+            <p style="font-size: 2rem; font-weight: bold; margin: 10px 0; color: #ffffff;">{new_users_week}</p>
+        </div>
+        <div class="card" style="text-align: center;">
+            <h3 style="color: #fd79a8;">💬 Shadow Work Responses</h3>
+            <p style="font-size: 2rem; font-weight: bold; margin: 10px 0; color: #ffffff;">{total_responses}</p>
+        </div>
+    </div>
+    
+    <!-- Recent Users -->
+    <div class="card">
+        <h3 style="margin-bottom: 20px;">🆕 Recent Users</h3>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #404040;">
+                        <th style="padding: 15px; text-align: left; color: #74b9ff;">Username</th>
+                        <th style="padding: 15px; text-align: left; color: #74b9ff;">Email</th>
+                        <th style="padding: 15px; text-align: left; color: #74b9ff;">Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+    '''
+    
+    for user in recent_users:
+        content += f'''
+                    <tr style="border-bottom: 1px solid #404040;">
+                        <td style="padding: 12px; color: #ffffff;">{user[0]}</td>
+                        <td style="padding: 12px; color: #ffffff;">{user[1]}</td>
+                        <td style="padding: 12px; color: #ffffff;">{user[2]}</td>
+                    </tr>
+        '''
+    
+    content += '''
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Admin Actions -->
+    <div class="card">
+        <h3 style="margin-bottom: 20px;">⚡ Admin Actions</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <a href="{{ url_for('home') }}" class="btn">🏠 View as User</a>
+            <a href="{{ url_for('logout') }}" class="btn" style="background: linear-gradient(135deg, #e17055 0%, #d63031 100%);">🚪 Admin Logout</a>
+        </div>
+    </div>
+    '''
+    
+    return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
+
+# Add this function to create admin user
+def create_admin_user():
+    conn = sqlite3.connect('oracle.db')
+    cursor = conn.cursor()
+    
+    # Check if admin already exists
+    cursor.execute('SELECT id FROM users WHERE username = ?', ('admin',))
+    if cursor.fetchone():
+        conn.close()
+        return
+    
+    # Create admin user
+    admin_id = generate_customer_id()
+    admin_password = generate_password_hash('admin123')  # Change this password!
+    
+    cursor.execute('''
+        INSERT INTO users (customer_id, username, email, password_hash, is_admin)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (admin_id, 'admin', 'admin@oracle.com', admin_password, True))
+    
+    conn.commit()
+    conn.close()
+    print("✅ Admin user created: username='admin', password='admin123'")
+
+# Update the main function
 if __name__ == '__main__':
     init_db()
-    print("🚀 Oracle Platform FIXED VERSION starting on http://0.0.0.0:5000")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    create_admin_user()  # Create admin user on startup
+    port = int(os.environ.get('PORT', 5000))
+    print("🚀 Oracle Platform FIXED VERSION starting on port", port)
+    print("🔐 Admin login: /admin/login (username: admin, password: admin123)")
+    app.run(host='0.0.0.0', port=port, debug=True)
