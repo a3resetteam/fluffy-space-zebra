@@ -12,32 +12,34 @@ import datetime as dt
 from datetime import datetime, timedelta
 from flask import Flask, request, render_template_string, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+import stripe
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'oracle_secret_key_2024')
+
+# Stripe configuration
+stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_your_test_key_here')
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'pk_test_your_test_key_here')
 
 # Simple database initialization
 def init_db():
     conn = sqlite3.connect('oracle.db')
     cursor = conn.cursor()
     
-    # Users table
+    # Users table - ADD stripe columns
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             customer_id TEXT UNIQUE NOT NULL,
-            usernam            // ...existing code...
-            if __name__ == '__main__':
-                init_db()
-                port = int(os.environ.get('PORT', 5000))
-                print(f"🚀 Oracle Platform FIXED VERSION starting on port {port}")
-                app.run(host='0.0.0.0', port=port, debug=False)e TEXT UNIQUE NOT NULL,
+            username TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
             subscription_status TEXT DEFAULT 'trial',
             trial_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            is_admin BOOLEAN DEFAULT FALSE
+            is_admin BOOLEAN DEFAULT FALSE,
+            stripe_customer_id TEXT,
+            stripe_subscription_id TEXT
         )
     ''')
     
@@ -80,7 +82,7 @@ BASE_TEMPLATE = '''
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            background: #000000;
             min-height: 100vh;
             color: #ffffff;
             margin: 0;
@@ -99,17 +101,18 @@ BASE_TEMPLATE = '''
             font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 15px;
-            background: linear-gradient(135deg, #ffffff 0%, #74b9ff 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 50%, #ffffff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255,255,255,0.3);
         }
         .card {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1px solid #333;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 2px solid #404040;
             border-radius: 20px;
             padding: 40px;
             margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.1);
         }
         .form-group {
             margin-bottom: 25px;
@@ -123,11 +126,17 @@ BASE_TEMPLATE = '''
         .form-group input, .form-group textarea {
             width: 100%;
             padding: 15px;
-            border: 2px solid #333;
+            border: 2px solid #404040;
             border-radius: 12px;
             font-size: 16px;
-            background: #1a1a2e;
+            background: #1a1a1a;
             color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #74b9ff;
+            box-shadow: 0 0 15px rgba(116, 185, 255, 0.3);
+            outline: none;
         }
         .btn {
             background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
@@ -140,6 +149,13 @@ BASE_TEMPLATE = '''
             text-decoration: none;
             display: inline-block;
             margin: 8px;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(116, 185, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(116, 185, 255, 0.4);
         }
         .modes-grid {
             display: grid;
@@ -148,11 +164,12 @@ BASE_TEMPLATE = '''
             margin-top: 40px;
         }
         .mode-card {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 2px solid #333;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 2px solid #404040;
             border-radius: 20px;
             padding: 35px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .flash-message {
             padding: 15px;
@@ -160,13 +177,20 @@ BASE_TEMPLATE = '''
             margin-bottom: 15px;
             background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
             color: #ffffff;
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+        }
+        /* Chrome/metallic effects */
+        .chrome-text {
+            background: linear-gradient(135deg, #c0c0c0 0%, #ffffff 50%, #c0c0c0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
 <body>
     <div class="container">
         {% if session.customer_id %}
-        <div style="background: #1a1a2e; padding: 20px; border-radius: 15px; margin-bottom: 30px;">
+        <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #404040; padding: 20px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
             <strong>🔮 Welcome back, {{ session.username }}!</strong>
             <a href="{{ url_for('logout') }}" class="btn">🚪 Logout</a>
         </div>
@@ -233,6 +257,7 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+        payment_method_id = request.form.get('payment_method_id')
         
         conn = sqlite3.connect('oracle.db')
         cursor = conn.cursor()
@@ -244,14 +269,48 @@ def register():
             conn.close()
             return redirect(url_for('register'))
         
-        # Create user
+        # Create Stripe customer and setup subscription
+        try:
+            # Create customer in Stripe
+            customer = stripe.Customer.create(
+                email=email,
+                name=username,
+                payment_method=payment_method_id
+            )
+            
+            # Attach payment method to customer
+            stripe.PaymentMethod.attach(
+                payment_method_id,
+                customer=customer.id
+            )
+            
+            # Set as default payment method
+            stripe.Customer.modify(
+                customer.id,
+                invoice_settings={'default_payment_method': payment_method_id}
+            )
+            
+            # TEMPORARILY COMMENT OUT SUBSCRIPTION
+            # subscription = stripe.Subscription.create(
+            #     customer=customer.id,
+            #     items=[{'price': 'pi_3RfTIOJe0L8W939g15P8180M'}],
+            #     trial_period_days=3,
+            #     expand=['latest_invoice.payment_intent']
+            # )
+            
+        except stripe.error.StripeError as e:
+            flash(f'Payment error: {str(e)}')
+            conn.close()
+            return redirect(url_for('register'))
+        
+        # Create user in database
         customer_id = generate_customer_id()
         password_hash = generate_password_hash(password)
         
         cursor.execute('''
-            INSERT INTO users (customer_id, username, email, password_hash)
-            VALUES (?, ?, ?, ?)
-        ''', (customer_id, username, email, password_hash))
+            INSERT INTO users (customer_id, username, email, password_hash, stripe_customer_id)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (customer_id, username, email, password_hash, customer.id))
         
         conn.commit()
         conn.close()
@@ -260,10 +319,10 @@ def register():
         session['customer_id'] = customer_id
         session['username'] = username
         
-        flash('Registration successful! Welcome to The Oracle.')
+        flash('Registration successful! Your 3-day free trial has started. 🎉')
         return redirect(url_for('home'))
     
-    content = '''
+    content = f'''
     <div class="header">
         <h1>MYA3Reset: The Oracle</h1>
         <p>🌟 Begin Your Elite Transformation</p>
@@ -271,7 +330,12 @@ def register():
     
     <div class="card">
         <h2 style="text-align: center; margin-bottom: 30px;">Join The Elite Circle 🔮</h2>
-        <form method="POST">
+        <div style="background: rgba(116, 185, 255, 0.1); border: 2px solid #74b9ff; padding: 15px; border-radius: 10px; margin-bottom: 25px; text-align: center;">
+            <p style="margin: 0; color: #74b9ff; font-size: 16px;">🎁 <strong>3 Days FREE</strong> • Then $19.99/month • Cancel Anytime</p>
+            <p style="margin: 5px 0 0 0; color: #ffffff; font-size: 14px;">Your card will be charged after the free trial ends</p>
+        </div>
+        
+        <form method="POST" id="registration-form">
             <div class="form-group">
                 <label for="username">👤 Username:</label>
                 <input type="text" id="username" name="username" required>
@@ -284,14 +348,95 @@ def register():
                 <label for="password">🔐 Password:</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <div style="text-align: center;">
-                <button type="submit" class="btn">🎯 START FREE TRIAL</button>
+            
+            <!-- Stripe Card Element -->
+            <div class="form-group">
+                <label>💳 Payment Information:</label>
+                <div id="card-element" style="background: #1a1a1a; border: 2px solid #404040; border-radius: 12px; padding: 15px; margin-top: 8px;">
+                    <!-- Stripe Elements will create form elements here -->
+                </div>
+                <div id="card-errors" role="alert" style="color: #ff6b6b; margin-top: 10px;"></div>
             </div>
+            
+            <div style="text-align: center;">
+                <button type="submit" id="submit-button" class="btn">🎯 START FREE TRIAL</button>
+            </div>
+            
+            <input type="hidden" name="payment_method_id" id="payment-method-id">
         </form>
+        
         <div style="text-align: center; margin-top: 30px;">
             Already have an account? <a href="{{ url_for('login') }}" style="color: #74b9ff;">🔐 Login Here</a>
         </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 14px; color: #cccccc;">
+            <p style="margin: 0;"><strong>🔒 Secure Payment:</strong> Your payment information is processed securely by Stripe. We never store your card details.</p>
+        </div>
     </div>
+    
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe('{STRIPE_PUBLISHABLE_KEY}');
+        const elements = stripe.elements();
+        
+        // Create card element with custom styling
+        const cardElement = elements.create('card', {{
+            style: {{
+                base: {{
+                    color: '#ffffff',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    '::placeholder': {{
+                        color: '#888888'
+                    }}
+                }},
+                invalid: {{
+                    color: '#ff6b6b'
+                }}
+            }}
+        }});
+        
+        cardElement.mount('#card-element');
+        
+        // Handle form submission
+        const form = document.getElementById('registration-form');
+        const submitButton = document.getElementById('submit-button');
+        
+        form.addEventListener('submit', async (event) => {{
+            event.preventDefault();
+            
+            submitButton.disabled = true;
+            submitButton.textContent = '⏳ Processing...';
+            
+            const {{paymentMethod, error}} = await stripe.createPaymentMethod({{
+                type: 'card',
+                card: cardElement,
+                billing_details: {{
+                    email: document.getElementById('email').value,
+                    name: document.getElementById('username').value
+                }}
+            }});
+            
+            if (error) {{
+                document.getElementById('card-errors').textContent = error.message;
+                submitButton.disabled = false;
+                submitButton.textContent = '🎯 START FREE TRIAL';
+            }} else {{
+                document.getElementById('payment-method-id').value = paymentMethod.id;
+                form.submit();
+            }}
+        }});
+        
+        // Handle real-time validation errors from the card Element
+        cardElement.on('change', (event) => {{
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {{
+                displayError.textContent = event.error.message;
+            }} else {{
+                displayError.textContent = '';
+            }}
+        }});
+    </script>
     '''
     
     return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
@@ -347,22 +492,22 @@ def login():
     </div>
 
     <!-- What The Oracle Offers -->
-    <div style="background: #1a1a2e; border: 2px solid #333333; border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(255, 255, 255, 0.05);">
+    <div class="card">
         <h2 style="text-align: center; color: #ffffff; margin-bottom: 30px;">🔮 The 4 Transformation Modes Inside The Oracle</h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
-            <div style="background: #1a1a2e; border: 2px solid #74b9ff; border-radius: 15px; padding: 25px; text-align: center; transition: all 0.3s ease;">
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #74b9ff; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(116, 185, 255, 0.2);">
                 <h3 style="color: #74b9ff; margin-bottom: 15px; font-size: 1.4rem;">👑 Alpha Elite Mode</h3>
                 <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Master executive presence, strategic decision-making, and high-performance leadership. Develop the mindset, communication skills, and emotional intelligence that separates industry leaders from the competition.</p>
             </div>
-            <div style="background: #1a1a2e; border: 2px solid #fd79a8; border-radius: 15px; padding: 25px; text-align: center; transition: all 0.3s ease;">
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #fd79a8; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(253, 121, 168, 0.2);">
                 <h3 style="color: #fd79a8; margin-bottom: 15px; font-size: 1.4rem;">💝 Situationship Mode</h3>
                 <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Navigate complex modern relationships with clarity and confidence. Master boundary setting, emotional intelligence, and authentic communication to attract and maintain meaningful connections that align with your values.</p>
             </div>
-            <div style="background: #1a1a2e; border: 2px solid #00b894; border-radius: 15px; padding: 25px; text-align: center; transition: all 0.3s ease;">
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #00b894; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(0, 184, 148, 0.2);">
                 <h3 style="color: #00b894; margin-bottom: 15px; font-size: 1.4rem;">🧠 A3Reset Assessment Mode</h3>
                 <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Comprehensive psychological profiling and transformation readiness evaluation. Discover your unique personality matrix, identify limiting patterns, and receive personalized strategies for accelerated personal development.</p>
             </div>
-            <div style="background: #1a1a2e; border: 2px solid #e17055; border-radius: 15px; padding: 25px; text-align: center; transition: all 0.3s ease;">
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid #e17055; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(225, 112, 85, 0.2);">
                 <h3 style="color: #e17055; margin-bottom: 15px; font-size: 1.4rem;">🎭 Custom Ritual Creator</h3>
                 <p style="color: #ffffff; font-size: 1rem; margin: 0; line-height: 1.6;">Design bespoke transformation protocols tailored to your specific goals and lifestyle. Create powerful daily practices, mindset anchors, and behavioral systems that compound into lasting change.</p>
             </div>
