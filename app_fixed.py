@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MYA3Reset: The Oracle - FIXED VERSION FOR IMMEDIATE LAUNCH
+MYA3Reset: The Oracle - DESIGN UPDATE ONLY
 """
 
 import os
@@ -12,21 +12,16 @@ import datetime as dt
 from datetime import datetime, timedelta
 from flask import Flask, request, render_template_string, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-import stripe
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'oracle_secret_key_2024')
-
-# Stripe configuration
-stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_your_test_key_here')
-STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'pk_test_your_test_key_here')
 
 # Simple database initialization
 def init_db():
     conn = sqlite3.connect('oracle.db')
     cursor = conn.cursor()
     
-    # Users table - ADD stripe columns
+    # Users table - simplified
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,9 +32,7 @@ def init_db():
             subscription_status TEXT DEFAULT 'trial',
             trial_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            is_admin BOOLEAN DEFAULT FALSE,
-            stripe_customer_id TEXT,
-            stripe_subscription_id TEXT
+            is_admin BOOLEAN DEFAULT FALSE
         )
     ''')
     
@@ -71,7 +64,7 @@ def init_db():
 def generate_customer_id():
     return f"ORC-{uuid.uuid4().hex[:8].upper()}"
 
-# Templates
+# Templates - SLEEK BLACK DESIGN
 BASE_TEMPLATE = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -179,12 +172,6 @@ BASE_TEMPLATE = '''
             color: #ffffff;
             box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
         }
-        /* Chrome/metallic effects */
-        .chrome-text {
-            background: linear-gradient(135deg, #c0c0c0 0%, #ffffff 50%, #c0c0c0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
     </style>
 </head>
 <body>
@@ -257,7 +244,6 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
-        payment_method_id = request.form.get('payment_method_id')
         
         conn = sqlite3.connect('oracle.db')
         cursor = conn.cursor()
@@ -269,48 +255,14 @@ def register():
             conn.close()
             return redirect(url_for('register'))
         
-        # Create Stripe customer and setup subscription
-        try:
-            # Create customer in Stripe
-            customer = stripe.Customer.create(
-                email=email,
-                name=username,
-                payment_method=payment_method_id
-            )
-            
-            # Attach payment method to customer
-            stripe.PaymentMethod.attach(
-                payment_method_id,
-                customer=customer.id
-            )
-            
-            # Set as default payment method
-            stripe.Customer.modify(
-                customer.id,
-                invoice_settings={'default_payment_method': payment_method_id}
-            )
-            
-            # TEMPORARILY COMMENT OUT SUBSCRIPTION
-            # subscription = stripe.Subscription.create(
-            #     customer=customer.id,
-            #     items=[{'price': 'pi_3RfTIOJe0L8W939g15P8180M'}],
-            #     trial_period_days=3,
-            #     expand=['latest_invoice.payment_intent']
-            # )
-            
-        except stripe.error.StripeError as e:
-            flash(f'Payment error: {str(e)}')
-            conn.close()
-            return redirect(url_for('register'))
-        
-        # Create user in database
+        # Create user in database (NO STRIPE)
         customer_id = generate_customer_id()
         password_hash = generate_password_hash(password)
         
         cursor.execute('''
-            INSERT INTO users (customer_id, username, email, password_hash, stripe_customer_id)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (customer_id, username, email, password_hash, customer.id))
+            INSERT INTO users (customer_id, username, email, password_hash)
+            VALUES (?, ?, ?, ?)
+        ''', (customer_id, username, email, password_hash))
         
         conn.commit()
         conn.close()
@@ -319,10 +271,10 @@ def register():
         session['customer_id'] = customer_id
         session['username'] = username
         
-        flash('Registration successful! Your 3-day free trial has started. 🎉')
+        flash('Registration successful! Welcome to The Oracle! 🎉')
         return redirect(url_for('home'))
     
-    content = f'''
+    content = '''
     <div class="header">
         <h1>MYA3Reset: The Oracle</h1>
         <p>🌟 Begin Your Elite Transformation</p>
@@ -330,12 +282,8 @@ def register():
     
     <div class="card">
         <h2 style="text-align: center; margin-bottom: 30px;">Join The Elite Circle 🔮</h2>
-        <div style="background: rgba(116, 185, 255, 0.1); border: 2px solid #74b9ff; padding: 15px; border-radius: 10px; margin-bottom: 25px; text-align: center;">
-            <p style="margin: 0; color: #74b9ff; font-size: 16px;">🎁 <strong>3 Days FREE</strong> • Then $19.99/month • Cancel Anytime</p>
-            <p style="margin: 5px 0 0 0; color: #ffffff; font-size: 14px;">Your card will be charged after the free trial ends</p>
-        </div>
         
-        <form method="POST" id="registration-form">
+        <form method="POST">
             <div class="form-group">
                 <label for="username">👤 Username:</label>
                 <input type="text" id="username" name="username" required>
@@ -349,94 +297,15 @@ def register():
                 <input type="password" id="password" name="password" required>
             </div>
             
-            <!-- Stripe Card Element -->
-            <div class="form-group">
-                <label>💳 Payment Information:</label>
-                <div id="card-element" style="background: #1a1a1a; border: 2px solid #404040; border-radius: 12px; padding: 15px; margin-top: 8px;">
-                    <!-- Stripe Elements will create form elements here -->
-                </div>
-                <div id="card-errors" role="alert" style="color: #ff6b6b; margin-top: 10px;"></div>
-            </div>
-            
             <div style="text-align: center;">
-                <button type="submit" id="submit-button" class="btn">🎯 START FREE TRIAL</button>
+                <button type="submit" class="btn">🎯 JOIN THE ORACLE</button>
             </div>
-            
-            <input type="hidden" name="payment_method_id" id="payment-method-id">
         </form>
         
         <div style="text-align: center; margin-top: 30px;">
             Already have an account? <a href="{{ url_for('login') }}" style="color: #74b9ff;">🔐 Login Here</a>
         </div>
-        
-        <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 14px; color: #cccccc;">
-            <p style="margin: 0;"><strong>🔒 Secure Payment:</strong> Your payment information is processed securely by Stripe. We never store your card details.</p>
-        </div>
     </div>
-    
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
-        const stripe = Stripe('{STRIPE_PUBLISHABLE_KEY}');
-        const elements = stripe.elements();
-        
-        // Create card element with custom styling
-        const cardElement = elements.create('card', {{
-            style: {{
-                base: {{
-                    color: '#ffffff',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '16px',
-                    '::placeholder': {{
-                        color: '#888888'
-                    }}
-                }},
-                invalid: {{
-                    color: '#ff6b6b'
-                }}
-            }}
-        }});
-        
-        cardElement.mount('#card-element');
-        
-        // Handle form submission
-        const form = document.getElementById('registration-form');
-        const submitButton = document.getElementById('submit-button');
-        
-        form.addEventListener('submit', async (event) => {{
-            event.preventDefault();
-            
-            submitButton.disabled = true;
-            submitButton.textContent = '⏳ Processing...';
-            
-            const {{paymentMethod, error}} = await stripe.createPaymentMethod({{
-                type: 'card',
-                card: cardElement,
-                billing_details: {{
-                    email: document.getElementById('email').value,
-                    name: document.getElementById('username').value
-                }}
-            }});
-            
-            if (error) {{
-                document.getElementById('card-errors').textContent = error.message;
-                submitButton.disabled = false;
-                submitButton.textContent = '🎯 START FREE TRIAL';
-            }} else {{
-                document.getElementById('payment-method-id').value = paymentMethod.id;
-                form.submit();
-            }}
-        }});
-        
-        // Handle real-time validation errors from the card Element
-        cardElement.on('change', (event) => {{
-            const displayError = document.getElementById('card-errors');
-            if (event.error) {{
-                displayError.textContent = event.error.message;
-            }} else {{
-                displayError.textContent = '';
-            }}
-        }});
-    </script>
     '''
     
     return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
