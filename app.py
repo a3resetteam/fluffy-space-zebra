@@ -257,7 +257,7 @@ def shadow_work():
     
     return render_template_string(BASE_TEMPLATE.replace('{{ content }}', content))
 
-# NO if __name__ == '__main__' block - let Gunicorn handle it
+# End of file - nothing else here!
 
 web: gunicorn app:app --bind 0.0.0.0:$PORT
 
